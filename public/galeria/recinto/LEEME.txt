@@ -1,0 +1,12 @@
+Copia aquí las fotos y videos del recinto (canchas, salón, piscina, entorno general).
+
+Formatos aceptados:
+- Imágenes: .jpg, .jpeg, .png, .webp, .gif
+- Videos: .mp4, .webm, .mov
+
+No hace falta reiniciar el servidor ni tocar código: apenas copies un archivo en esta
+carpeta y refresques la página /galeria.html, va a aparecer. Puedes borrar o reemplazar
+archivos cuando quieras para ir renovando la galería.
+
+Puedes borrar este archivo LEEME.txt, no afecta el sitio (no es una imagen ni video,
+así que la galería lo ignora).

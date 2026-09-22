@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Galería — Vistas Quillaiquen</title>
+<link rel="stylesheet" href="/css/estilo.css">
+</head>
+<body>
+<header class="sitio">
+  <div class="marca">
+    <h1>Vistas Quillaiquen</h1>
+    <nav class="principal">
+      <a href="/index.html">Inicio</a>
+      <a href="/canchas.html">Canchas</a>
+      <a href="/eventos.html">Centro de Eventos</a>
+      <a href="/galeria.html">Galería</a>
+      <a href="/admin.html">Administración</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <h2>Galería</h2>
+  <p>Fotos y videos del recinto y de eventos realizados en Vistas Quillaiquen.</p>
+
+  <div class="tabs-galeria">
+    <button class="boton" id="tab-recinto">Recinto</button>
+    <button class="boton secundario" id="tab-eventos">Eventos</button>
+  </div>
+
+  <div id="mensaje-galeria"></div>
+
+  <section id="vista-recinto">
+    <div class="grilla-galeria" id="grilla-recinto"></div>
+  </section>
+
+  <section id="vista-eventos" class="oculto">
+    <div id="lista-albumes"></div>
+  </section>
+</main>
+
+<div id="lightbox" class="lightbox oculto">
+  <button id="lightbox-cerrar" class="lightbox-cerrar" aria-label="Cerrar">&times;</button>
+  <button id="lightbox-anterior" class="lightbox-nav lightbox-anterior" aria-label="Anterior">&larr;</button>
+  <div id="lightbox-contenido" class="lightbox-contenido"></div>
+  <button id="lightbox-siguiente" class="lightbox-nav lightbox-siguiente" aria-label="Siguiente">&rarr;</button>
+</div>
+
+<footer class="sitio">Vistas Quillaiquen — parte de Comercializadora PCY</footer>
+<script src="/js/galeria.js"></script>
+</body>
+</html>

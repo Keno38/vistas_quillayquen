@@ -1,0 +1,14 @@
+{
+  "name": "vistas-quillaiquen",
+  "version": "1.0.0",
+  "description": "Sitio y sistema de reservas para Vistas Quillaiquen (canchas de pasto sintetico y centro de eventos con piscina). Sin dependencias externas: solo Node.js.",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "UNLICENSED",
+  "dependencies": {}
+}

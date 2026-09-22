@@ -1,0 +1,14 @@
+Cada carpeta dentro de "eventos/" es un álbum (por ejemplo "Matrimonio Perez" o
+"Fin de año Colegio San Martin 2026"). Crea una carpeta nueva por cada evento que
+quieras mostrar y copia ahí las fotos y videos de ese evento.
+
+Formatos aceptados:
+- Imágenes: .jpg, .jpeg, .png, .webp, .gif
+- Videos: .mp4, .webm, .mov
+
+El nombre de la carpeta es el que se muestra como título del álbum en la página
+/galeria.html. No hace falta tocar código ni reiniciar el servidor: solo crea la
+carpeta, copia los archivos, y refresca la página.
+
+La carpeta "Ejemplo - Matrimonio Perez" es solo un ejemplo de cómo nombrar un álbum;
+puedes borrarla.

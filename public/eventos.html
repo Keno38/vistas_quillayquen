@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Centro de Eventos — Vistas Quillaiquen</title>
+<link rel="stylesheet" href="/css/estilo.css">
+</head>
+<body>
+<header class="sitio">
+  <div class="marca">
+    <h1>Vistas Quillaiquen</h1>
+    <nav class="principal">
+      <a href="/index.html">Inicio</a>
+      <a href="/canchas.html">Canchas</a>
+      <a href="/eventos.html">Centro de Eventos</a>
+      <a href="/galeria.html">Galería</a>
+      <a href="/admin.html">Administración</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <h2>Centro de Eventos con Piscina</h2>
+  <p>Ideal para paseos de fin de año de colegios, matrimonios y celebraciones. Puedes arrendar solo el local, o el local con menú (pollo con papas fritas y ensaladas). Elige una fecha libre en el calendario y envíanos tu solicitud; nuestro equipo la confirmará a la brevedad.</p>
+
+  <div class="leyenda">
+    <span class="lib"><i></i> Libre</span>
+    <span class="pen"><i></i> Con solicitud pendiente (aún puedes consultar)</span>
+    <span class="con"><i></i> Confirmado (no disponible)</span>
+  </div>
+
+  <div class="selector-fecha">
+    <button class="boton secundario" id="btn-mes-anterior">&larr; Mes anterior</button>
+    <strong id="titulo-mes"></strong>
+    <button class="boton secundario" id="btn-mes-siguiente">Mes siguiente &rarr;</button>
+  </div>
+
+  <div id="mensaje-eventos"></div>
+  <div id="calendario" class="calendario-mes"></div>
+
+  <form id="form-evento" class="oculto">
+    <h3>Solicitar reserva para el <span id="fecha-elegida-texto"></span></h3>
+    <input type="hidden" id="ev-fecha">
+    <label for="ev-contacto">Nombre de contacto</label>
+    <input type="text" id="ev-contacto" required>
+    <label for="ev-institucion">Colegio / institución / empresa (opcional)</label>
+    <input type="text" id="ev-institucion">
+    <label for="ev-telefono">Teléfono de contacto</label>
+    <input type="tel" id="ev-telefono" required placeholder="+56 9 ...">
+    <label for="ev-personas">Cantidad aproximada de personas</label>
+    <input type="number" id="ev-personas" min="1">
+    <label>
+      <input type="checkbox" id="ev-menu" style="width:auto;display:inline-block;vertical-align:middle;">
+      Incluir menú (pollo con papas fritas y ensaladas)
+    </label>
+    <label for="ev-comentario">Comentario (opcional)</label>
+    <textarea id="ev-comentario" rows="3"></textarea>
+    <div style="display:flex;gap:0.6rem;margin-top:1.2rem;">
+      <button type="submit" class="boton secundario">Enviar solicitud</button>
+      <button type="button" class="boton" id="btn-cancelar-evento" style="background:#888;">Cancelar</button>
+    </div>
+  </form>
+</main>
+
+<footer class="sitio">Vistas Quillaiquen — parte de Comercializadora PCY</footer>
+<script src="/js/eventos.js"></script>
+</body>
+</html>

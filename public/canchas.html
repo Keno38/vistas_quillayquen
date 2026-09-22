@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reservar cancha — Vistas Quillaiquen</title>
+<link rel="stylesheet" href="/css/estilo.css">
+</head>
+<body>
+<header class="sitio">
+  <div class="marca">
+    <h1>Vistas Quillaiquen</h1>
+    <nav class="principal">
+      <a href="/index.html">Inicio</a>
+      <a href="/canchas.html">Canchas</a>
+      <a href="/eventos.html">Centro de Eventos</a>
+      <a href="/galeria.html">Galería</a>
+      <a href="/admin.html">Administración</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <h2>Reserva de canchas de pasto sintético</h2>
+  <p>Horario de agendamiento: 18:00 a 23:00 hrs, todos los días. Cada bloque reservado incluye tiempo de cambio de equipo. La reserva queda confirmada de inmediato.</p>
+
+  <div class="selector-fecha">
+    <label for="fecha" style="margin:0;">Elige una fecha:</label>
+    <input type="date" id="fecha">
+  </div>
+
+  <div id="mensaje-canchas"></div>
+  <div id="grilla" class="grilla-canchas">Selecciona una fecha para ver la disponibilidad.</div>
+</main>
+
+<!-- Formulario de reserva (modal simple) -->
+<div id="modal-reserva" class="oculto" style="position:fixed;inset:0;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;padding:1rem;">
+  <div style="background:#fff;border-radius:12px;padding:1.5rem;max-width:420px;width:100%;">
+    <h3 id="modal-titulo">Confirmar reserva</h3>
+    <form id="form-reserva">
+      <input type="hidden" id="r-cancha-id">
+      <input type="hidden" id="r-fecha">
+      <input type="hidden" id="r-hora">
+      <label for="r-nombre">Nombre</label>
+      <input type="text" id="r-nombre" required>
+      <label for="r-telefono">Teléfono de contacto</label>
+      <input type="tel" id="r-telefono" required placeholder="+56 9 ...">
+      <div style="display:flex;gap:0.6rem;margin-top:1.2rem;">
+        <button type="submit" class="boton">Confirmar reserva</button>
+        <button type="button" class="boton secundario" id="btn-cancelar-modal">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<footer class="sitio">Vistas Quillaiquen — parte de Comercializadora PCY</footer>
+<script src="/js/canchas.js"></script>
+</body>
+</html>

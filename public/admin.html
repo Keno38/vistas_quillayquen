@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Administración — Vistas Quillaiquen</title>
+<link rel="stylesheet" href="/css/estilo.css">
+</head>
+<body>
+<header class="sitio">
+  <div class="marca">
+    <h1>Vistas Quillaiquen — Administración</h1>
+    <nav class="principal">
+      <a href="/index.html">Volver al sitio</a>
+      <a href="#" id="btn-logout" class="oculto">Cerrar sesión</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div id="mensaje-admin"></div>
+
+  <!-- Login -->
+  <section id="seccion-login" class="hero">
+    <h2>Iniciar sesión</h2>
+    <form id="form-login" style="max-width:320px;">
+      <label for="login-usuario">Usuario</label>
+      <input type="text" id="login-usuario" required>
+      <label for="login-password">Contraseña</label>
+      <input type="password" id="login-password" required>
+      <button type="submit" class="boton" style="margin-top:1rem;">Ingresar</button>
+    </form>
+  </section>
+
+  <!-- Panel -->
+  <section id="seccion-panel" class="oculto">
+    <h2>Solicitudes del Centro de Eventos</h2>
+    <p>Confirma o rechaza manualmente cada solicitud. Al confirmar una fecha, el sistema bloqueará automáticamente ese día para nuevas solicitudes.</p>
+    <table class="admin-tabla" id="tabla-eventos">
+      <thead>
+        <tr>
+          <th>Fecha</th><th>Contacto</th><th>Institución</th><th>Teléfono</th>
+          <th>Personas</th><th>Menú</th><th>Comentario</th><th>Estado</th><th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <h2 style="margin-top:2.5rem;">Reservas de canchas</h2>
+    <div class="selector-fecha">
+      <label for="admin-desde" style="margin:0;">Desde</label>
+      <input type="date" id="admin-desde">
+      <label for="admin-hasta" style="margin:0;">Hasta</label>
+      <input type="date" id="admin-hasta">
+      <button class="boton secundario" id="btn-filtrar-canchas">Filtrar</button>
+    </div>
+    <table class="admin-tabla" id="tabla-canchas">
+      <thead>
+        <tr><th>Fecha</th><th>Hora</th><th>Cancha</th><th>Cliente</th><th>Teléfono</th><th>Acciones</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+</main>
+
+<footer class="sitio">Vistas Quillaiquen — parte de Comercializadora PCY</footer>
+<script src="/js/admin.js"></script>
+</body>
+</html>
