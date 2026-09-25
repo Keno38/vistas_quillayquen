@@ -1,0 +1,13 @@
+Fotos para el hero de la página de inicio (index.html): la foto grande
+de la izquierda y las 2 fotos pequeñas de la derecha.
+
+Sugerencia de nombres (para que sea fácil ubicarlas):
+- principal.jpg   -> foto grande (cancha o vista general del recinto)
+- lateral-1.jpg   -> foto pequeña de arriba (piscina)
+- lateral-2.jpg   -> foto pequeña de abajo (cancha iluminada)
+
+Formato recomendado: .jpg, idealmente de al menos 1200px de ancho para
+que no se vean borrosas al agrandarse.
+
+Cuando pongas las fotos aquí, avísame y actualizo index.html para que
+las use en vez de las fotos de muestra actuales (public/img/muestra/).

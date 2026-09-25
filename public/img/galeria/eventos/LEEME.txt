@@ -1,0 +1,11 @@
+Fotos para usar en la página de Centro de Eventos (eventos.html), por
+ejemplo para la sección de "Servicios incluidos" o para ilustrar el
+salón/piscina en el hero de esa página.
+
+Nota: esto es distinto de los álbumes de eventos reales de clientes,
+que están en public/galeria/eventos/<nombre del evento>/ (esos los lee
+sola la página /galeria.html). Esta carpeta es para fotos genéricas del
+espacio que se quieran incrustar directamente en el código de la
+página de eventos.
+
+Avísame cuando pongas fotos aquí y las agrego donde corresponda.

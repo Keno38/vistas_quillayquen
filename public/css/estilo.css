@@ -574,17 +574,9 @@ footer.sitio .firma {
 }
 
 .home-logo-badge {
-  display: grid;
-  place-items: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  background: var(--home-azul-oscuro);
-  color: var(--home-blanco);
-  font-family: var(--home-font);
-  font-weight: 800;
-  font-size: 0.85rem;
-  letter-spacing: 0.02em;
+  width: 46px;
+  height: 46px;
+  object-fit: contain;
   flex-shrink: 0;
 }
 

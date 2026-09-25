@@ -1,0 +1,11 @@
+Fotos de las canchas para usar en la página de Canchas (canchas.html) o
+en otras secciones que muestren específicamente las canchas de pasto
+sintético.
+
+Nota: esto es distinto de la galería general del sitio, que está en
+public/galeria/recinto/ y public/galeria/eventos/ (esa la lee sola la
+página /galeria.html). Esta carpeta es para fotos puntuales que se
+quieran usar directamente incrustadas en otras páginas.
+
+Avísame cuando pongas fotos aquí y te digo dónde conviene usarlas o
+las agrego yo directamente en el código.
