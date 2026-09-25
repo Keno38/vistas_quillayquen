@@ -1,4 +1,8 @@
 const { pg } = require('./supabaseClient');
+const { subirComprobante, descargarComprobante } = require('./storage');
+
+// Estados que "ocupan" el horario (bloquean el bloque para otras personas).
+const ESTADOS_ACTIVOS = ['pendiente_verificacion', 'confirmada'];
 
 function toMinutes(hhmm) {
   const [h, m] = hhmm.split(':').map(Number);
@@ -39,6 +43,31 @@ async function getConfig() {
   return filas[0];
 }
 
+async function actualizarConfig({ valor_cancha_hora, abono_porcentaje }) {
+  const cambios = {};
+  if (valor_cancha_hora !== undefined) {
+    const valor = Number(valor_cancha_hora);
+    if (!Number.isFinite(valor) || valor <= 0) {
+      const err = new Error('El valor de la cancha debe ser un número mayor a 0');
+      err.status = 400;
+      throw err;
+    }
+    cambios.valor_cancha_hora = valor;
+  }
+  if (abono_porcentaje !== undefined) {
+    const porcentaje = Number(abono_porcentaje);
+    if (!Number.isFinite(porcentaje) || porcentaje < 1 || porcentaje > 100) {
+      const err = new Error('El porcentaje de abono debe estar entre 1 y 100');
+      err.status = 400;
+      throw err;
+    }
+    cambios.abono_porcentaje = porcentaje;
+  }
+  if (Object.keys(cambios).length === 0) return getConfig();
+  const actualizados = await pg('/config?id=eq.1', { method: 'PATCH', body: cambios });
+  return actualizados[0];
+}
+
 // Disponibilidad de ambas canchas para una fecha dada.
 async function disponibilidad(fecha) {
   if (!validarFecha(fecha)) {
@@ -46,10 +75,11 @@ async function disponibilidad(fecha) {
     err.status = 400;
     throw err;
   }
+  const estadosFiltro = ESTADOS_ACTIVOS.join(',');
   const [config, canchas, reservasDelDia] = await Promise.all([
     getConfig(),
     pg('/canchas?select=*&order=id'),
-    pg(`/reservas_cancha?fecha=eq.${fecha}&select=cancha_id,hora_inicio`)
+    pg(`/reservas_cancha?fecha=eq.${fecha}&estado=in.(${estadosFiltro})&select=cancha_id,hora_inicio`)
   ]);
   const bloques = generarBloques(config);
 
@@ -69,8 +99,15 @@ async function disponibilidad(fecha) {
   });
 }
 
-// Reserva automática: si el bloque está libre, se confirma al instante.
-async function reservar({ cancha_id, fecha, hora_inicio, nombre_cliente, telefono }) {
+function calcularMonto(config, tipoPago) {
+  if (tipoPago === 'completo') return config.valor_cancha_hora;
+  return Math.round((config.valor_cancha_hora * config.abono_porcentaje) / 100);
+}
+
+// Reserva con pago por transferencia: queda "pendiente_verificacion" (el horario
+// ya se bloquea para otros) hasta que el personal revise el comprobante desde el
+// panel de administración y la confirme o la rechace.
+async function reservar({ cancha_id, fecha, hora_inicio, nombre_cliente, telefono, tipo_pago }, comprobante) {
   if (!validarFecha(fecha)) {
     const err = new Error('Fecha inválida, use formato AAAA-MM-DD');
     err.status = 400;
@@ -78,6 +115,16 @@ async function reservar({ cancha_id, fecha, hora_inicio, nombre_cliente, telefon
   }
   if (!nombre_cliente || !telefono) {
     const err = new Error('Debe indicar nombre y teléfono de contacto');
+    err.status = 400;
+    throw err;
+  }
+  if (!['abono', 'completo'].includes(tipo_pago)) {
+    const err = new Error('Debe indicar si el pago es un abono o el monto completo');
+    err.status = 400;
+    throw err;
+  }
+  if (!comprobante) {
+    const err = new Error('Debe adjuntar el comprobante de la transferencia');
     err.status = 400;
     throw err;
   }
@@ -101,14 +148,17 @@ async function reservar({ cancha_id, fecha, hora_inicio, nombre_cliente, telefon
     throw err;
   }
 
+  const estadosFiltro = ESTADOS_ACTIVOS.join(',');
   const yaOcupado = await pg(
-    `/reservas_cancha?cancha_id=eq.${cancha.id}&fecha=eq.${fecha}&hora_inicio=eq.${encodeURIComponent(hora_inicio)}&select=id`
+    `/reservas_cancha?cancha_id=eq.${cancha.id}&fecha=eq.${fecha}&hora_inicio=eq.${encodeURIComponent(hora_inicio)}&estado=in.(${estadosFiltro})&select=id`
   );
   if (yaOcupado.length > 0) {
     const err = new Error('Ese horario ya fue reservado por otra persona. Elige otro bloque disponible.');
     err.status = 409;
     throw err;
   }
+
+  const comprobantePath = await subirComprobante(comprobante.filename, comprobante.data, comprobante.contentType);
 
   try {
     const insertadas = await pg('/reservas_cancha', {
@@ -119,7 +169,11 @@ async function reservar({ cancha_id, fecha, hora_inicio, nombre_cliente, telefon
         hora_inicio: bloque.hora_inicio,
         hora_fin: bloque.hora_fin,
         nombre_cliente: String(nombre_cliente).trim(),
-        telefono: String(telefono).trim()
+        telefono: String(telefono).trim(),
+        tipo_pago,
+        monto_esperado: calcularMonto(config, tipo_pago),
+        comprobante_path: comprobantePath,
+        estado: 'pendiente_verificacion'
       }
     });
     return insertadas[0];
@@ -139,14 +193,69 @@ async function listarReservas({ desde, hasta } = {}) {
   return pg(query);
 }
 
-async function cancelarReserva(id) {
-  const eliminadas = await pg(`/reservas_cancha?id=eq.${Number(id)}`, { method: 'DELETE' });
-  if (!eliminadas || eliminadas.length === 0) {
+async function obtenerReserva(id) {
+  const filas = await pg(`/reservas_cancha?id=eq.${Number(id)}&select=*`);
+  if (!filas[0]) {
     const err = new Error('Reserva no encontrada');
     err.status = 404;
     throw err;
   }
-  return eliminadas[0];
+  return filas[0];
 }
 
-module.exports = { disponibilidad, reservar, listarReservas, cancelarReserva, generarBloques };
+// El personal revisó el comprobante y es válido: la reserva queda confirmada.
+async function confirmarReserva(id) {
+  await obtenerReserva(id);
+  const actualizadas = await pg(`/reservas_cancha?id=eq.${Number(id)}`, {
+    method: 'PATCH',
+    body: { estado: 'confirmada' }
+  });
+  return actualizadas[0];
+}
+
+// El comprobante no es válido (o no llegó la transferencia): se rechaza y el
+// horario queda libre automáticamente para que otra persona lo reserve.
+async function rechazarReserva(id, motivo) {
+  await obtenerReserva(id);
+  const actualizadas = await pg(`/reservas_cancha?id=eq.${Number(id)}`, {
+    method: 'PATCH',
+    body: { estado: 'rechazada', motivo: motivo ? String(motivo).trim() : 'Comprobante inválido' }
+  });
+  return actualizadas[0];
+}
+
+// Cancelación manual (ej. el cliente avisó con más de 2 horas de anticipación
+// que no puede ir y corresponde reintegrarle el dinero). El reintegro en sí lo
+// hace el personal por transferencia; aquí solo se libera el horario y queda
+// registro de la cancelación.
+async function cancelarReserva(id, motivo) {
+  await obtenerReserva(id);
+  const actualizadas = await pg(`/reservas_cancha?id=eq.${Number(id)}`, {
+    method: 'PATCH',
+    body: { estado: 'cancelada', motivo: motivo ? String(motivo).trim() : 'Cancelada por el cliente' }
+  });
+  return actualizadas[0];
+}
+
+async function obtenerArchivoComprobante(id) {
+  const reserva = await obtenerReserva(id);
+  if (!reserva.comprobante_path) {
+    const err = new Error('Esta reserva no tiene comprobante adjunto');
+    err.status = 404;
+    throw err;
+  }
+  return descargarComprobante(reserva.comprobante_path);
+}
+
+module.exports = {
+  disponibilidad,
+  reservar,
+  listarReservas,
+  confirmarReserva,
+  rechazarReserva,
+  cancelarReserva,
+  obtenerArchivoComprobante,
+  getConfig,
+  actualizarConfig,
+  generarBloques
+};

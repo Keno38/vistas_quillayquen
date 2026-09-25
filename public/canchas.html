@@ -22,7 +22,9 @@
 
 <main>
   <h2>Reserva de canchas de pasto sintético</h2>
-  <p>Horario de agendamiento: 18:00 a 23:00 hrs, todos los días. Cada bloque reservado incluye tiempo de cambio de equipo. La reserva queda confirmada de inmediato.</p>
+  <p>Horario de agendamiento: 18:00 a 23:00 hrs, todos los días. Cada bloque reservado incluye tiempo de cambio de equipo.</p>
+  <p>El pago es por transferencia: puedes abonar el <strong id="texto-abono">30%</strong> o pagar el valor completo, adjuntando el comprobante de la transferencia. Tu reserva queda <strong>pendiente de verificación</strong> hasta que nuestro personal confirme el pago (normalmente el mismo día).</p>
+  <p>Si necesitas cancelar, avísanos con al menos <strong>2 horas de anticipación</strong> a tu hora reservada y te reintegramos el dinero.</p>
 
   <div class="selector-fecha">
     <label for="fecha" style="margin:0;">Elige una fecha:</label>
@@ -45,8 +47,26 @@
       <input type="text" id="r-nombre" required>
       <label for="r-telefono">Teléfono de contacto</label>
       <input type="tel" id="r-telefono" required placeholder="+56 9 ...">
+
+      <label>Tipo de pago</label>
+      <label style="font-weight:normal;display:flex;align-items:center;gap:0.4rem;">
+        <input type="radio" name="r-tipo-pago" value="abono" checked style="width:auto;">
+        Abonar <span id="monto-abono">-</span>
+      </label>
+      <label style="font-weight:normal;display:flex;align-items:center;gap:0.4rem;">
+        <input type="radio" name="r-tipo-pago" value="completo" style="width:auto;">
+        Pagar el total <span id="monto-completo">-</span>
+      </label>
+
+      <p style="font-size:0.9rem;color:#64756c;">
+        Transfiere el monto elegido a nuestra cuenta (te la confirmamos por WhatsApp al enviar tus datos)
+        y adjunta aquí el comprobante.
+      </p>
+      <label for="r-comprobante">Comprobante de transferencia (foto o PDF)</label>
+      <input type="file" id="r-comprobante" accept="image/*,.pdf" required>
+
       <div style="display:flex;gap:0.6rem;margin-top:1.2rem;">
-        <button type="submit" class="boton">Confirmar reserva</button>
+        <button type="submit" class="boton" id="btn-enviar-reserva">Enviar solicitud de reserva</button>
         <button type="button" class="boton secundario" id="btn-cancelar-modal">Cancelar</button>
       </div>
     </form>

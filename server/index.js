@@ -13,6 +13,9 @@ const canchas = require('./canchas');
 const eventos = require('./eventos');
 const auth = require('./auth');
 const galeria = require('./galeria');
+const { parseMultipart } = require('./multipart');
+
+const MAX_COMPROBANTE_BYTES = 8 * 1024 * 1024; // 8MB, de sobra para una foto/PDF de comprobante
 
 const PORT = process.env.PORT || 3000;
 const PUBLIC_DIR = path.join(__dirname, '..', 'public');
@@ -76,6 +79,26 @@ function readBody(req) {
   });
 }
 
+// Igual que readBody, pero sin asumir JSON: devuelve el cuerpo crudo como Buffer
+// (lo usamos para el formulario multipart/form-data con el comprobante adjunto).
+function readRawBody(req, maxBytes = MAX_COMPROBANTE_BYTES) {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+    let total = 0;
+    req.on('data', chunk => {
+      total += chunk.length;
+      if (total > maxBytes) {
+        reject(Object.assign(new Error('El archivo adjunto es demasiado grande (máximo 8MB)'), { status: 413 }));
+        req.destroy();
+        return;
+      }
+      chunks.push(chunk);
+    });
+    req.on('end', () => resolve(Buffer.concat(chunks)));
+    req.on('error', reject);
+  });
+}
+
 function requireAdmin(req) {
   const cookies = parseCookies(req);
   if (!auth.verificar(cookies.admin_token)) {
@@ -117,9 +140,26 @@ async function handleApi(req, res, pathname, query) {
     if (pathname === '/api/canchas/disponibilidad' && req.method === 'GET') {
       return sendJSON(res, 200, await canchas.disponibilidad(query.fecha));
     }
+    if (pathname === '/api/canchas/config' && req.method === 'GET') {
+      const config = await canchas.getConfig();
+      const monto_abono = Math.round((config.valor_cancha_hora * config.abono_porcentaje) / 100);
+      return sendJSON(res, 200, {
+        valor_cancha_hora: config.valor_cancha_hora,
+        abono_porcentaje: config.abono_porcentaje,
+        monto_abono,
+        monto_completo: config.valor_cancha_hora
+      });
+    }
     if (pathname === '/api/canchas/reservar' && req.method === 'POST') {
-      const body = await readBody(req);
-      const reserva = await canchas.reservar(body);
+      const contentType = req.headers['content-type'] || '';
+      if (!contentType.startsWith('multipart/form-data')) {
+        const err = new Error('Debe enviar el formulario con el comprobante adjunto (multipart/form-data)');
+        err.status = 400;
+        throw err;
+      }
+      const raw = await readRawBody(req);
+      const { campos, archivos } = parseMultipart(raw, contentType);
+      const reserva = await canchas.reservar(campos, archivos.comprobante);
       return sendJSON(res, 201, { ok: true, reserva });
     }
 
@@ -165,8 +205,35 @@ async function handleApi(req, res, pathname, query) {
     const matchCancelarCancha = pathname.match(/^\/api\/admin\/canchas\/reservas\/(\d+)$/);
     if (matchCancelarCancha && req.method === 'DELETE') {
       requireAdmin(req);
-      const eliminada = await canchas.cancelarReserva(matchCancelarCancha[1]);
-      return sendJSON(res, 200, { ok: true, eliminada });
+      const body = await readBody(req).catch(() => ({}));
+      const cancelada = await canchas.cancelarReserva(matchCancelarCancha[1], body.motivo);
+      return sendJSON(res, 200, { ok: true, reserva: cancelada });
+    }
+    const matchConfirmarCancha = pathname.match(/^\/api\/admin\/canchas\/reservas\/(\d+)\/confirmar$/);
+    if (matchConfirmarCancha && req.method === 'POST') {
+      requireAdmin(req);
+      const confirmada = await canchas.confirmarReserva(matchConfirmarCancha[1]);
+      return sendJSON(res, 200, { ok: true, reserva: confirmada });
+    }
+    const matchRechazarCancha = pathname.match(/^\/api\/admin\/canchas\/reservas\/(\d+)\/rechazar$/);
+    if (matchRechazarCancha && req.method === 'POST') {
+      requireAdmin(req);
+      const body = await readBody(req);
+      const rechazada = await canchas.rechazarReserva(matchRechazarCancha[1], body.motivo);
+      return sendJSON(res, 200, { ok: true, reserva: rechazada });
+    }
+    const matchComprobante = pathname.match(/^\/api\/admin\/canchas\/reservas\/(\d+)\/comprobante$/);
+    if (matchComprobante && req.method === 'GET') {
+      requireAdmin(req);
+      const { buffer, contentType } = await canchas.obtenerArchivoComprobante(matchComprobante[1]);
+      res.writeHead(200, { 'Content-Type': contentType });
+      return res.end(buffer);
+    }
+    if (pathname === '/api/admin/canchas/config' && req.method === 'PUT') {
+      requireAdmin(req);
+      const body = await readBody(req);
+      const actualizada = await canchas.actualizarConfig(body);
+      return sendJSON(res, 200, { ok: true, config: actualizada });
     }
 
     // ---- Admin: eventos ----

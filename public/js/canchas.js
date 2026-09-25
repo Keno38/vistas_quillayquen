@@ -5,9 +5,15 @@ const mensajeDiv = document.getElementById('mensaje-canchas');
 const modal = document.getElementById('modal-reserva');
 const formReserva = document.getElementById('form-reserva');
 
+let configPago = null;
+
 function hoyISO() {
   const d = new Date();
   return d.toISOString().slice(0, 10);
+}
+
+function formatoCLP(monto) {
+  return monto.toLocaleString('es-CL', { style: 'currency', currency: 'CLP', maximumFractionDigits: 0 });
 }
 
 inputFecha.min = hoyISO();
@@ -16,6 +22,18 @@ inputFecha.value = hoyISO();
 function mostrarMensaje(texto, tipo) {
   mensajeDiv.innerHTML = `<div class="mensaje ${tipo}">${texto}</div>`;
   setTimeout(() => { mensajeDiv.innerHTML = ''; }, 6000);
+}
+
+async function cargarConfigPago() {
+  try {
+    const resp = await fetch('/api/canchas/config');
+    configPago = await resp.json();
+    document.getElementById('texto-abono').textContent = `${configPago.abono_porcentaje}%`;
+    document.getElementById('monto-abono').textContent = `(${formatoCLP(configPago.monto_abono)})`;
+    document.getElementById('monto-completo').textContent = `(${formatoCLP(configPago.monto_completo)})`;
+  } catch {
+    // Si falla, igual se puede reservar; el monto exacto lo confirma el personal.
+  }
 }
 
 async function cargarDisponibilidad() {
@@ -78,28 +96,42 @@ document.getElementById('btn-cancelar-modal').addEventListener('click', cerrarMo
 
 formReserva.addEventListener('submit', async (e) => {
   e.preventDefault();
-  const payload = {
-    cancha_id: document.getElementById('r-cancha-id').value,
-    fecha: document.getElementById('r-fecha').value,
-    hora_inicio: document.getElementById('r-hora').value,
-    nombre_cliente: document.getElementById('r-nombre').value,
-    telefono: document.getElementById('r-telefono').value
-  };
+  const archivo = document.getElementById('r-comprobante').files[0];
+  if (!archivo) {
+    mostrarMensaje('Debes adjuntar el comprobante de la transferencia.', 'error');
+    return;
+  }
+
+  const datos = new FormData();
+  datos.append('cancha_id', document.getElementById('r-cancha-id').value);
+  datos.append('fecha', document.getElementById('r-fecha').value);
+  datos.append('hora_inicio', document.getElementById('r-hora').value);
+  datos.append('nombre_cliente', document.getElementById('r-nombre').value);
+  datos.append('telefono', document.getElementById('r-telefono').value);
+  datos.append('tipo_pago', formReserva.querySelector('input[name="r-tipo-pago"]:checked').value);
+  datos.append('comprobante', archivo);
+
+  const btnEnviar = document.getElementById('btn-enviar-reserva');
+  btnEnviar.disabled = true;
+  btnEnviar.textContent = 'Enviando...';
   try {
-    const resp = await fetch('/api/canchas/reservar', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
+    const resp = await fetch('/api/canchas/reservar', { method: 'POST', body: datos });
     const data = await resp.json();
     if (!resp.ok) throw new Error(data.error || 'No se pudo reservar');
     cerrarModal();
-    mostrarMensaje('¡Reserva confirmada! Te esperamos en la cancha.', 'exito');
+    mostrarMensaje(
+      '¡Solicitud enviada! Tu horario queda apartado mientras verificamos el comprobante. Te confirmaremos a la brevedad.',
+      'exito'
+    );
     cargarDisponibilidad();
   } catch (err) {
     mostrarMensaje(err.message, 'error');
+  } finally {
+    btnEnviar.disabled = false;
+    btnEnviar.textContent = 'Enviar solicitud de reserva';
   }
 });
 
 inputFecha.addEventListener('change', cargarDisponibilidad);
+cargarConfigPago();
 cargarDisponibilidad();

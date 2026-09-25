@@ -20,6 +20,10 @@ node -v
 2. Copia y pega todo el contenido de [`db/schema.sql`](db/schema.sql) y presiona **Run**.
    Esto crea las tablas y deja cargados los datos iniciales (2 canchas, configuración
    por defecto y el usuario admin).
+3. Si tu proyecto Supabase ya existía de antes (ya habías corrido el paso anterior),
+   corre además [`db/migraciones/002_pagos_canchas.sql`](db/migraciones/002_pagos_canchas.sql)
+   — agrega el pago con comprobante a las reservas de cancha. Un proyecto nuevo no
+   necesita este paso: `schema.sql` ya lo incluye.
 
 ### 2. Configura las credenciales
 
@@ -61,14 +65,28 @@ node scripts/generar-password-admin.js "TU_NUEVA_CONTRASEÑA"
 ### Canchas (2 canchas de pasto sintético)
 
 - Se pueden reservar todos los días, en bloques de 1 hora, entre las 18:00 y las 23:00
-  (18:00, 19:00, 20:00, 21:00, 22:00 — 5 bloques por cancha por día).
-- La reserva es **automática**: si el bloque está libre, queda confirmada al instante,
-  sin necesidad de que un administrador la apruebe.
+  (18:00, 19:10, 20:20, 21:30 — 4 bloques por cancha por día).
 - Entre el fin de un bloque y el inicio del siguiente hay una **pausa de 10 minutos**
-  por defecto (cambio de equipo): por eso el horario real de bloques queda
-  18:00-19:00, 19:10-20:10, 20:20-21:20, 21:30-22:30 (4 bloques por cancha por día
-  en vez de 5, ya que la pausa resta tiempo vendible). Este valor se puede ajustar
-  editando la fila de la tabla `config` en Supabase (columna `buffer_cambio_min`).
+  por defecto (cambio de equipo). Este valor se puede ajustar editando la fila de la
+  tabla `config` en Supabase (columna `buffer_cambio_min`).
+- **Pago por transferencia, con comprobante adjunto.** Al reservar, la persona elige
+  abonar un porcentaje (30% por defecto, configurable) o pagar el valor completo
+  (\$24.000 la hora por defecto, configurable), y adjunta la foto/PDF del comprobante.
+  La reserva queda en estado **"pendiente de verificación"** — el horario ya se
+  bloquea para que nadie más lo reserve, pero no es definitiva todavía.
+- El **personal revisa el comprobante desde el panel de administración**
+  (`/admin.html`): si está bien, hace clic en **Confirmar**; si no es válido (o nunca
+  llegó la plata), hace clic en **Rechazar** y el horario se libera automáticamente
+  para que otra persona lo pueda reservar. El panel muestra un contador de "reservas
+  por revisar" para que no se pase ninguna.
+- **Cancelación con reintegro:** si el cliente avisa que no puede ir con al menos
+  **2 horas de anticipación**, el personal cancela la reserva manualmente desde el
+  panel (queda registrada como "cancelada", con el motivo) y hace el reintegro por
+  transferencia — el reintegro en sí no lo hace el sitio automáticamente, es un paso
+  manual del personal.
+- El precio de la hora y el porcentaje de abono se editan desde el panel de admin,
+  en "Configuración de precios de cancha" (sección **Canchas**, no requiere tocar
+  código ni la base de datos a mano).
 
 ### Centro de eventos con piscina
 
@@ -104,8 +122,9 @@ node scripts/generar-password-admin.js "TU_NUEVA_CONTRASEÑA"
 ### Panel de administración
 
 - Ver y confirmar/rechazar solicitudes de eventos.
-- Ver todas las reservas de canchas y cancelarlas si es necesario (por ejemplo si el
-  cliente avisó que no puede ir).
+- Ver todas las reservas de canchas, revisar el comprobante adjunto, confirmarlas o
+  rechazarlas, y cancelarlas manualmente si el cliente avisa con anticipación.
+- Editar el precio de la cancha y el porcentaje de abono.
 
 ## Dónde están guardados los datos
 
@@ -120,11 +139,16 @@ Supabase hace respaldos automáticos del proyecto; para un respaldo manual, usa
 
 ## Pagos
 
-Por ahora el pago **no se gestiona en el sitio**: se coordina aparte (transferencia,
-efectivo o en el lugar), tal como se definió para este proyecto. Si más adelante
-quieren cobrar una seña o el total al momento de reservar, se puede integrar una
-pasarela de pago chilena (Webpay Plus, Flow, Mercado Pago) — es un cambio acotado
-sobre esta misma base.
+**Canchas:** por transferencia bancaria, con comprobante adjunto al reservar y
+verificación manual del personal desde el panel (ver sección "Canchas" arriba).
+
+**Centro de eventos:** el pago sigue coordinándose aparte (transferencia, efectivo o
+en el lugar), no está integrado al sitio todavía.
+
+Si más adelante quieren automatizar el cobro (que el comprobante no sea necesario
+porque el pago se procesa al instante), se puede integrar una pasarela de pago
+chilena (Webpay Plus, Flow, Mercado Pago) — es un cambio acotado sobre esta misma
+base, y el comprobante manual se podría dejar solo como respaldo.
 
 ## Próximos pasos sugeridos
 

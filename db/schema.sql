@@ -16,9 +16,21 @@ create table if not exists reservas_cancha (
   nombre_cliente text not null,
   telefono text not null,
   creado_en timestamptz not null default now(),
-  -- Evita doble reserva del mismo bloque aunque lleguen dos solicitudes al mismo tiempo.
-  unique (cancha_id, fecha, hora_inicio)
+  -- Pago por transferencia con comprobante adjunto (ver README, sección "Pagos").
+  tipo_pago text check (tipo_pago in ('abono', 'completo')),
+  monto_esperado integer,
+  comprobante_path text,
+  estado text not null default 'pendiente_verificacion'
+    check (estado in ('pendiente_verificacion', 'confirmada', 'rechazada', 'cancelada')),
+  motivo text
 );
+
+-- Evita doble reserva del mismo bloque, pero solo mientras la reserva esté activa
+-- (pendiente de verificación o confirmada): si se rechaza o cancela, el horario
+-- vuelve a quedar disponible para otra persona.
+create unique index if not exists idx_reserva_cancha_activa_unica
+  on reservas_cancha (cancha_id, fecha, hora_inicio)
+  where estado in ('pendiente_verificacion', 'confirmada');
 
 create table if not exists eventos (
   id serial primary key,
@@ -46,6 +58,8 @@ create table if not exists config (
   buffer_cambio_min integer not null default 10,
   menu_evento_nombre text not null default 'Pollo con papas fritas y ensaladas',
   menu_evento_precio_por_persona integer,
+  valor_cancha_hora integer not null default 24000,
+  abono_porcentaje integer not null default 30 check (abono_porcentaje between 1 and 100),
   constraint config_fila_unica check (id = 1)
 );
 
@@ -77,3 +91,9 @@ insert into admin_usuarios (usuario, salt, password_hash) values (
   '208fb32c53880573ce1ecf58cafc6d33',
   'a91f8e6447fe62157750e96a35b21f2b7924a84c0b9aaf6b647e4b4a86d8ede6'
 ) on conflict (usuario) do nothing;
+
+-- Bucket privado para los comprobantes de transferencia de las reservas de cancha
+-- (solo el servidor, con la clave service_role, puede leer/escribir aquí).
+insert into storage.buckets (id, name, public)
+values ('comprobantes', 'comprobantes', false)
+on conflict (id) do nothing;
