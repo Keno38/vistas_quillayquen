@@ -3,63 +3,121 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vistas Quillaiquen</title>
+<title>Vistas Quillayquén — Recinto deportivo</title>
 <link rel="stylesheet" href="/css/estilo.css">
 </head>
-<body>
-<header class="sitio">
-  <div class="marca">
-    <img src="/img/logo.png" alt="Vistas de Quillaiquen — Complejo deportivo y centro de eventos" class="logo">
-    <div class="grupo-nav">
-      <nav class="principal">
-        <a href="/index.html">Inicio</a>
-        <a href="/canchas.html">Canchas</a>
-        <a href="/eventos.html">Centro de Eventos</a>
-        <a href="/galeria.html">Galería</a>
-        <a href="/admin.html">Administración</a>
-      </nav>
-    </div>
+<body class="pagina-inicio">
+
+<div class="home-glow home-glow-verde" aria-hidden="true"></div>
+<div class="home-glow home-glow-dorado" aria-hidden="true"></div>
+
+<header class="home-header">
+  <div class="home-header-inner">
+    <a href="/index.html" class="home-marca">
+      <span class="home-logo-badge">VQ</span>
+      <span class="home-marca-texto">
+        <span class="home-marca-nombre">Vistas Quillayquén</span>
+        <span class="home-marca-sub">Recinto deportivo</span>
+      </span>
+    </a>
+    <nav class="home-nav" aria-label="Navegación principal">
+      <a href="#horarios">Canchas</a>
+      <a href="#piscina">Piscina</a>
+      <a href="#eventos">Centro de eventos</a>
+      <a href="/galeria.html">Galería</a>
+      <a href="/admin.html">Administración</a>
+    </nav>
+    <a href="/canchas.html" class="home-boton-oscuro">Reservar cancha</a>
   </div>
 </header>
 
-<main>
-  <section class="hero-portada">
-    <div class="hero-portada-principal">
-      <img src="/galeria/recinto/79509699_192098655247369_6497532306138333184_n.jpg" alt="Piscina y zona de camastros de Vistas Quillaiquen" width="206" height="206">
-      <div class="hero-portada-overlay">
-        <span class="hero-portada-etiqueta"><i></i> Abierto todos los días</span>
-        <h1>Vistas Quillaiquen</h1>
-        <p>Canchas de pasto sintético y un centro de eventos con piscina. Reserva tu hora o cotiza tu evento en minutos.</p>
-        <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
-          <a class="boton" href="/canchas.html">Reservar cancha</a>
-          <a class="boton secundario" href="/galeria.html">Ver galería</a>
+<main class="home-main">
+
+  <section class="home-hero">
+    <article class="home-hero-principal">
+      <img src="/img/muestra/quillaiquen-canchas.jpg" alt="Cancha de pasto sintético al atardecer con montañas de fondo" loading="eager">
+      <div class="home-hero-overlay">
+        <span class="home-etiqueta"><i></i> Cancha 1 · disponible 19:10</span>
+        <h1>Vistas Quillayquén</h1>
+        <p>Dos canchas de pasto sintético y un centro de eventos con piscina. Explora el recinto y comienza tu reserva.</p>
+        <div class="home-hero-botones">
+          <a href="/canchas.html" class="home-boton-verde">Reservar cancha</a>
+          <a href="#galeria-recinto" class="home-boton-glass">Ver galería</a>
         </div>
       </div>
-    </div>
-    <div class="hero-galeria-lateral">
-      <figure>
-        <img src="/galeria/recinto/78578357_192098585247376_4636437764630380544_n.jpg" alt="Piscina de Vistas Quillaiquen" width="206" height="206">
-        <figcaption>Piscina</figcaption>
+    </article>
+
+    <div class="home-hero-lateral" id="galeria-recinto">
+      <figure id="piscina">
+        <img src="/img/muestra/quillaiquen-piscina.jpg" alt="Piscina y terraza del centro de eventos" loading="lazy">
+        <figcaption>Piscina · centro de eventos</figcaption>
       </figure>
       <figure>
-        <img src="/galeria/recinto/79693061_192098558580712_8220875117475921920_n.jpg" alt="Quincho y zona de mesas de Vistas Quillaiquen" width="206" height="206">
-        <figcaption>Quincho</figcaption>
+        <img src="/img/muestra/quillaiquen-luces.jpg" alt="Cancha de pasto sintético iluminada de noche" loading="lazy">
+        <figcaption>Cancha 2 · iluminada</figcaption>
       </figure>
     </div>
   </section>
 
-  <div class="tarjetas">
-    <div class="tarjeta">
-      <h3>Canchas de pasto sintético</h3>
-      <p>Reserva tu hora de juego de forma inmediata. Disponibilidad en línea, confirmación automática al momento.</p>
-      <a class="boton" href="/canchas.html">Reservar cancha</a>
+  <p class="home-nota-muestra">Fotos de muestra — se reemplazarán por fotos reales del recinto.</p>
+
+  <section class="home-disponibilidad" id="horarios">
+    <div class="home-disp-header">
+      <div>
+        <p class="home-disp-eyebrow">Bloques desde las 18:00</p>
+        <h2>Elige tu hora de juego</h2>
+      </div>
+      <p class="home-disp-meta">1 hora por bloque<br>10 min entre bloques</p>
     </div>
-    <div class="tarjeta">
-      <h3>Centro de Eventos con Piscina</h3>
-      <p>Ideal para paseos de curso, matrimonios y celebraciones. Arriendo del salón solo o con menú (pollo con papas fritas y ensaladas).</p>
-      <a class="boton secundario" href="/eventos.html">Consultar disponibilidad</a>
+
+    <div class="home-bloques">
+      <article class="home-bloque">
+        <div class="home-bloque-top">
+          <span class="home-bloque-hora">18:00</span>
+          <span class="home-chip home-chip-libre">Libre</span>
+        </div>
+        <p class="home-bloque-cancha">Cancha 1</p>
+        <p class="home-bloque-tipo">Pasto sintético</p>
+        <a href="/canchas.html" class="home-bloque-boton home-bloque-boton-verde">Reservar</a>
+      </article>
+
+      <article class="home-bloque">
+        <div class="home-bloque-top">
+          <span class="home-bloque-hora">19:10</span>
+          <span class="home-chip home-chip-libre">Libre</span>
+        </div>
+        <p class="home-bloque-cancha">Cancha 2</p>
+        <p class="home-bloque-tipo">Pasto sintético</p>
+        <a href="/canchas.html" class="home-bloque-boton home-bloque-boton-verde">Reservar</a>
+      </article>
+
+      <article class="home-bloque">
+        <div class="home-bloque-top">
+          <span class="home-bloque-hora">20:20</span>
+          <span class="home-chip home-chip-ultimo">Último</span>
+        </div>
+        <p class="home-bloque-cancha">Cancha 1</p>
+        <p class="home-bloque-tipo">Pasto sintético</p>
+        <a href="/canchas.html" class="home-bloque-boton home-bloque-boton-dorado">Reservar</a>
+      </article>
+
+      <article class="home-bloque home-bloque-ocupado">
+        <div class="home-bloque-top">
+          <span class="home-bloque-hora">21:30</span>
+          <span class="home-chip home-chip-ocupado">Ocupado</span>
+        </div>
+        <p class="home-bloque-cancha">Cancha 2</p>
+        <p class="home-bloque-tipo">Pasto sintético</p>
+        <span class="home-bloque-boton home-bloque-boton-deshabilitado">Sin cupo</span>
+      </article>
     </div>
-  </div>
+
+    <div class="home-disp-footer" id="eventos">
+      <p>¿Organizas un torneo, cumpleaños o reunión? Cotiza tu evento en el centro de eventos con piscina.</p>
+      <a href="/eventos.html" class="home-boton-oscuro">Cotizar evento</a>
+    </div>
+  </section>
+
 </main>
 
 <footer class="sitio">
