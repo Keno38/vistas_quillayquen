@@ -28,17 +28,37 @@ header.sitio {
 
 header.sitio .marca {
   display: flex;
-  align-items: baseline;
+  flex-direction: row;
+  align-items: center;
   justify-content: space-between;
-  max-width: 1000px;
+  max-width: 1100px;
   margin: 0 auto;
+  gap: 1rem;
   flex-wrap: wrap;
-  gap: 0.5rem;
 }
 
 header.sitio h1 {
   margin: 0;
   font-size: 1.4rem;
+}
+
+header.sitio .grupo-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+header.sitio .logo {
+  max-width: 170px;
+  width: 100%;
+  height: auto;
+  order: 2;
+}
+
+header.sitio .subtitulo-admin {
+  margin: 0;
+  font-weight: 600;
+  opacity: 0.9;
 }
 
 nav.principal {
@@ -253,6 +273,12 @@ footer.sitio {
   padding: 1.5rem;
   color: #64756c;
   font-size: 0.85rem;
+}
+
+footer.sitio .firma {
+  margin-top: 0.4rem;
+  font-size: 0.78rem;
+  opacity: 0.8;
 }
 
 .oculto { display: none !important; }
