@@ -928,9 +928,69 @@ footer.sitio .firma {
   color: color-mix(in oklab, var(--home-azul-oscuro) 75%, transparent);
 }
 
-@media (max-width: 720px) {
-  .home-header-inner { justify-content: center; text-align: center; }
-  .home-nav { justify-content: center; order: 3; width: 100%; }
+/* ---- Menú hamburguesa (móvil/tablet angosto) ---- */
+.home-menu-checkbox { display: none; }
+
+.home-hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.home-hamburger:hover { background: rgba(6, 43, 79, 0.06); }
+.home-hamburger span {
+  display: block;
+  width: 22px;
+  height: 2.5px;
+  border-radius: 2px;
+  background: var(--home-azul-oscuro);
+}
+
+.home-menu-movil { display: contents; }
+
+@media (max-width: 860px) {
+  .home-hamburger { display: flex; }
+
+  .home-menu-movil {
+    display: none;
+    order: 4;
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.9rem;
+    background: var(--home-blanco);
+    border-radius: 18px;
+    box-shadow: var(--home-sombra);
+    padding: 1rem;
+    margin-top: 0.4rem;
+  }
+
+  .home-menu-checkbox:checked ~ .home-menu-movil { display: flex; }
+
+  .home-menu-movil .home-nav {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.2rem;
+  }
+  .home-menu-movil .home-nav a {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    padding: 0 0.5rem;
+    border-radius: 10px;
+  }
+  .home-menu-movil .home-nav a:hover { background: rgba(6, 43, 79, 0.06); }
+
+  .home-menu-movil .home-boton-oscuro {
+    justify-content: center;
+    width: 100%;
+  }
 }
 
 /* ---- Encabezado de página interna (título + subtítulo) y panel genérico,
@@ -1062,3 +1122,61 @@ footer.sitio .firma {
 
 .botones-form { display: flex; gap: 0.6rem; margin-top: 1.2rem; }
 .botones-form button { flex: 1; justify-content: center; }
+
+/* =========================================================================
+   Móvil (320-480px): mobile-first "de verdad", no solo achicar.
+   ========================================================================= */
+@media (max-width: 640px) {
+  /* Hero: en vez de texto encima de la foto, la foto va completa arriba y
+     el texto queda debajo en una tarjeta blanca — más legible en pantallas
+     chicas y sin depender del contraste sobre la imagen. */
+  .home-hero-principal {
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .home-hero-principal img {
+    position: static;
+    width: 100%;
+    height: 220px;
+    border-radius: var(--home-radio) var(--home-radio) 0 0;
+  }
+  .home-hero-overlay {
+    position: static;
+    background: var(--home-blanco);
+    color: var(--home-azul-oscuro);
+    border-radius: 0 0 var(--home-radio) var(--home-radio);
+    padding: 1.4rem;
+  }
+  .home-hero-overlay h1 { color: var(--home-azul-oscuro); }
+  .home-hero-overlay p { color: color-mix(in oklab, var(--home-azul-oscuro) 78%, transparent); }
+  .home-etiqueta {
+    background: var(--home-verde-claro);
+    color: var(--home-azul-oscuro);
+    border-color: transparent;
+    backdrop-filter: none;
+  }
+  .home-boton-glass {
+    background: rgba(6, 43, 79, 0.06);
+    color: var(--home-azul-oscuro);
+    border-color: rgba(6, 43, 79, 0.15);
+  }
+
+  /* Botones y enlaces con área táctil mínima de 44px. */
+  .boton,
+  .home-boton-verde,
+  .home-boton-oscuro,
+  .home-boton-glass,
+  .home-bloque-boton {
+    min-height: 44px;
+  }
+  .home-hero-botones { flex-direction: column; }
+  .home-hero-botones a { width: 100%; justify-content: center; }
+
+  /* Nada de scroll horizontal por contenido que no cabe. */
+  .home-main, main { overflow-x: hidden; }
+  .resumen-reserva { grid-template-columns: 1fr; }
+
+  .selector-fecha { justify-content: center; text-align: center; }
+  .selector-fecha strong { width: 100%; order: -1; }
+}
