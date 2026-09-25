@@ -59,18 +59,24 @@ function parseCookies(req) {
 
 function readBody(req) {
   return new Promise((resolve, reject) => {
-    let data = '';
+    // Se acumula como Buffer y se decodifica UTF-8 una sola vez al final: concatenar
+    // por chunk como string (data += chunk) puede partir un carácter multibyte
+    // (tildes, ñ) justo en el límite entre dos paquetes de red y corromperlo.
+    const chunks = [];
+    let total = 0;
     req.on('data', chunk => {
-      data += chunk;
-      if (data.length > 1e6) {
+      total += chunk.length;
+      if (total > 1e6) {
         reject(Object.assign(new Error('Cuerpo de solicitud demasiado grande'), { status: 413 }));
         req.destroy();
+        return;
       }
+      chunks.push(chunk);
     });
     req.on('end', () => {
-      if (!data) return resolve({});
+      if (total === 0) return resolve({});
       try {
-        resolve(JSON.parse(data));
+        resolve(JSON.parse(Buffer.concat(chunks).toString('utf8')));
       } catch (e) {
         reject(Object.assign(new Error('JSON inválido'), { status: 400 }));
       }
