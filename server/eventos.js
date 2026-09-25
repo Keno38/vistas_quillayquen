@@ -19,13 +19,13 @@ async function calendario(mes) {
     throw err;
   }
 
-  const [config] = await pg('/config?id=eq.1&select=menu_evento_nombre,menu_evento_precio_por_persona');
-  const eventosDelMes = await pg(
-    `/eventos?fecha=gte.${mes}-01&fecha=lte.${mes}-31&estado=neq.rechazado&select=fecha,estado`
-  );
-
   const [anio, mesNum] = mes.split('-').map(Number);
   const diasEnMes = new Date(anio, mesNum, 0).getDate();
+
+  const [config] = await pg('/config?id=eq.1&select=menu_evento_nombre,menu_evento_precio_por_persona');
+  const eventosDelMes = await pg(
+    `/eventos?fecha=gte.${mes}-01&fecha=lte.${mes}-${diasEnMes}&estado=neq.rechazado&select=fecha,estado`
+  );
 
   const dias = [];
   for (let d = 1; d <= diasEnMes; d++) {

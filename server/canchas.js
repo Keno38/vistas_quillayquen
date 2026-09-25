@@ -79,20 +79,23 @@ async function disponibilidad(fecha) {
   const [config, canchas, reservasDelDia] = await Promise.all([
     getConfig(),
     pg('/canchas?select=*&order=id'),
-    pg(`/reservas_cancha?fecha=eq.${fecha}&estado=in.(${estadosFiltro})&select=cancha_id,hora_inicio`)
+    pg(`/reservas_cancha?fecha=eq.${fecha}&estado=in.(${estadosFiltro})&select=cancha_id,hora_inicio,estado`)
   ]);
   const bloques = generarBloques(config);
 
   return canchas.map(cancha => {
     const horarios = bloques.map(b => {
-      const ocupado = reservasDelDia.find(
+      const reserva = reservasDelDia.find(
         r => r.cancha_id === cancha.id && r.hora_inicio === b.hora_inicio
       );
+      // "estado" público del bloque: 'disponible', 'pendiente_verificacion'
+      // (alguien lo reservó y está por confirmarse) o 'confirmada'. No exponemos
+      // datos del cliente en la vista pública, solo este estado.
       return {
         hora_inicio: b.hora_inicio,
         hora_fin: b.hora_fin,
-        disponible: !ocupado
-        // No exponemos datos del cliente en la vista pública, solo si está ocupado.
+        disponible: !reserva,
+        estado: reserva ? reserva.estado : 'disponible'
       };
     });
     return { cancha_id: cancha.id, nombre: cancha.nombre, horarios };
@@ -107,7 +110,7 @@ function calcularMonto(config, tipoPago) {
 // Reserva con pago por transferencia: queda "pendiente_verificacion" (el horario
 // ya se bloquea para otros) hasta que el personal revise el comprobante desde el
 // panel de administración y la confirme o la rechace.
-async function reservar({ cancha_id, fecha, hora_inicio, nombre_cliente, telefono, tipo_pago }, comprobante) {
+async function reservar({ cancha_id, fecha, hora_inicio, nombre_cliente, telefono, correo_cliente, tipo_pago }, comprobante) {
   if (!validarFecha(fecha)) {
     const err = new Error('Fecha inválida, use formato AAAA-MM-DD');
     err.status = 400;
@@ -170,6 +173,7 @@ async function reservar({ cancha_id, fecha, hora_inicio, nombre_cliente, telefon
         hora_fin: bloque.hora_fin,
         nombre_cliente: String(nombre_cliente).trim(),
         telefono: String(telefono).trim(),
+        correo_cliente: correo_cliente ? String(correo_cliente).trim() : null,
         tipo_pago,
         monto_esperado: calcularMonto(config, tipo_pago),
         comprobante_path: comprobantePath,

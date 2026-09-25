@@ -1,134 +1,45 @@
-@import url("https://fonts.googleapis.com/css2?family=Archivo+Black&family=Hind:wght@400;500;600;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap");
 
 :root {
-  --verde: #1f7a3f;
-  --verde-oscuro: #145229;
-  --celeste: #1985a1;
+  /* Paleta premium unificada en todo el sitio (misma que la portada). */
+  --verde: #0b8f55;
+  --verde-oscuro: #062b4f;
+  --celeste: #0f6e8c;
   --gris-fondo: #f5f7f6;
   --gris-borde: #dfe4e2;
-  --texto: #22302a;
+  --texto: #062b4f;
   --blanco: #ffffff;
   --rojo: #b3261e;
-  --amarillo: #b58200;
-  --font-display: "Archivo Black", -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-  --radio-tarjeta: 20px;
-  --sombra-tarjeta: 0 10px 30px -12px rgba(20, 82, 41, 0.18);
+  --amarillo: #f2a93b;
+  --verde-claro: #ddf4ea;
+  --font-display: "Poppins", -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --radio-tarjeta: 26px;
+  --radio-chico: 16px;
+  --sombra-tarjeta: 0 16px 36px -16px rgba(6, 43, 79, 0.22);
 }
 
 * { box-sizing: border-box; }
 
 body {
   margin: 0;
-  font-family: "Hind", -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  font-family: var(--font-display);
   color: var(--texto);
-  background: var(--gris-fondo);
+  background:
+    radial-gradient(1200px 600px at 15% -10%, color-mix(in oklab, var(--verde-claro) 70%, transparent), transparent),
+    radial-gradient(900px 500px at 100% 10%, color-mix(in oklab, var(--amarillo) 12%, transparent), transparent),
+    var(--gris-fondo);
   line-height: 1.5;
 }
 
 h1, h2, h3 {
   font-family: var(--font-display);
-  font-weight: 400;
+  font-weight: 700;
   letter-spacing: -0.01em;
 }
 
-header.sitio {
-  position: relative;
-  background: linear-gradient(120deg, var(--verde-oscuro), var(--verde));
-  color: var(--blanco);
-  padding: 1.2rem 1.5rem;
-  overflow: hidden;
-}
-
-header.sitio::before,
-header.sitio::after {
-  content: "";
-  position: absolute;
-  border-radius: 9999px;
-  filter: blur(70px);
-  pointer-events: none;
-}
-
-header.sitio::before {
-  width: 320px;
-  height: 320px;
-  top: -160px;
-  left: -60px;
-  background: color-mix(in oklab, var(--amarillo) 45%, transparent);
-}
-
-header.sitio::after {
-  width: 360px;
-  height: 360px;
-  bottom: -220px;
-  right: -80px;
-  background: color-mix(in oklab, var(--celeste) 35%, transparent);
-}
-
-header.sitio .marca {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  grid-template-columns: 170px 1fr 170px;
-  align-items: center;
-  max-width: 1100px;
-  margin: 0 auto;
-  gap: 1rem;
-}
-
-header.sitio h1 {
-  margin: 0;
-  font-size: 1.4rem;
-}
-
-header.sitio .grupo-nav {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.4rem;
-  text-align: center;
-}
-
-header.sitio .logo {
-  max-width: 170px;
-  width: 100%;
-  height: auto;
-}
-
-/* Columna vacía a la derecha, del mismo ancho que el logo, para que el
-   menú quede realmente centrado en el encabezado y no solo en el espacio
-   que sobra junto al logo. */
-header.sitio .marca::after {
-  content: "";
-}
-
-@media (max-width: 720px) {
-  header.sitio .marca {
-    grid-template-columns: 1fr;
-    justify-items: center;
-  }
-}
-
-header.sitio .subtitulo-admin {
-  margin: 0;
-  font-weight: 600;
-  opacity: 0.9;
-}
-
-nav.principal {
-  display: flex;
-  gap: 1.2rem;
-  flex-wrap: wrap;
-}
-
-nav.principal a {
-  color: var(--blanco);
-  text-decoration: none;
-  font-weight: 600;
-  opacity: 0.9;
-}
-
-nav.principal a:hover { opacity: 1; text-decoration: underline; }
+/* El encabezado ahora es el mismo en las 5 páginas: ver ".home-header"
+   más abajo (sección "Portada premium"), que dejó de ser exclusivo del
+   home y es el header de todo el sitio. */
 
 main {
   max-width: 1000px;
@@ -263,6 +174,17 @@ input, select, textarea {
   box-shadow: none;
 }
 
+.bloque-horario.pendiente {
+  background: color-mix(in oklab, var(--amarillo) 12%, white);
+  color: #8a5a12;
+}
+
+.bloque-horario.seleccionado {
+  background: var(--verde-oscuro);
+  color: var(--blanco);
+  box-shadow: 0 10px 24px -10px rgba(6, 43, 79, 0.5);
+}
+
 .bloque-horario .estado-tag {
   font-size: 0.85rem;
   font-weight: 600;
@@ -270,6 +192,8 @@ input, select, textarea {
 
 .bloque-horario.disponible .estado-tag { color: var(--verde); }
 .bloque-horario.ocupado .estado-tag { color: var(--rojo); }
+.bloque-horario.pendiente .estado-tag { color: #8a5a12; }
+.bloque-horario.seleccionado .estado-tag { color: var(--blanco); }
 
 .mensaje {
   padding: 0.8rem 1.1rem;
@@ -317,6 +241,7 @@ input, select, textarea {
 .calendario-mes .dia.confirmado { background: #fbe9e7; color: var(--rojo); cursor: not-allowed; }
 .calendario-mes .dia.vacio { visibility: hidden; cursor: default; }
 .calendario-mes .dia.seleccionado { outline: 3px solid var(--celeste); }
+.calendario-mes .dia.seleccionado-canchas { background: var(--verde); color: var(--blanco); }
 
 .leyenda { display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.85rem; margin-bottom: 1rem; }
 .leyenda span { display: inline-flex; align-items: center; gap: 0.35rem; }
@@ -591,12 +516,12 @@ footer.sitio .firma {
 .lightbox-siguiente { right: 1rem; top: 50%; transform: translateY(-50%); }
 
 /* =========================================================================
-   Portada (home) — estilo premium independiente del resto del sitio.
-   Paleta y estructura pedidas explícitamente por el cliente: fondo blanco
-   cálido con degradados verdes suaves, tarjetas grandes redondeadas,
-   header liviano con insignia "VQ". Todas las clases van prefijadas con
-   "home-" para no afectar el resto de las páginas (que siguen con el
-   header verde y las clases .tarjeta / .boton de siempre).
+   Estilo premium — usado en TODAS las páginas del sitio (header, hero de
+   portada, panel de disponibilidad). Las variables --home-* alimentan estos
+   componentes; la paleta base (--verde, --texto, --gris-fondo, etc. en :root
+   al principio del archivo) ya está alineada a los mismos colores, así que
+   el resto de las clases del sitio (.tarjeta, .boton, .bloque-horario...)
+   quedan visualmente consistentes con esto sin tocarlas una por una.
    ========================================================================= */
 
 :root {
@@ -610,21 +535,8 @@ footer.sitio .firma {
   --home-radio: 26px;
   --home-radio-chico: 16px;
   --home-sombra: 0 20px 45px -20px rgba(6, 43, 79, 0.22);
-  --home-font: "Poppins", "Hind", -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --home-font: "Poppins", -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
 }
-
-body.pagina-inicio {
-  font-family: var(--home-font);
-  color: var(--home-azul-oscuro);
-  background:
-    radial-gradient(1200px 600px at 15% -10%, color-mix(in oklab, var(--home-verde-claro) 70%, transparent), transparent),
-    radial-gradient(900px 500px at 100% 10%, color-mix(in oklab, var(--home-dorado) 12%, transparent), transparent),
-    var(--home-gris-suave);
-}
-
-body.pagina-inicio h1,
-body.pagina-inicio h2,
-body.pagina-inicio h3 { font-family: var(--home-font); font-weight: 700; letter-spacing: -0.01em; }
 
 .home-glow {
   position: fixed;
@@ -919,6 +831,20 @@ body.pagina-inicio h3 { font-family: var(--home-font); font-weight: 700; letter-
   color: color-mix(in oklab, var(--home-azul-oscuro) 55%, transparent);
 }
 
+.home-disp-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.home-disp-selector label { margin: 0; font-weight: 600; font-size: 0.85rem; }
+.home-disp-selector input {
+  border: 1px solid var(--gris-borde);
+  border-radius: 999px;
+  padding: 0.4rem 0.9rem;
+  font-family: inherit;
+  font-size: 0.88rem;
+}
+
 .home-bloques {
   margin-top: 1.4rem;
   display: grid;
@@ -960,8 +886,10 @@ body.pagina-inicio h3 { font-family: var(--home-font); font-weight: 700; letter-
   letter-spacing: 0.04em;
 }
 .home-chip-libre { background: color-mix(in oklab, var(--home-verde) 18%, transparent); color: var(--home-verde); }
-.home-chip-ultimo { background: color-mix(in oklab, var(--home-dorado) 25%, transparent); color: #8a5a12; }
-.home-chip-ocupado { background: rgba(6, 43, 79, 0.08); color: color-mix(in oklab, var(--home-azul-oscuro) 60%, transparent); }
+.home-chip-ultimo,
+.home-chip-pendiente { background: color-mix(in oklab, var(--home-dorado) 25%, transparent); color: #8a5a12; }
+.home-chip-ocupado,
+.home-chip-reservado { background: rgba(6, 43, 79, 0.08); color: color-mix(in oklab, var(--home-azul-oscuro) 60%, transparent); }
 
 .home-bloque-cancha { margin: 0.7rem 0 0; font-weight: 600; font-size: 0.95rem; }
 .home-bloque-tipo { margin: 0.1rem 0 0.9rem; font-size: 0.8rem; color: color-mix(in oklab, var(--home-azul-oscuro) 50%, transparent); }
@@ -1012,3 +940,133 @@ body.pagina-inicio h3 { font-family: var(--home-font); font-weight: 700; letter-
   .home-header-inner { justify-content: center; text-align: center; }
   .home-nav { justify-content: center; order: 3; width: 100%; }
 }
+
+/* ---- Encabezado de página interna (título + subtítulo) y panel genérico,
+   reutilizados en canchas / eventos / galería / admin para que compartan
+   la misma línea gráfica que la portada. ---- */
+.home-pagina-header {
+  text-align: center;
+  max-width: 760px;
+  margin: 0.5rem auto 2rem;
+}
+
+.home-pagina-header h1 {
+  margin: 0.35rem 0 0.6rem;
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+}
+
+.home-pagina-header .home-subtitulo {
+  margin: 0;
+  font-size: 1.02rem;
+  color: color-mix(in oklab, var(--home-azul-oscuro) 68%, transparent);
+}
+
+.home-panel {
+  background: var(--home-blanco);
+  border-radius: var(--home-radio);
+  box-shadow: var(--home-sombra);
+  padding: 1.8rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 640px) {
+  .home-panel { padding: 1.3rem; }
+}
+
+/* ---- Barra flotante "Continuar reserva" ---- */
+.home-barra-continuar {
+  position: fixed;
+  left: 50%;
+  bottom: 1.2rem;
+  transform: translateX(-50%);
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: var(--home-azul-oscuro);
+  color: var(--home-blanco);
+  padding: 0.8rem 1rem 0.8rem 1.3rem;
+  border-radius: 999px;
+  box-shadow: 0 16px 34px -12px rgba(6, 43, 79, 0.5);
+  max-width: calc(100vw - 2rem);
+}
+
+.home-barra-continuar span {
+  font-size: 0.88rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---- Modal / formulario de reserva premium ---- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(6, 43, 79, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 1000;
+}
+
+.modal-tarjeta {
+  background: var(--home-blanco);
+  border-radius: var(--home-radio);
+  box-shadow: var(--home-sombra);
+  padding: 1.8rem;
+  max-width: 460px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.resumen-reserva {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.6rem;
+  background: var(--home-gris-suave);
+  border-radius: var(--home-radio-chico);
+  padding: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.resumen-reserva div { display: flex; flex-direction: column; gap: 0.15rem; }
+.resumen-reserva span { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.06em; color: color-mix(in oklab, var(--home-azul-oscuro) 55%, transparent); }
+.resumen-reserva strong { font-size: 0.88rem; }
+
+.opciones-pago { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 0.8rem; }
+
+.opcion-pago {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-weight: 500;
+  border: 1px solid var(--gris-borde);
+  border-radius: var(--radio-chico);
+  padding: 0.6rem 0.9rem;
+  cursor: pointer;
+  margin: 0;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.opcion-pago input { width: auto; margin: 0; }
+.opcion-pago:has(input:checked) { border-color: var(--verde); background: var(--verde-claro); }
+
+.zona-drop {
+  display: block;
+  border: 2px dashed var(--gris-borde);
+  border-radius: var(--radio-chico);
+  padding: 1.3rem 1rem;
+  text-align: center;
+  cursor: pointer;
+  background: var(--home-gris-suave);
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.zona-drop p { margin: 0; font-size: 0.88rem; color: color-mix(in oklab, var(--home-azul-oscuro) 65%, transparent); }
+.zona-drop.arrastrando { border-color: var(--verde); background: var(--verde-claro); }
+.zona-drop.con-archivo { border-style: solid; border-color: var(--verde); }
+.zona-drop input[type="file"] { display: none; }
+
+.botones-form { display: flex; gap: 0.6rem; margin-top: 1.2rem; }
+.botones-form button { flex: 1; justify-content: center; }

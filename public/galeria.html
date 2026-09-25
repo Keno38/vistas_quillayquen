@@ -3,43 +3,57 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Galería — Vistas Quillaiquen</title>
+<title>Galería — Vistas Quillayquén</title>
 <link rel="stylesheet" href="/css/estilo.css">
 </head>
 <body>
-<header class="sitio">
-  <div class="marca">
-    <img src="/img/logo.png" alt="Vistas de Quillaiquen — Complejo deportivo y centro de eventos" class="logo">
-    <div class="grupo-nav">
-      <nav class="principal">
-        <a href="/index.html">Inicio</a>
-        <a href="/canchas.html">Canchas</a>
-        <a href="/eventos.html">Centro de Eventos</a>
-        <a href="/galeria.html">Galería</a>
-        <a href="/admin.html">Administración</a>
-      </nav>
-    </div>
+
+<div class="home-glow home-glow-verde" aria-hidden="true"></div>
+<div class="home-glow home-glow-dorado" aria-hidden="true"></div>
+
+<header class="home-header">
+  <div class="home-header-inner">
+    <a href="/index.html" class="home-marca">
+      <span class="home-logo-badge">VQ</span>
+      <span class="home-marca-texto">
+        <span class="home-marca-nombre">Vistas Quillayquén</span>
+        <span class="home-marca-sub">Recinto deportivo</span>
+      </span>
+    </a>
+    <nav class="home-nav" aria-label="Navegación principal">
+      <a href="/index.html">Inicio</a>
+      <a href="/canchas.html">Canchas</a>
+      <a href="/eventos.html">Centro de Eventos</a>
+      <a href="/galeria.html">Galería</a>
+      <a href="/admin.html">Administración</a>
+    </nav>
+    <a href="/canchas.html" class="home-boton-oscuro">Reservar cancha</a>
   </div>
 </header>
 
-<main>
-  <h2>Galería</h2>
-  <p>Fotos y videos del recinto y de eventos realizados en Vistas Quillaiquen.</p>
-
-  <div class="tabs-galeria">
-    <button class="boton" id="tab-recinto">Recinto</button>
-    <button class="boton secundario" id="tab-eventos">Eventos</button>
+<main class="home-main">
+  <div class="home-pagina-header">
+    <p class="home-disp-eyebrow">Fotos y videos</p>
+    <h1>Galería</h1>
+    <p class="home-subtitulo">Conoce nuestras instalaciones</p>
   </div>
 
-  <div id="mensaje-galeria"></div>
+  <div class="home-panel">
+    <div class="tabs-galeria">
+      <button class="boton" id="tab-recinto">Recinto</button>
+      <button class="boton secundario" id="tab-eventos">Eventos</button>
+    </div>
 
-  <section id="vista-recinto">
-    <div class="grilla-galeria" id="grilla-recinto"></div>
-  </section>
+    <div id="mensaje-galeria"></div>
 
-  <section id="vista-eventos" class="oculto">
-    <div id="lista-albumes"></div>
-  </section>
+    <section id="vista-recinto">
+      <div class="grilla-galeria" id="grilla-recinto"></div>
+    </section>
+
+    <section id="vista-eventos" class="oculto">
+      <div id="lista-albumes"></div>
+    </section>
+  </div>
 </main>
 
 <div id="lightbox" class="lightbox oculto">

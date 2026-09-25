@@ -3,66 +3,108 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Centro de Eventos — Vistas Quillaiquen</title>
+<title>Centro de Eventos — Vistas Quillayquén</title>
 <link rel="stylesheet" href="/css/estilo.css">
 </head>
 <body>
-<header class="sitio">
-  <div class="marca">
-    <img src="/img/logo.png" alt="Vistas de Quillaiquen — Complejo deportivo y centro de eventos" class="logo">
-    <div class="grupo-nav">
-      <nav class="principal">
-        <a href="/index.html">Inicio</a>
-        <a href="/canchas.html">Canchas</a>
-        <a href="/eventos.html">Centro de Eventos</a>
-        <a href="/galeria.html">Galería</a>
-        <a href="/admin.html">Administración</a>
-      </nav>
-    </div>
+
+<div class="home-glow home-glow-verde" aria-hidden="true"></div>
+<div class="home-glow home-glow-dorado" aria-hidden="true"></div>
+
+<header class="home-header">
+  <div class="home-header-inner">
+    <a href="/index.html" class="home-marca">
+      <span class="home-logo-badge">VQ</span>
+      <span class="home-marca-texto">
+        <span class="home-marca-nombre">Vistas Quillayquén</span>
+        <span class="home-marca-sub">Recinto deportivo</span>
+      </span>
+    </a>
+    <nav class="home-nav" aria-label="Navegación principal">
+      <a href="/index.html">Inicio</a>
+      <a href="/canchas.html">Canchas</a>
+      <a href="/eventos.html">Centro de Eventos</a>
+      <a href="/galeria.html">Galería</a>
+      <a href="/admin.html">Administración</a>
+    </nav>
+    <a href="#solicitar" class="home-boton-oscuro">Solicitar cotización</a>
   </div>
 </header>
 
-<main>
-  <h2>Centro de Eventos con Piscina</h2>
-  <p>Ideal para paseos de fin de año de colegios, matrimonios y celebraciones. Puedes arrendar solo el local, o el local con menú (pollo con papas fritas y ensaladas). Elige una fecha libre en el calendario y envíanos tu solicitud; nuestro equipo la confirmará a la brevedad.</p>
+<main class="home-main">
 
-  <div class="leyenda">
-    <span class="lib"><i></i> Libre</span>
-    <span class="pen"><i></i> Con solicitud pendiente (aún puedes consultar)</span>
-    <span class="con"><i></i> Confirmado (no disponible)</span>
-  </div>
-
-  <div class="selector-fecha">
-    <button class="boton secundario" id="btn-mes-anterior">&larr; Mes anterior</button>
-    <strong id="titulo-mes"></strong>
-    <button class="boton secundario" id="btn-mes-siguiente">Mes siguiente &rarr;</button>
-  </div>
-
-  <div id="mensaje-eventos"></div>
-  <div id="calendario" class="calendario-mes"></div>
-
-  <form id="form-evento" class="oculto">
-    <h3>Solicitar reserva para el <span id="fecha-elegida-texto"></span></h3>
-    <input type="hidden" id="ev-fecha">
-    <label for="ev-contacto">Nombre de contacto</label>
-    <input type="text" id="ev-contacto" required>
-    <label for="ev-institucion">Colegio / institución / empresa (opcional)</label>
-    <input type="text" id="ev-institucion">
-    <label for="ev-telefono">Teléfono de contacto</label>
-    <input type="tel" id="ev-telefono" required placeholder="+56 9 ...">
-    <label for="ev-personas">Cantidad aproximada de personas</label>
-    <input type="number" id="ev-personas" min="1">
-    <label>
-      <input type="checkbox" id="ev-menu" style="width:auto;display:inline-block;vertical-align:middle;">
-      Incluir menú (pollo con papas fritas y ensaladas)
-    </label>
-    <label for="ev-comentario">Comentario (opcional)</label>
-    <textarea id="ev-comentario" rows="3"></textarea>
-    <div style="display:flex;gap:0.6rem;margin-top:1.2rem;">
-      <button type="submit" class="boton secundario">Enviar solicitud</button>
-      <button type="button" class="boton" id="btn-cancelar-evento" style="background:#888;">Cancelar</button>
+  <article class="home-hero-principal" style="min-height:320px;margin-bottom:0.6rem;">
+    <img src="/img/muestra/quillaiquen-piscina.jpg" alt="Piscina y terraza del centro de eventos">
+    <div class="home-hero-overlay">
+      <span class="home-etiqueta"><i></i> Piscina · salón · quincho</span>
+      <h1 style="margin:0.7rem 0 0.35rem;">Centro de Eventos Quillayquén</h1>
+      <p style="margin:0;max-width:52ch;">Un espacio ideal para celebraciones, reuniones y actividades familiares.</p>
     </div>
-  </form>
+  </article>
+  <p class="home-nota-muestra">Foto de muestra — se reemplazará por una foto real del salón.</p>
+
+  <div class="tarjetas" style="margin-top:0.4rem;">
+    <div class="tarjeta">
+      <h3>Capacidad</h3>
+      <p>Hasta 80 personas en el salón techado, más la terraza y el área de piscina para actividades al aire libre. Ideal para cursos, cumpleaños, matrimonios y celebraciones de empresa.</p>
+    </div>
+    <div class="tarjeta">
+      <h3>Servicios incluidos</h3>
+      <p>Salón techado, piscina, mesas y sillas, estacionamiento. Opcional: menú de pollo con papas fritas y ensaladas para todos los asistentes.</p>
+    </div>
+    <div class="tarjeta">
+      <h3>Contacto</h3>
+      <p>Coordina tu evento eligiendo una fecha libre en el calendario. Te contactamos por teléfono/WhatsApp para confirmar los detalles y el pago.</p>
+    </div>
+  </div>
+
+  <div class="home-pagina-header" id="solicitar">
+    <p class="home-disp-eyebrow">Disponibilidad</p>
+    <h1>Cotiza tu evento</h1>
+    <p class="home-subtitulo">Elige una fecha libre en el calendario y envíanos tu solicitud</p>
+  </div>
+
+  <div class="home-panel">
+    <p>Ideal para paseos de fin de año de colegios, matrimonios y celebraciones. Puedes arrendar solo el local, o el local con menú (pollo con papas fritas y ensaladas). Elige una fecha libre en el calendario y envíanos tu solicitud; nuestro equipo la confirmará a la brevedad.</p>
+
+    <div class="leyenda">
+      <span class="lib"><i></i> Libre</span>
+      <span class="pen"><i></i> Con solicitud pendiente (aún puedes consultar)</span>
+      <span class="con"><i></i> Confirmado (no disponible)</span>
+    </div>
+
+    <div class="selector-fecha">
+      <button class="boton secundario" id="btn-mes-anterior">&larr; Mes anterior</button>
+      <strong id="titulo-mes"></strong>
+      <button class="boton secundario" id="btn-mes-siguiente">Mes siguiente &rarr;</button>
+    </div>
+
+    <div id="mensaje-eventos"></div>
+    <div id="calendario" class="calendario-mes"></div>
+
+    <form id="form-evento" class="oculto">
+      <h3>Solicitar reserva para el <span id="fecha-elegida-texto"></span></h3>
+      <input type="hidden" id="ev-fecha">
+      <label for="ev-contacto">Nombre de contacto</label>
+      <input type="text" id="ev-contacto" required>
+      <label for="ev-institucion">Colegio / institución / empresa (opcional)</label>
+      <input type="text" id="ev-institucion">
+      <label for="ev-telefono">Teléfono de contacto</label>
+      <input type="tel" id="ev-telefono" required placeholder="+56 9 ...">
+      <label for="ev-personas">Cantidad aproximada de personas</label>
+      <input type="number" id="ev-personas" min="1">
+      <label>
+        <input type="checkbox" id="ev-menu" style="width:auto;display:inline-block;vertical-align:middle;">
+        Incluir menú (pollo con papas fritas y ensaladas)
+      </label>
+      <label for="ev-comentario">Comentario (opcional)</label>
+      <textarea id="ev-comentario" rows="3"></textarea>
+      <div style="display:flex;gap:0.6rem;margin-top:1.2rem;">
+        <button type="submit" class="boton secundario">Enviar solicitud</button>
+        <button type="button" class="boton" id="btn-cancelar-evento" style="background:#888;">Cancelar</button>
+      </div>
+    </form>
+  </div>
 </main>
 
 <footer class="sitio">

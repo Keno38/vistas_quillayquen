@@ -3,73 +3,115 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Reservar cancha — Vistas Quillaiquen</title>
+<title>Reservar cancha — Vistas Quillayquén</title>
 <link rel="stylesheet" href="/css/estilo.css">
 </head>
 <body>
-<header class="sitio">
-  <div class="marca">
-    <img src="/img/logo.png" alt="Vistas de Quillaiquen — Complejo deportivo y centro de eventos" class="logo">
-    <div class="grupo-nav">
-      <nav class="principal">
-        <a href="/index.html">Inicio</a>
-        <a href="/canchas.html">Canchas</a>
-        <a href="/eventos.html">Centro de Eventos</a>
-        <a href="/galeria.html">Galería</a>
-        <a href="/admin.html">Administración</a>
-      </nav>
-    </div>
+
+<div class="home-glow home-glow-verde" aria-hidden="true"></div>
+<div class="home-glow home-glow-dorado" aria-hidden="true"></div>
+
+<header class="home-header">
+  <div class="home-header-inner">
+    <a href="/index.html" class="home-marca">
+      <span class="home-logo-badge">VQ</span>
+      <span class="home-marca-texto">
+        <span class="home-marca-nombre">Vistas Quillayquén</span>
+        <span class="home-marca-sub">Recinto deportivo</span>
+      </span>
+    </a>
+    <nav class="home-nav" aria-label="Navegación principal">
+      <a href="/index.html">Inicio</a>
+      <a href="/canchas.html">Canchas</a>
+      <a href="/eventos.html">Centro de Eventos</a>
+      <a href="/galeria.html">Galería</a>
+      <a href="/admin.html">Administración</a>
+    </nav>
+    <a href="/canchas.html" class="home-boton-oscuro">Reservar cancha</a>
   </div>
 </header>
 
-<main>
-  <h2>Reserva de canchas de pasto sintético</h2>
-  <p>Horario de agendamiento: 18:00 a 23:00 hrs, todos los días. Cada bloque reservado incluye tiempo de cambio de equipo.</p>
-  <p>El pago es por transferencia: puedes abonar el <strong id="texto-abono">30%</strong> o pagar el valor completo, adjuntando el comprobante de la transferencia. Tu reserva queda <strong>pendiente de verificación</strong> hasta que nuestro personal confirme el pago (normalmente el mismo día).</p>
-  <p>Si necesitas cancelar, avísanos con al menos <strong>2 horas de anticipación</strong> a tu hora reservada y te reintegramos el dinero.</p>
+<main class="home-main">
+  <div class="home-pagina-header">
+    <p class="home-disp-eyebrow">Canchas de pasto sintético</p>
+    <h1>Reserva tu cancha</h1>
+    <p class="home-subtitulo">Selecciona fecha, cancha y horario disponible</p>
+  </div>
 
-  <div class="selector-fecha">
-    <label for="fecha" style="margin:0;">Elige una fecha:</label>
-    <input type="date" id="fecha">
+  <div class="home-panel">
+    <p>El pago es por transferencia: puedes abonar el <strong id="texto-abono">30%</strong> o pagar el valor completo, adjuntando el comprobante. Tu reserva queda <strong>pendiente de verificación</strong> hasta que nuestro personal confirme el pago (normalmente el mismo día). Si necesitas cancelar, avísanos con al menos <strong>2 horas de anticipación</strong> y te reintegramos el dinero.</p>
+  </div>
+
+  <div class="home-panel">
+    <h2 style="margin-top:0;">Elige una fecha</h2>
+    <div class="selector-fecha">
+      <button class="boton secundario" id="btn-mes-anterior" type="button">&larr; Mes anterior</button>
+      <strong id="titulo-mes"></strong>
+      <button class="boton secundario" id="btn-mes-siguiente" type="button">Mes siguiente &rarr;</button>
+    </div>
+    <div id="calendario-canchas" class="calendario-mes"></div>
   </div>
 
   <div id="mensaje-canchas"></div>
-  <div id="grilla" class="grilla-canchas">Selecciona una fecha para ver la disponibilidad.</div>
+
+  <div class="home-panel">
+    <h2 style="margin-top:0;">Horarios para <span id="fecha-elegida-canchas"></span></h2>
+    <div id="grilla" class="grilla-canchas">Selecciona una fecha para ver la disponibilidad.</div>
+  </div>
 </main>
 
-<!-- Formulario de reserva (modal simple) -->
-<div id="modal-reserva" class="oculto" style="position:fixed;inset:0;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;padding:1rem;">
-  <div style="background:#fff;border-radius:12px;padding:1.5rem;max-width:420px;width:100%;">
-    <h3 id="modal-titulo">Confirmar reserva</h3>
+<!-- Barra flotante: aparece cuando hay un horario seleccionado -->
+<div id="barra-continuar" class="home-barra-continuar oculto">
+  <span id="resumen-seleccion"></span>
+  <button class="home-boton-verde" id="btn-continuar-reserva" type="button">Continuar reserva</button>
+</div>
+
+<!-- Formulario de reserva -->
+<div id="modal-reserva" class="modal-overlay oculto">
+  <div class="modal-tarjeta">
+    <h2 style="margin-top:0;">Completar reserva</h2>
+
+    <div class="resumen-reserva">
+      <div><span>Cancha</span><strong id="resumen-cancha">-</strong></div>
+      <div><span>Fecha</span><strong id="resumen-fecha">-</strong></div>
+      <div><span>Horario</span><strong id="resumen-horario">-</strong></div>
+    </div>
+
     <form id="form-reserva">
       <input type="hidden" id="r-cancha-id">
       <input type="hidden" id="r-fecha">
       <input type="hidden" id="r-hora">
-      <label for="r-nombre">Nombre</label>
+
+      <label for="r-nombre">Nombre completo</label>
       <input type="text" id="r-nombre" required>
-      <label for="r-telefono">Teléfono de contacto</label>
+
+      <label for="r-telefono">Teléfono WhatsApp</label>
       <input type="tel" id="r-telefono" required placeholder="+56 9 ...">
 
-      <label>Tipo de pago</label>
-      <label style="font-weight:normal;display:flex;align-items:center;gap:0.4rem;">
-        <input type="radio" name="r-tipo-pago" value="abono" checked style="width:auto;">
-        Abonar <span id="monto-abono">-</span>
-      </label>
-      <label style="font-weight:normal;display:flex;align-items:center;gap:0.4rem;">
-        <input type="radio" name="r-tipo-pago" value="completo" style="width:auto;">
-        Pagar el total <span id="monto-completo">-</span>
+      <label for="r-correo">Correo electrónico (opcional)</label>
+      <input type="email" id="r-correo" placeholder="tu@correo.cl">
+
+      <label>Método de pago</label>
+      <div class="opciones-pago">
+        <label class="opcion-pago">
+          <input type="radio" name="r-tipo-pago" value="abono" checked>
+          <span>Abonar <strong id="monto-abono">-</strong></span>
+        </label>
+        <label class="opcion-pago">
+          <input type="radio" name="r-tipo-pago" value="completo">
+          <span>Pagar el total <strong id="monto-completo">-</strong></span>
+        </label>
+      </div>
+
+      <label>Comprobante de transferencia</label>
+      <label class="zona-drop" id="zona-drop" for="r-comprobante">
+        <p id="texto-drop">Arrastra tu comprobante o haz clic para seleccionar el archivo</p>
+        <input type="file" id="r-comprobante" accept="image/*,.pdf" required>
       </label>
 
-      <p style="font-size:0.9rem;color:#64756c;">
-        Transfiere el monto elegido a nuestra cuenta (te la confirmamos por WhatsApp al enviar tus datos)
-        y adjunta aquí el comprobante.
-      </p>
-      <label for="r-comprobante">Comprobante de transferencia (foto o PDF)</label>
-      <input type="file" id="r-comprobante" accept="image/*,.pdf" required>
-
-      <div style="display:flex;gap:0.6rem;margin-top:1.2rem;">
-        <button type="submit" class="boton" id="btn-enviar-reserva">Enviar solicitud de reserva</button>
-        <button type="button" class="boton secundario" id="btn-cancelar-modal">Cancelar</button>
+      <div class="botones-form">
+        <button type="submit" class="home-boton-verde" id="btn-enviar-reserva">Confirmar reserva</button>
+        <button type="button" class="home-boton-oscuro" id="btn-cancelar-modal">Cancelar</button>
       </div>
     </form>
   </div>

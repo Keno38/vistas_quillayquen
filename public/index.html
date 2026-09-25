@@ -21,9 +21,9 @@
       </span>
     </a>
     <nav class="home-nav" aria-label="Navegación principal">
-      <a href="#horarios">Canchas</a>
-      <a href="#piscina">Piscina</a>
-      <a href="#eventos">Centro de eventos</a>
+      <a href="/index.html">Inicio</a>
+      <a href="/canchas.html">Canchas</a>
+      <a href="/eventos.html">Centro de Eventos</a>
       <a href="/galeria.html">Galería</a>
       <a href="/admin.html">Administración</a>
     </nav>
@@ -64,53 +64,17 @@
   <section class="home-disponibilidad" id="horarios">
     <div class="home-disp-header">
       <div>
-        <p class="home-disp-eyebrow">Bloques desde las 18:00</p>
+        <p class="home-disp-eyebrow">Disponibilidad de hoy</p>
         <h2>Elige tu hora de juego</h2>
       </div>
-      <p class="home-disp-meta">1 hora por bloque<br>10 min entre bloques</p>
+      <div class="home-disp-selector">
+        <label for="home-fecha">Fecha</label>
+        <input type="date" id="home-fecha">
+      </div>
     </div>
 
-    <div class="home-bloques">
-      <article class="home-bloque">
-        <div class="home-bloque-top">
-          <span class="home-bloque-hora">18:00</span>
-          <span class="home-chip home-chip-libre">Libre</span>
-        </div>
-        <p class="home-bloque-cancha">Cancha 1</p>
-        <p class="home-bloque-tipo">Pasto sintético</p>
-        <a href="/canchas.html" class="home-bloque-boton home-bloque-boton-verde">Reservar</a>
-      </article>
-
-      <article class="home-bloque">
-        <div class="home-bloque-top">
-          <span class="home-bloque-hora">19:10</span>
-          <span class="home-chip home-chip-libre">Libre</span>
-        </div>
-        <p class="home-bloque-cancha">Cancha 2</p>
-        <p class="home-bloque-tipo">Pasto sintético</p>
-        <a href="/canchas.html" class="home-bloque-boton home-bloque-boton-verde">Reservar</a>
-      </article>
-
-      <article class="home-bloque">
-        <div class="home-bloque-top">
-          <span class="home-bloque-hora">20:20</span>
-          <span class="home-chip home-chip-ultimo">Último</span>
-        </div>
-        <p class="home-bloque-cancha">Cancha 1</p>
-        <p class="home-bloque-tipo">Pasto sintético</p>
-        <a href="/canchas.html" class="home-bloque-boton home-bloque-boton-dorado">Reservar</a>
-      </article>
-
-      <article class="home-bloque home-bloque-ocupado">
-        <div class="home-bloque-top">
-          <span class="home-bloque-hora">21:30</span>
-          <span class="home-chip home-chip-ocupado">Ocupado</span>
-        </div>
-        <p class="home-bloque-cancha">Cancha 2</p>
-        <p class="home-bloque-tipo">Pasto sintético</p>
-        <span class="home-bloque-boton home-bloque-boton-deshabilitado">Sin cupo</span>
-      </article>
-    </div>
+    <div id="home-mensaje"></div>
+    <div class="home-bloques" id="home-bloques">Cargando disponibilidad...</div>
 
     <div class="home-disp-footer" id="eventos">
       <p>¿Organizas un torneo, cumpleaños o reunión? Cotiza tu evento en el centro de eventos con piscina.</p>
@@ -124,5 +88,6 @@
   Vistas Quillaiquen — parte de Comercializadora PCY
   <div class="firma">© 2026 enovo · Todos los derechos reservados.</div>
 </footer>
+<script src="/js/inicio.js"></script>
 </body>
 </html>

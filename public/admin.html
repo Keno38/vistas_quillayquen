@@ -3,30 +3,37 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Administración — Vistas Quillaiquen</title>
+<title>Administración — Vistas Quillayquén</title>
 <link rel="stylesheet" href="/css/estilo.css">
 </head>
 <body>
-<header class="sitio">
-  <div class="marca">
-    <img src="/img/logo.png" alt="Vistas de Quillaiquen — Complejo deportivo y centro de eventos" class="logo">
-    <div class="grupo-nav">
-      <p class="subtitulo-admin">Administración</p>
-      <nav class="principal">
-        <a href="/index.html">Volver al sitio</a>
-        <a href="#" id="btn-logout" class="oculto">Cerrar sesión</a>
-      </nav>
-    </div>
+
+<div class="home-glow home-glow-verde" aria-hidden="true"></div>
+<div class="home-glow home-glow-dorado" aria-hidden="true"></div>
+
+<header class="home-header">
+  <div class="home-header-inner">
+    <a href="/index.html" class="home-marca">
+      <span class="home-logo-badge">VQ</span>
+      <span class="home-marca-texto">
+        <span class="home-marca-nombre">Vistas Quillayquén</span>
+        <span class="home-marca-sub">Administración</span>
+      </span>
+    </a>
+    <nav class="home-nav" aria-label="Navegación principal">
+      <a href="/index.html">Volver al sitio</a>
+    </nav>
+    <a href="#" id="btn-logout" class="home-boton-oscuro oculto">Cerrar sesión</a>
   </div>
 </header>
 
-<main>
+<main class="home-main">
   <div id="mensaje-admin"></div>
 
   <!-- Login -->
-  <section id="seccion-login" class="hero">
-    <h2>Iniciar sesión</h2>
-    <form id="form-login" style="max-width:320px;">
+  <section id="seccion-login" class="home-panel" style="max-width:420px;margin:2rem auto;">
+    <h1 style="margin-top:0;">Iniciar sesión</h1>
+    <form id="form-login">
       <label for="login-usuario">Usuario</label>
       <input type="text" id="login-usuario" required>
       <label for="login-password">Contraseña</label>
@@ -37,49 +44,55 @@
 
   <!-- Panel -->
   <section id="seccion-panel" class="oculto">
-    <h2>Solicitudes del Centro de Eventos</h2>
-    <p>Confirma o rechaza manualmente cada solicitud. Al confirmar una fecha, el sistema bloqueará automáticamente ese día para nuevas solicitudes.</p>
-    <table class="admin-tabla" id="tabla-eventos">
-      <thead>
-        <tr>
-          <th>Fecha</th><th>Contacto</th><th>Institución</th><th>Teléfono</th>
-          <th>Personas</th><th>Menú</th><th>Comentario</th><th>Estado</th><th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-
-    <h2 style="margin-top:2.5rem;">Configuración de precios de cancha</h2>
-    <form id="form-config-canchas" style="max-width:420px;display:flex;gap:1rem;align-items:flex-end;flex-wrap:wrap;">
-      <div style="flex:1;min-width:160px;">
-        <label for="cfg-valor-cancha">Valor de la hora (CLP)</label>
-        <input type="number" id="cfg-valor-cancha" min="1" required>
-      </div>
-      <div style="flex:1;min-width:160px;">
-        <label for="cfg-abono-porcentaje">% de abono</label>
-        <input type="number" id="cfg-abono-porcentaje" min="1" max="100" required>
-      </div>
-      <button type="submit" class="boton" style="margin-bottom:0.2rem;">Guardar</button>
-    </form>
-
-    <h2 style="margin-top:2.5rem;">Reservas de canchas <span id="badge-pendientes" class="tag-estado oculto"></span></h2>
-    <p>Revisa el comprobante antes de confirmar. Si no es válido, rechaza la reserva y el horario se libera automáticamente.</p>
-    <div class="selector-fecha">
-      <label for="admin-desde" style="margin:0;">Desde</label>
-      <input type="date" id="admin-desde">
-      <label for="admin-hasta" style="margin:0;">Hasta</label>
-      <input type="date" id="admin-hasta">
-      <button class="boton secundario" id="btn-filtrar-canchas">Filtrar</button>
+    <div class="home-panel">
+      <h2 style="margin-top:0;">Solicitudes del Centro de Eventos</h2>
+      <p>Confirma o rechaza manualmente cada solicitud. Al confirmar una fecha, el sistema bloqueará automáticamente ese día para nuevas solicitudes.</p>
+      <table class="admin-tabla" id="tabla-eventos">
+        <thead>
+          <tr>
+            <th>Fecha</th><th>Contacto</th><th>Institución</th><th>Teléfono</th>
+            <th>Personas</th><th>Menú</th><th>Comentario</th><th>Estado</th><th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
     </div>
-    <table class="admin-tabla" id="tabla-canchas">
-      <thead>
-        <tr>
-          <th>Fecha</th><th>Hora</th><th>Cancha</th><th>Cliente</th><th>Teléfono</th>
-          <th>Pago</th><th>Monto</th><th>Comprobante</th><th>Estado</th><th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+
+    <div class="home-panel">
+      <h2 style="margin-top:0;">Configuración de precios de cancha</h2>
+      <form id="form-config-canchas" style="max-width:420px;display:flex;gap:1rem;align-items:flex-end;flex-wrap:wrap;">
+        <div style="flex:1;min-width:160px;">
+          <label for="cfg-valor-cancha">Valor de la hora (CLP)</label>
+          <input type="number" id="cfg-valor-cancha" min="1" required>
+        </div>
+        <div style="flex:1;min-width:160px;">
+          <label for="cfg-abono-porcentaje">% de abono</label>
+          <input type="number" id="cfg-abono-porcentaje" min="1" max="100" required>
+        </div>
+        <button type="submit" class="boton" style="margin-bottom:0.2rem;">Guardar</button>
+      </form>
+    </div>
+
+    <div class="home-panel">
+      <h2 style="margin-top:0;">Reservas de canchas <span id="badge-pendientes" class="tag-estado oculto"></span></h2>
+      <p>Revisa el comprobante antes de confirmar. Si no es válido, rechaza la reserva y el horario se libera automáticamente.</p>
+      <div class="selector-fecha">
+        <label for="admin-desde" style="margin:0;">Desde</label>
+        <input type="date" id="admin-desde">
+        <label for="admin-hasta" style="margin:0;">Hasta</label>
+        <input type="date" id="admin-hasta">
+        <button class="boton secundario" id="btn-filtrar-canchas">Filtrar</button>
+      </div>
+      <table class="admin-tabla" id="tabla-canchas">
+        <thead>
+          <tr>
+            <th>Fecha</th><th>Hora</th><th>Cancha</th><th>Cliente</th><th>Teléfono</th>
+            <th>Pago</th><th>Monto</th><th>Comprobante</th><th>Estado</th><th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
   </section>
 </main>
 

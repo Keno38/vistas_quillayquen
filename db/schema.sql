@@ -15,6 +15,7 @@ create table if not exists reservas_cancha (
   hora_fin text not null,
   nombre_cliente text not null,
   telefono text not null,
+  correo_cliente text,
   creado_en timestamptz not null default now(),
   -- Pago por transferencia con comprobante adjunto (ver README, sección "Pagos").
   tipo_pago text check (tipo_pago in ('abono', 'completo')),
