@@ -205,35 +205,75 @@ input, select, textarea {
 .mensaje.exito { background: #e4f5e9; color: var(--verde-oscuro); border: 1px solid #b7dfc4; }
 .mensaje.error { background: #fbe9e7; color: var(--rojo); border: 1px solid #f0c4c0; }
 
+/* ---- Navegación compacta del calendario: [← Mes Año →] ---- */
+.nav-calendario {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.nav-calendario strong {
+  font-family: var(--font-display, inherit);
+  font-size: 1.05rem;
+  color: var(--verde-oscuro);
+  min-width: 11ch;
+  text-align: center;
+}
+
+.nav-calendario-btn {
+  height: 36px;
+  width: 36px;
+  border-radius: 20px;
+  border: 1px solid var(--gris-borde);
+  background: var(--blanco);
+  color: var(--verde-oscuro);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--sombra-tarjeta);
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.nav-calendario-btn:hover { transform: translateY(-1px); background: #e4f5e9; }
+
 .calendario-mes {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 0.4rem;
-  margin: 1rem 0 1.5rem;
+  gap: 0.35rem;
+  margin: 0 auto 1.2rem;
+  max-width: 900px;
 }
 
 .calendario-mes .dia-semana {
   text-align: center;
   font-weight: 700;
   color: var(--verde-oscuro);
-  font-size: 0.85rem;
+  font-size: 0.8rem;
+  padding-bottom: 0.2rem;
 }
 
 .calendario-mes .dia {
-  aspect-ratio: 1;
+  height: clamp(45px, 8vw, 90px);
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 14px;
+  border-radius: 12px;
   border: 1px solid var(--gris-borde);
   cursor: pointer;
   font-weight: 600;
+  font-size: 0.9rem;
   background: var(--blanco);
-  transition: transform 0.15s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .calendario-mes .dia:not(.confirmado):not(.vacio):hover {
   transform: translateY(-2px);
+  box-shadow: var(--sombra-tarjeta);
 }
 
 .calendario-mes .dia.libre { background: #e4f5e9; color: var(--verde-oscuro); }
@@ -241,7 +281,20 @@ input, select, textarea {
 .calendario-mes .dia.confirmado { background: #fbe9e7; color: var(--rojo); cursor: not-allowed; }
 .calendario-mes .dia.vacio { visibility: hidden; cursor: default; }
 .calendario-mes .dia.seleccionado { outline: 3px solid var(--celeste); }
-.calendario-mes .dia.seleccionado-canchas { background: var(--verde); color: var(--blanco); }
+.calendario-mes .dia.seleccionado-canchas {
+  background: var(--verde);
+  color: var(--blanco);
+  box-shadow: 0 6px 16px -6px rgba(11, 143, 85, 0.55);
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  .calendario-mes .dia { height: 70px; }
+}
+
+@media (max-width: 480px) {
+  .calendario-mes .dia { height: clamp(45px, 12vw, 55px); font-size: 0.8rem; }
+  .nav-calendario strong { font-size: 0.95rem; min-width: 9ch; }
+}
 
 .leyenda { display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.85rem; margin-bottom: 1rem; }
 .leyenda span { display: inline-flex; align-items: center; gap: 0.35rem; }

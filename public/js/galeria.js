@@ -1,10 +1,8 @@
 const mensajeDiv = document.getElementById('mensaje-galeria');
 const tabRecinto = document.getElementById('tab-recinto');
 const tabEventos = document.getElementById('tab-eventos');
-const tabReels = document.getElementById('tab-reels');
 const vistaRecinto = document.getElementById('vista-recinto');
 const vistaEventos = document.getElementById('vista-eventos');
-const vistaReels = document.getElementById('vista-reels');
 const grillaRecinto = document.getElementById('grilla-recinto');
 const listaAlbumes = document.getElementById('lista-albumes');
 const grillaReels = document.getElementById('grilla-reels');
@@ -173,15 +171,12 @@ document.getElementById('tab-reels-ferreteria').addEventListener('click', () => 
 function activarTab(tab) {
   tabRecinto.classList.toggle('secundario', tab !== 'recinto');
   tabEventos.classList.toggle('secundario', tab !== 'eventos');
-  tabReels.classList.toggle('secundario', tab !== 'reels');
   vistaRecinto.classList.toggle('oculto', tab !== 'recinto');
   vistaEventos.classList.toggle('oculto', tab !== 'eventos');
-  vistaReels.classList.toggle('oculto', tab !== 'reels');
 }
 
 tabRecinto.addEventListener('click', () => activarTab('recinto'));
 tabEventos.addEventListener('click', () => activarTab('eventos'));
-tabReels.addEventListener('click', () => activarTab('reels'));
 
 async function cargarGaleria() {
   try {
