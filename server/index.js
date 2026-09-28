@@ -13,6 +13,7 @@ const canchas = require('./canchas');
 const eventos = require('./eventos');
 const auth = require('./auth');
 const galeria = require('./galeria');
+const supabaseAuth = require('./supabaseAuth');
 const { parseMultipart } = require('./multipart');
 
 const MAX_COMPROBANTE_BYTES = 8 * 1024 * 1024; // 8MB, de sobra para una foto/PDF de comprobante
@@ -114,6 +115,20 @@ function requireAdmin(req) {
   }
 }
 
+// El panel de "Contenido" usa un login totalmente aparte: Supabase Authentication.
+// Acá solo confirmamos con la propia API de Supabase que el token que manda el
+// navegador (header Authorization: Bearer <token>) corresponde a un usuario real.
+async function requireSuperAdmin(req) {
+  const encabezado = req.headers.authorization || '';
+  const token = encabezado.startsWith('Bearer ') ? encabezado.slice(7) : null;
+  const usuario = await supabaseAuth.verificarToken(token);
+  if (!usuario) {
+    const err = new Error('No autorizado. Debe iniciar sesión con la cuenta de superadministrador.');
+    err.status = 401;
+    throw err;
+  }
+}
+
 function serveStatic(req, res, pathname) {
   let filePath = pathname === '/' ? '/index.html' : pathname;
   filePath = path.normalize(filePath).replace(/^(\.\.[/\\])+/, '');
@@ -178,6 +193,18 @@ async function handleApi(req, res, pathname, query) {
       const solicitud = await eventos.solicitar(body);
       return sendJSON(res, 201, { ok: true, solicitud });
     }
+    if (pathname === '/api/eventos/info-publica' && req.method === 'GET') {
+      return sendJSON(res, 200, await eventos.infoPublica());
+    }
+
+    // ---- Configuración pública (para que el navegador pueda hablar con
+    // Supabase Authentication directamente al iniciar sesión como superadmin) ----
+    if (pathname === '/api/config-publica' && req.method === 'GET') {
+      return sendJSON(res, 200, {
+        supabaseUrl: process.env.SUPABASE_URL,
+        supabaseAnonKey: process.env.SUPABASE_ANON_KEY
+      });
+    }
 
     // ---- Galería (recinto y eventos) ----
     if (pathname === '/api/galeria' && req.method === 'GET') {
@@ -235,13 +262,6 @@ async function handleApi(req, res, pathname, query) {
       res.writeHead(200, { 'Content-Type': contentType });
       return res.end(buffer);
     }
-    if (pathname === '/api/admin/canchas/config' && req.method === 'PUT') {
-      requireAdmin(req);
-      const body = await readBody(req);
-      const actualizada = await canchas.actualizarConfig(body);
-      return sendJSON(res, 200, { ok: true, config: actualizada });
-    }
-
     // ---- Admin: eventos ----
     if (pathname === '/api/admin/eventos' && req.method === 'GET') {
       requireAdmin(req);
@@ -253,6 +273,45 @@ async function handleApi(req, res, pathname, query) {
       const body = await readBody(req);
       const actualizado = await eventos.cambiarEstado(matchEstadoEvento[1], body.estado);
       return sendJSON(res, 200, { ok: true, evento: actualizado });
+    }
+
+    // ---- Superadmin: contenido y precios (Supabase Authentication) ----
+    if (pathname === '/api/superadmin/canchas-config' && req.method === 'GET') {
+      await requireSuperAdmin(req);
+      return sendJSON(res, 200, await canchas.getConfig());
+    }
+    if (pathname === '/api/superadmin/canchas-config' && req.method === 'PUT') {
+      await requireSuperAdmin(req);
+      const body = await readBody(req);
+      return sendJSON(res, 200, { ok: true, config: await canchas.actualizarConfig(body) });
+    }
+    if (pathname === '/api/superadmin/eventos-info' && req.method === 'GET') {
+      await requireSuperAdmin(req);
+      return sendJSON(res, 200, await eventos.infoPublica());
+    }
+    if (pathname === '/api/superadmin/eventos-info' && req.method === 'PUT') {
+      await requireSuperAdmin(req);
+      const body = await readBody(req);
+      return sendJSON(res, 200, { ok: true, info: await eventos.actualizarInfo(body) });
+    }
+    if (pathname === '/api/superadmin/menu-opciones' && req.method === 'GET') {
+      await requireSuperAdmin(req);
+      return sendJSON(res, 200, await eventos.listarMenuOpciones());
+    }
+    if (pathname === '/api/superadmin/menu-opciones' && req.method === 'POST') {
+      await requireSuperAdmin(req);
+      const body = await readBody(req);
+      return sendJSON(res, 201, { ok: true, opcion: await eventos.crearMenuOpcion(body) });
+    }
+    const matchMenuOpcion = pathname.match(/^\/api\/superadmin\/menu-opciones\/(\d+)$/);
+    if (matchMenuOpcion && req.method === 'PUT') {
+      await requireSuperAdmin(req);
+      const body = await readBody(req);
+      return sendJSON(res, 200, { ok: true, opcion: await eventos.actualizarMenuOpcion(matchMenuOpcion[1], body) });
+    }
+    if (matchMenuOpcion && req.method === 'DELETE') {
+      await requireSuperAdmin(req);
+      return sendJSON(res, 200, { ok: true, opcion: await eventos.eliminarMenuOpcion(matchMenuOpcion[1]) });
     }
 
     return sendJSON(res, 404, { error: 'Ruta de API no encontrada' });

@@ -19,6 +19,37 @@ function mostrarMensaje(texto, tipo) {
   setTimeout(() => { mensajeDiv.innerHTML = ''; }, 6000);
 }
 
+function formatoCLP(monto) {
+  return Number(monto).toLocaleString('es-CL', { style: 'currency', currency: 'CLP', maximumFractionDigits: 0 });
+}
+
+// Carga la información editable (capacidad/servicios/contacto) y las opciones
+// de menú activas. El menú solo aparece acá, en el formulario de solicitud,
+// no como texto fijo en el resto de la página.
+async function cargarInfoPublica() {
+  try {
+    const resp = await fetch('/api/eventos/info-publica');
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.error || 'No se pudo cargar la información');
+
+    document.getElementById('info-capacidad').textContent = data.capacidad || '';
+    document.getElementById('info-servicios').textContent = data.servicios || '';
+    document.getElementById('info-contacto').textContent = data.contacto || '';
+
+    const selectDesayuno = document.getElementById('ev-menu-desayuno');
+    const selectTarde = document.getElementById('ev-menu-tarde');
+    data.menu_opciones.forEach(opcion => {
+      const precio = opcion.precio_por_persona ? ` (${formatoCLP(opcion.precio_por_persona)} p/p)` : '';
+      const option = document.createElement('option');
+      option.value = opcion.id;
+      option.textContent = `${opcion.nombre}${precio}`;
+      (opcion.categoria === 'desayuno' ? selectDesayuno : selectTarde).appendChild(option);
+    });
+  } catch (err) {
+    mostrarMensaje(err.message, 'error');
+  }
+}
+
 async function cargarCalendario() {
   tituloMes.textContent = `${NOMBRES_MES[mesActual - 1]} ${anioActual}`;
   calendarioDiv.innerHTML = 'Cargando...';
@@ -105,7 +136,8 @@ form.addEventListener('submit', async (e) => {
     institucion: document.getElementById('ev-institucion').value,
     telefono: document.getElementById('ev-telefono').value,
     cantidad_personas: document.getElementById('ev-personas').value,
-    con_menu: document.getElementById('ev-menu').checked,
+    menu_desayuno_id: document.getElementById('ev-menu-desayuno').value || null,
+    menu_tarde_id: document.getElementById('ev-menu-tarde').value || null,
     comentario: document.getElementById('ev-comentario').value
   };
   try {
@@ -125,4 +157,5 @@ form.addEventListener('submit', async (e) => {
   }
 });
 
+cargarInfoPublica();
 cargarCalendario();

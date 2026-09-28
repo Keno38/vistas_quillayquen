@@ -52,15 +52,15 @@
   <div class="tarjetas" style="margin-top:0.4rem;">
     <div class="tarjeta">
       <h3>Capacidad</h3>
-      <p>Hasta 80 personas en el salón techado, más la terraza y el área de piscina para actividades al aire libre. Ideal para cursos, cumpleaños, matrimonios y celebraciones de empresa.</p>
+      <p id="info-capacidad">Cargando...</p>
     </div>
     <div class="tarjeta">
       <h3>Servicios incluidos</h3>
-      <p>Salón techado, piscina, mesas y sillas, estacionamiento. Opcional: menú de pollo con papas fritas y ensaladas para todos los asistentes.</p>
+      <p id="info-servicios">Cargando...</p>
     </div>
     <div class="tarjeta">
       <h3>Contacto</h3>
-      <p>Coordina tu evento eligiendo una fecha libre en el calendario. Te contactamos por teléfono/WhatsApp para confirmar los detalles y el pago.</p>
+      <p id="info-contacto">Cargando...</p>
     </div>
   </div>
 
@@ -71,7 +71,7 @@
   </div>
 
   <div class="home-panel">
-    <p>Ideal para paseos de fin de año de colegios, matrimonios y celebraciones. Puedes arrendar solo el local, o el local con menú (pollo con papas fritas y ensaladas). Elige una fecha libre en el calendario y envíanos tu solicitud; nuestro equipo la confirmará a la brevedad.</p>
+    <p>Ideal para paseos de fin de año de colegios, matrimonios y celebraciones. Puedes arrendar solo el local, o el local con menú. Elige una fecha libre en el calendario y envíanos tu solicitud; nuestro equipo la confirmará a la brevedad.</p>
 
     <div class="leyenda">
       <span class="lib"><i></i> Libre</span>
@@ -99,10 +99,14 @@
       <input type="tel" id="ev-telefono" required placeholder="+56 9 ...">
       <label for="ev-personas">Cantidad aproximada de personas</label>
       <input type="number" id="ev-personas" min="1">
-      <label>
-        <input type="checkbox" id="ev-menu" style="width:auto;display:inline-block;vertical-align:middle;">
-        Incluir menú (pollo con papas fritas y ensaladas)
-      </label>
+      <label for="ev-menu-desayuno">Menú desayuno (opcional)</label>
+      <select id="ev-menu-desayuno">
+        <option value="">Sin menú</option>
+      </select>
+      <label for="ev-menu-tarde">Menú tarde (opcional)</label>
+      <select id="ev-menu-tarde">
+        <option value="">Sin menú</option>
+      </select>
       <label for="ev-comentario">Comentario (opcional)</label>
       <textarea id="ev-comentario" rows="3"></textarea>
       <div style="display:flex;gap:0.6rem;margin-top:1.2rem;">

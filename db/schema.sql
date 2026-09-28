@@ -61,6 +61,9 @@ create table if not exists config (
   menu_evento_precio_por_persona integer,
   valor_cancha_hora integer not null default 24000,
   abono_porcentaje integer not null default 30 check (abono_porcentaje between 1 and 100),
+  eventos_capacidad text default 'Hasta 80 personas en el salón techado, más la terraza y el área de piscina.',
+  eventos_servicios text default 'Salón techado, piscina, mesas y sillas, estacionamiento.',
+  eventos_contacto text default 'Coordina tu evento eligiendo una fecha libre en el calendario. Te contactamos por teléfono/WhatsApp para confirmar los detalles y el pago.',
   constraint config_fila_unica check (id = 1)
 );
 
@@ -70,6 +73,22 @@ create table if not exists admin_usuarios (
   password_hash text not null
 );
 
+-- Opciones de menú para el Centro de Eventos, administradas por el
+-- superadministrador (ver README, sección "Panel de contenido").
+create table if not exists menu_opciones (
+  id serial primary key,
+  nombre text not null,
+  precio_por_persona integer,
+  activo boolean not null default true,
+  orden integer not null default 0,
+  -- 'desayuno' o 'tarde': un evento puede elegir un menú de cada categoría
+  -- a la vez (son independientes entre sí).
+  categoria text not null default 'tarde' check (categoria in ('desayuno', 'tarde'))
+);
+
+alter table eventos add column if not exists menu_desayuno_id integer references menu_opciones(id);
+alter table eventos add column if not exists menu_tarde_id integer references menu_opciones(id);
+
 -- El servidor accede con la clave "service_role" (nunca la "anon"), que ya
 -- salta las políticas de RLS. Igual dejamos RLS activado y sin políticas
 -- públicas, como defensa adicional por si alguna vez se usa la clave anon.
@@ -78,6 +97,7 @@ alter table reservas_cancha enable row level security;
 alter table eventos enable row level security;
 alter table config enable row level security;
 alter table admin_usuarios enable row level security;
+alter table menu_opciones enable row level security;
 
 -- Datos iniciales (equivalentes a los que traía data/db.json por defecto).
 insert into canchas (id, nombre) values (1, 'Cancha 1'), (2, 'Cancha 2')
@@ -92,6 +112,10 @@ insert into admin_usuarios (usuario, salt, password_hash) values (
   '208fb32c53880573ce1ecf58cafc6d33',
   'a91f8e6447fe62157750e96a35b21f2b7924a84c0b9aaf6b647e4b4a86d8ede6'
 ) on conflict (usuario) do nothing;
+
+insert into menu_opciones (nombre, precio_por_persona, orden)
+select 'Pollo con papas fritas y ensaladas', null, 1
+where not exists (select 1 from menu_opciones);
 
 -- Bucket privado para los comprobantes de transferencia de las reservas de cancha
 -- (solo el servidor, con la clave service_role, puede leer/escribir aquí).

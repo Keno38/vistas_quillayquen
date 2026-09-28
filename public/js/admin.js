@@ -22,7 +22,6 @@ async function verificarSesion() {
     seccionPanel.classList.remove('oculto');
     btnLogout.classList.remove('oculto');
     cargarEventos();
-    cargarConfigCanchas();
     cargarCanchas();
   } else {
     seccionLogin.classList.remove('oculto');
@@ -75,7 +74,7 @@ async function cargarEventos() {
         <td>${ev.institucion || '-'}</td>
         <td>${ev.telefono}</td>
         <td>${ev.cantidad_personas ?? '-'}</td>
-        <td>${ev.con_menu ? 'Sí (pollo, papas fritas y ensaladas)' : 'No'}</td>
+        <td>${[ev.menu_desayuno?.nombre && `Desayuno: ${ev.menu_desayuno.nombre}`, ev.menu_tarde?.nombre && `Tarde: ${ev.menu_tarde.nombre}`].filter(Boolean).join(' · ') || 'No'}</td>
         <td>${ev.comentario || '-'}</td>
         <td><span class="tag-estado ${ev.estado}">${ev.estado}</span></td>
         <td></td>
@@ -121,37 +120,6 @@ async function cambiarEstadoEvento(id, estado) {
     mostrarMensaje(err.message, 'error');
   }
 }
-
-async function cargarConfigCanchas() {
-  try {
-    const resp = await fetch('/api/canchas/config');
-    const config = await resp.json();
-    if (!resp.ok) throw new Error(config.error || 'No se pudo cargar la configuración');
-    document.getElementById('cfg-valor-cancha').value = config.valor_cancha_hora;
-    document.getElementById('cfg-abono-porcentaje').value = config.abono_porcentaje;
-  } catch (err) {
-    mostrarMensaje(err.message, 'error');
-  }
-}
-
-document.getElementById('form-config-canchas').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  try {
-    const resp = await fetch('/api/admin/canchas/config', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        valor_cancha_hora: document.getElementById('cfg-valor-cancha').value,
-        abono_porcentaje: document.getElementById('cfg-abono-porcentaje').value
-      })
-    });
-    const data = await resp.json();
-    if (!resp.ok) throw new Error(data.error || 'No se pudo guardar la configuración');
-    mostrarMensaje('Configuración de precios actualizada.', 'exito');
-  } catch (err) {
-    mostrarMensaje(err.message, 'error');
-  }
-});
 
 const ETIQUETAS_ESTADO = {
   pendiente_verificacion: 'Pendiente de verificación',

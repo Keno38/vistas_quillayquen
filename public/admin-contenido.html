@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contenido — Vistas Quillaiquen</title>
+<link rel="stylesheet" href="/css/estilo.css">
+</head>
+<body>
+
+<div class="home-glow home-glow-verde" aria-hidden="true"></div>
+<div class="home-glow home-glow-dorado" aria-hidden="true"></div>
+
+<header class="home-header">
+  <div class="home-header-inner">
+    <a href="/index.html" class="home-marca">
+      <img src="/img/logo-icono.png" alt="Vistas Quillaiquen" class="home-logo-badge">
+      <span class="home-marca-texto">
+        <span class="home-marca-nombre">Vistas Quillaiquen</span>
+        <span class="home-marca-sub">Panel de contenido</span>
+      </span>
+    </a>
+    <nav class="home-nav" aria-label="Navegación principal">
+      <a href="/admin.html">Panel de agenda</a>
+    </nav>
+    <a href="#" id="btn-logout-contenido" class="home-boton-oscuro oculto">Cerrar sesión</a>
+  </div>
+</header>
+
+<main class="home-main">
+  <div id="mensaje-contenido"></div>
+
+  <!-- Login (Supabase Authentication, separado del admin de agenda) -->
+  <section id="seccion-login-contenido" class="home-panel" style="max-width:420px;margin:2rem auto;">
+    <h1 style="margin-top:0;">Iniciar sesión</h1>
+    <p style="font-size:0.9rem;color:#64756c;">Acceso de superadministrador (Supabase Authentication). Distinto del usuario que revisa la agenda día a día.</p>
+    <form id="form-login-contenido">
+      <label for="ca-email">Correo</label>
+      <input type="email" id="ca-email" required>
+      <label for="ca-password">Contraseña</label>
+      <input type="password" id="ca-password" required>
+      <button type="submit" class="boton" style="margin-top:1rem;">Ingresar</button>
+    </form>
+  </section>
+
+  <!-- Panel -->
+  <section id="seccion-panel-contenido" class="oculto">
+    <div class="home-panel">
+      <h2 style="margin-top:0;">Información del Centro de Eventos</h2>
+      <p>Este texto se muestra en las tarjetas de la página pública de eventos.</p>
+      <form id="form-info-eventos">
+        <label for="ci-capacidad">Capacidad</label>
+        <textarea id="ci-capacidad" rows="3"></textarea>
+        <label for="ci-servicios">Servicios incluidos</label>
+        <textarea id="ci-servicios" rows="3"></textarea>
+        <label for="ci-contacto">Contacto</label>
+        <textarea id="ci-contacto" rows="3"></textarea>
+        <button type="submit" class="boton" style="margin-top:1rem;">Guardar información</button>
+      </form>
+    </div>
+
+    <div class="home-panel">
+      <h2 style="margin-top:0;">Opciones de menú</h2>
+      <p>Estas opciones son las que aparecen para elegir cuando alguien solicita el Centro de Eventos. Cada evento puede elegir un menú de desayuno y uno de tarde, independientemente. Si desactivas una opción, deja de ofrecerse pero no se borra su historial.</p>
+      <table class="admin-tabla" id="tabla-menu-opciones">
+        <thead>
+          <tr><th>Nombre</th><th>Categoría</th><th>Precio por persona</th><th>Activo</th><th>Orden</th><th>Acciones</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <h3>Agregar opción nueva</h3>
+      <form id="form-nueva-opcion" style="display:flex;gap:1rem;align-items:flex-end;flex-wrap:wrap;">
+        <div style="flex:2;min-width:200px;">
+          <label for="mo-nombre">Nombre</label>
+          <input type="text" id="mo-nombre" required>
+        </div>
+        <div style="flex:1;min-width:140px;">
+          <label for="mo-categoria">Categoría</label>
+          <select id="mo-categoria">
+            <option value="desayuno">Desayuno</option>
+            <option value="tarde" selected>Tarde</option>
+          </select>
+        </div>
+        <div style="flex:1;min-width:140px;">
+          <label for="mo-precio">Precio por persona (opcional)</label>
+          <input type="number" id="mo-precio" min="0">
+        </div>
+        <button type="submit" class="boton" style="margin-bottom:0.2rem;">Agregar</button>
+      </form>
+    </div>
+
+    <div class="home-panel">
+      <h2 style="margin-top:0;">Precio de canchas</h2>
+      <p>Valor de la hora y porcentaje de abono para las reservas de cancha.</p>
+      <form id="form-config-canchas" style="max-width:420px;display:flex;gap:1rem;align-items:flex-end;flex-wrap:wrap;">
+        <div style="flex:1;min-width:160px;">
+          <label for="cfg-valor-cancha">Valor de la hora (CLP)</label>
+          <input type="number" id="cfg-valor-cancha" min="1" required>
+        </div>
+        <div style="flex:1;min-width:160px;">
+          <label for="cfg-abono-porcentaje">% de abono</label>
+          <input type="number" id="cfg-abono-porcentaje" min="1" max="100" required>
+        </div>
+        <button type="submit" class="boton" style="margin-bottom:0.2rem;">Guardar</button>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer class="sitio">
+  Vistas Quillaiquen — parte de Comercializadora PCY
+  <div class="firma">© 2026 enovo · Todos los derechos reservados.</div>
+</footer>
+<script src="/js/admin-contenido.js"></script>
+</body>
+</html>
