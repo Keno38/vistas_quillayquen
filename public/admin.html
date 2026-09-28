@@ -20,11 +20,19 @@
         <span class="home-marca-sub">Administración</span>
       </span>
     </a>
-    <nav class="home-nav" aria-label="Navegación principal">
-      <a href="/index.html">Volver al sitio</a>
-      <a href="/admin-contenido.html">Contenido</a>
-    </nav>
-    <a href="#" id="btn-logout" class="home-boton-oscuro oculto">Cerrar sesión</a>
+    <input type="checkbox" id="menu-toggle" class="home-menu-checkbox">
+    <label for="menu-toggle" class="home-hamburger" aria-label="Abrir menú">
+      <span></span><span></span><span></span>
+    </label>
+    <div class="home-menu-movil">
+      <nav class="home-nav" aria-label="Navegación principal">
+        <a href="#panel-eventos">Solicitudes</a>
+        <a href="#panel-canchas">Reservas</a>
+        <a href="/admin-contenido.html">Contenido</a>
+        <a href="/index.html">Volver al sitio</a>
+      </nav>
+      <a href="#" id="btn-logout" class="home-boton-oscuro oculto">Cerrar sesión</a>
+    </div>
   </div>
 </header>
 
@@ -45,7 +53,9 @@
 
   <!-- Panel -->
   <section id="seccion-panel" class="oculto">
-    <div class="home-panel">
+    <div class="stats-admin" id="stats-admin"></div>
+
+    <div class="home-panel" id="panel-eventos">
       <h2 style="margin-top:0;">Solicitudes del Centro de Eventos</h2>
       <p>Confirma o rechaza manualmente cada solicitud. Al confirmar una fecha, el sistema bloqueará automáticamente ese día para nuevas solicitudes.</p>
       <table class="admin-tabla" id="tabla-eventos">
@@ -59,16 +69,20 @@
       </table>
     </div>
 
-    <div class="home-panel">
+    <div class="home-panel" id="panel-canchas">
       <h2 style="margin-top:0;">Reservas de canchas <span id="badge-pendientes" class="tag-estado oculto"></span></h2>
       <p>Revisa el comprobante antes de confirmar. Si no es válido, rechaza la reserva y el horario se libera automáticamente.</p>
-      <div class="selector-fecha">
+
+      <input type="checkbox" id="filtros-toggle-check" class="filtros-checkbox">
+      <label for="filtros-toggle-check" class="boton secundario filtros-toggle">Filtros</label>
+      <div class="selector-fecha filtros-panel">
         <label for="admin-desde" style="margin:0;">Desde</label>
         <input type="date" id="admin-desde">
         <label for="admin-hasta" style="margin:0;">Hasta</label>
         <input type="date" id="admin-hasta">
-        <button class="boton secundario" id="btn-filtrar-canchas">Filtrar</button>
+        <button class="boton secundario" id="btn-filtrar-canchas">Aplicar filtros</button>
       </div>
+
       <table class="admin-tabla" id="tabla-canchas">
         <thead>
           <tr>

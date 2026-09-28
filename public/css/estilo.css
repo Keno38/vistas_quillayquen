@@ -271,6 +271,106 @@ table.admin-tabla th, table.admin-tabla td {
 table.admin-tabla th { background: #eef3f0; }
 table.admin-tabla tr:last-child td { border-bottom: none; }
 
+/* ---- Tablas de administración → tarjetas en móvil ----
+   No se duplica el render en JS: cada <td> lleva un atributo
+   data-label="Campo" (agregado al armar la fila) y en pantallas chicas
+   la tabla se convierte en una lista de tarjetas, una por fila, con el
+   nombre del campo a la izquierda y el valor a la derecha. ---- */
+@media (max-width: 760px) {
+  table.admin-tabla, table.admin-tabla thead, table.admin-tabla tbody,
+  table.admin-tabla th, table.admin-tabla td, table.admin-tabla tr {
+    display: block;
+  }
+  table.admin-tabla thead { display: none; }
+  table.admin-tabla tr {
+    background: var(--blanco);
+    border-radius: var(--radio-chico);
+    box-shadow: var(--sombra-tarjeta);
+    margin-bottom: 0.9rem;
+    padding: 0.4rem 0.9rem;
+  }
+  table.admin-tabla td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8rem;
+    border-bottom: 1px solid var(--gris-borde);
+    padding: 0.55rem 0;
+    text-align: right;
+    min-height: 44px;
+  }
+  table.admin-tabla td:last-child { border-bottom: none; }
+  table.admin-tabla td[data-label]::before {
+    content: attr(data-label);
+    font-weight: 700;
+    color: var(--verde-oscuro);
+    text-align: left;
+    flex-shrink: 0;
+  }
+  table.admin-tabla td input,
+  table.admin-tabla td select {
+    width: auto;
+    max-width: 60%;
+  }
+  table.admin-tabla td:has(button) {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+}
+
+/* ---- Panel de filtros colapsable en móvil ---- */
+.filtros-checkbox { display: none; }
+
+@media (max-width: 640px) {
+  .filtros-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .filtros-panel {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.6rem;
+    margin-top: 0.8rem;
+    padding: 1rem;
+    background: var(--gris-fondo);
+    border-radius: var(--radio-chico);
+  }
+  .filtros-checkbox:checked ~ .filtros-panel { display: flex; }
+  .filtros-panel input, .filtros-panel select { width: 100%; }
+}
+@media (min-width: 641px) {
+  .filtros-toggle { display: none; }
+}
+
+/* ---- Indicadores rápidos (dashboard) ---- */
+.stats-admin {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.8rem;
+  margin-bottom: 1.5rem;
+}
+.stat-tarjeta {
+  background: var(--blanco);
+  border-radius: var(--radio-chico);
+  box-shadow: var(--sombra-tarjeta);
+  padding: 1rem 1.2rem;
+}
+.stat-tarjeta .stat-numero {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--verde-oscuro);
+  line-height: 1.1;
+}
+.stat-tarjeta .stat-etiqueta {
+  font-size: 0.8rem;
+  color: #64756c;
+  margin-top: 0.2rem;
+}
+
 .tag-estado {
   display: inline-block;
   padding: 0.25rem 0.7rem;

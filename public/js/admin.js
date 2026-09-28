@@ -54,6 +54,33 @@ btnLogout.addEventListener('click', async (e) => {
   verificarSesion();
 });
 
+let ultimosEventos = [];
+let ultimasReservasCanchas = [];
+
+function renderStatsAdmin() {
+  const cont = document.getElementById('stats-admin');
+  const hoy = new Date();
+  const mesActualISO = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}`;
+
+  const eventosPendientes = ultimosEventos.filter(e => e.estado === 'pendiente').length;
+  const canchasPendientes = ultimasReservasCanchas.filter(r => r.estado === 'pendiente_verificacion').length;
+  const canchasConfirmadasMes = ultimasReservasCanchas.filter(
+    r => r.estado === 'confirmada' && r.fecha.startsWith(mesActualISO)
+  ).length;
+
+  const tarjetas = [
+    { numero: eventosPendientes, etiqueta: 'Solicitudes de eventos por revisar' },
+    { numero: canchasPendientes, etiqueta: 'Reservas de cancha por revisar' },
+    { numero: canchasConfirmadasMes, etiqueta: 'Reservas confirmadas este mes' }
+  ];
+  cont.innerHTML = tarjetas.map(t => `
+    <div class="stat-tarjeta">
+      <div class="stat-numero">${t.numero}</div>
+      <div class="stat-etiqueta">${t.etiqueta}</div>
+    </div>
+  `).join('');
+}
+
 async function cargarEventos() {
   const tbody = document.querySelector('#tabla-eventos tbody');
   tbody.innerHTML = '<tr><td colspan="9">Cargando...</td></tr>';
@@ -61,6 +88,8 @@ async function cargarEventos() {
     const resp = await fetch('/api/admin/eventos');
     const lista = await resp.json();
     if (!resp.ok) throw new Error(lista.error || 'Error al cargar solicitudes');
+    ultimosEventos = lista;
+    renderStatsAdmin();
     if (lista.length === 0) {
       tbody.innerHTML = '<tr><td colspan="9">No hay solicitudes registradas.</td></tr>';
       return;
@@ -69,19 +98,19 @@ async function cargarEventos() {
     lista.forEach(ev => {
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td>${ev.fecha}</td>
-        <td>${ev.contacto_nombre}</td>
-        <td>${ev.institucion || '-'}</td>
-        <td>${ev.telefono}</td>
-        <td>${ev.cantidad_personas ?? '-'}</td>
-        <td>${[
+        <td data-label="Fecha">${ev.fecha}</td>
+        <td data-label="Contacto">${ev.contacto_nombre}</td>
+        <td data-label="Institución">${ev.institucion || '-'}</td>
+        <td data-label="Teléfono">${ev.telefono}</td>
+        <td data-label="Personas">${ev.cantidad_personas ?? '-'}</td>
+        <td data-label="Menú">${[
           ev.menu_desayuno?.nombre && `Desayuno: ${ev.menu_desayuno.nombre}`,
           ev.menu_almuerzo?.nombre && `Almuerzo: ${ev.menu_almuerzo.nombre}`,
           ev.menu_once?.nombre && `Once: ${ev.menu_once.nombre}`
         ].filter(Boolean).join(' · ') || 'No'}</td>
-        <td>${ev.comentario || '-'}</td>
-        <td><span class="tag-estado ${ev.estado}">${ev.estado}</span></td>
-        <td></td>
+        <td data-label="Comentario">${ev.comentario || '-'}</td>
+        <td data-label="Estado"><span class="tag-estado ${ev.estado}">${ev.estado}</span></td>
+        <td data-label="Acciones"></td>
       `;
       const tdAcciones = tr.querySelector('td:last-child');
       if (ev.estado === 'pendiente') {
@@ -156,6 +185,8 @@ async function cargarCanchas() {
     const lista = await resp.json();
     if (!resp.ok) throw new Error(lista.error || 'Error al cargar reservas');
     actualizarBadgePendientes(lista);
+    ultimasReservasCanchas = lista;
+    renderStatsAdmin();
     if (lista.length === 0) {
       tbody.innerHTML = '<tr><td colspan="10">No hay reservas registradas.</td></tr>';
       return;
@@ -167,16 +198,16 @@ async function cargarCanchas() {
       const claseEstado = r.estado === 'confirmada' ? 'confirmado'
         : r.estado === 'pendiente_verificacion' ? 'pendiente' : 'rechazado';
       tr.innerHTML = `
-        <td>${r.fecha}</td>
-        <td>${r.hora_inicio} - ${r.hora_fin}</td>
-        <td>Cancha ${r.cancha_id}</td>
-        <td>${r.nombre_cliente}</td>
-        <td>${r.telefono}</td>
-        <td>${r.tipo_pago === 'completo' ? 'Total' : 'Abono'}</td>
-        <td>${formatoCLP(r.monto_esperado)}</td>
-        <td></td>
-        <td><span class="tag-estado ${claseEstado}">${estadoTexto}</span>${r.motivo ? `<br><small>${r.motivo}</small>` : ''}</td>
-        <td></td>
+        <td data-label="Fecha">${r.fecha}</td>
+        <td data-label="Hora">${r.hora_inicio} - ${r.hora_fin}</td>
+        <td data-label="Cancha">Cancha ${r.cancha_id}</td>
+        <td data-label="Cliente">${r.nombre_cliente}</td>
+        <td data-label="Teléfono">${r.telefono}</td>
+        <td data-label="Pago">${r.tipo_pago === 'completo' ? 'Total' : 'Abono'}</td>
+        <td data-label="Monto">${formatoCLP(r.monto_esperado)}</td>
+        <td data-label="Comprobante"></td>
+        <td data-label="Estado"><span class="tag-estado ${claseEstado}">${estadoTexto}</span>${r.motivo ? `<br><small>${r.motivo}</small>` : ''}</td>
+        <td data-label="Acciones"></td>
       `;
 
       const tdComprobante = tr.children[7];
