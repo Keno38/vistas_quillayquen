@@ -1,10 +1,15 @@
 const mensajeDiv = document.getElementById('mensaje-galeria');
 const tabRecinto = document.getElementById('tab-recinto');
 const tabEventos = document.getElementById('tab-eventos');
+const tabReels = document.getElementById('tab-reels');
 const vistaRecinto = document.getElementById('vista-recinto');
 const vistaEventos = document.getElementById('vista-eventos');
+const vistaReels = document.getElementById('vista-reels');
 const grillaRecinto = document.getElementById('grilla-recinto');
 const listaAlbumes = document.getElementById('lista-albumes');
+const grillaReels = document.getElementById('grilla-reels');
+
+const NOMBRE_CUENTA = { vistas: 'Vistas Quillayquén', ferreteria: 'Ferretería PCY' };
 
 const lightbox = document.getElementById('lightbox');
 const lightboxContenido = document.getElementById('lightbox-contenido');
@@ -118,22 +123,51 @@ function renderEventos(albumes) {
   });
 }
 
-function activarTab(tab) {
-  if (tab === 'recinto') {
-    tabRecinto.classList.remove('secundario');
-    tabEventos.classList.add('secundario');
-    vistaRecinto.classList.remove('oculto');
-    vistaEventos.classList.add('oculto');
-  } else {
-    tabEventos.classList.remove('secundario');
-    tabRecinto.classList.add('secundario');
-    vistaEventos.classList.remove('oculto');
-    vistaRecinto.classList.add('oculto');
+// ---- Reels (incrustados con el embed oficial de Instagram) ----
+let scriptInstagramCargado = false;
+
+function cargarScriptInstagram() {
+  if (scriptInstagramCargado) {
+    if (window.instgrm) window.instgrm.Embeds.process();
+    return;
   }
+  scriptInstagramCargado = true;
+  const script = document.createElement('script');
+  script.src = 'https://www.instagram.com/embed.js';
+  script.async = true;
+  document.body.appendChild(script);
+}
+
+function renderReels(lista) {
+  grillaReels.innerHTML = '';
+  if (lista.length === 0) {
+    grillaReels.innerHTML = '<p>Todavía no hay reels cargados.</p>';
+    return;
+  }
+  lista.forEach(reel => {
+    const tarjeta = document.createElement('div');
+    tarjeta.className = 'tarjeta-reel';
+    tarjeta.innerHTML = `
+      <span class="reel-cuenta">${reel.titulo || NOMBRE_CUENTA[reel.cuenta] || ''}</span>
+      <blockquote class="instagram-media" data-instgrm-permalink="${reel.url}" data-instgrm-version="14"></blockquote>
+    `;
+    grillaReels.appendChild(tarjeta);
+  });
+  cargarScriptInstagram();
+}
+
+function activarTab(tab) {
+  tabRecinto.classList.toggle('secundario', tab !== 'recinto');
+  tabEventos.classList.toggle('secundario', tab !== 'eventos');
+  tabReels.classList.toggle('secundario', tab !== 'reels');
+  vistaRecinto.classList.toggle('oculto', tab !== 'recinto');
+  vistaEventos.classList.toggle('oculto', tab !== 'eventos');
+  vistaReels.classList.toggle('oculto', tab !== 'reels');
 }
 
 tabRecinto.addEventListener('click', () => activarTab('recinto'));
 tabEventos.addEventListener('click', () => activarTab('eventos'));
+tabReels.addEventListener('click', () => activarTab('reels'));
 
 async function cargarGaleria() {
   try {
@@ -147,4 +181,16 @@ async function cargarGaleria() {
   }
 }
 
+async function cargarReels() {
+  try {
+    const resp = await fetch('/api/reels');
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.error || 'No se pudieron cargar los reels');
+    renderReels(data);
+  } catch (err) {
+    mostrarMensaje(err.message, 'error');
+  }
+}
+
 cargarGaleria();
+cargarReels();

@@ -73,8 +73,8 @@ async function crearMenuOpcion({ nombre, precio_por_persona, orden, categoria })
     err.status = 400;
     throw err;
   }
-  if (!['desayuno', 'tarde'].includes(categoria)) {
-    const err = new Error('La categoría debe ser "desayuno" o "tarde"');
+  if (!['desayuno', 'almuerzo', 'once'].includes(categoria)) {
+    const err = new Error('La categoría debe ser "desayuno", "almuerzo" u "once"');
     err.status = 400;
     throw err;
   }
@@ -97,8 +97,8 @@ async function actualizarMenuOpcion(id, { nombre, precio_por_persona, activo, or
   if (activo !== undefined) cambios.activo = Boolean(activo);
   if (orden !== undefined) cambios.orden = Number(orden);
   if (categoria !== undefined) {
-    if (!['desayuno', 'tarde'].includes(categoria)) {
-      const err = new Error('La categoría debe ser "desayuno" o "tarde"');
+    if (!['desayuno', 'almuerzo', 'once'].includes(categoria)) {
+      const err = new Error('La categoría debe ser "desayuno", "almuerzo" u "once"');
       err.status = 400;
       throw err;
     }
@@ -137,7 +137,7 @@ async function validarMenuOpcion(id, categoriaEsperada) {
   return opcion.id;
 }
 
-async function solicitar({ fecha, contacto_nombre, institucion, telefono, menu_desayuno_id, menu_tarde_id, cantidad_personas, comentario }) {
+async function solicitar({ fecha, contacto_nombre, institucion, telefono, menu_desayuno_id, menu_almuerzo_id, menu_once_id, cantidad_personas, comentario }) {
   if (!validarFecha(fecha)) {
     const err = new Error('Fecha inválida, use formato AAAA-MM-DD');
     err.status = 400;
@@ -149,9 +149,10 @@ async function solicitar({ fecha, contacto_nombre, institucion, telefono, menu_d
     throw err;
   }
 
-  const [menuDesayunoId, menuTardeId] = await Promise.all([
+  const [menuDesayunoId, menuAlmuerzoId, menuOnceId] = await Promise.all([
     validarMenuOpcion(menu_desayuno_id, 'desayuno'),
-    validarMenuOpcion(menu_tarde_id, 'tarde')
+    validarMenuOpcion(menu_almuerzo_id, 'almuerzo'),
+    validarMenuOpcion(menu_once_id, 'once')
   ]);
 
   const confirmados = await pg(`/eventos?fecha=eq.${fecha}&estado=eq.confirmado&select=id`);
@@ -168,9 +169,10 @@ async function solicitar({ fecha, contacto_nombre, institucion, telefono, menu_d
       contacto_nombre: String(contacto_nombre).trim(),
       institucion: institucion ? String(institucion).trim() : '',
       telefono: String(telefono).trim(),
-      con_menu: menuDesayunoId !== null || menuTardeId !== null,
+      con_menu: menuDesayunoId !== null || menuAlmuerzoId !== null || menuOnceId !== null,
       menu_desayuno_id: menuDesayunoId,
-      menu_tarde_id: menuTardeId,
+      menu_almuerzo_id: menuAlmuerzoId,
+      menu_once_id: menuOnceId,
       cantidad_personas: cantidad_personas ? Number(cantidad_personas) : null,
       comentario: comentario ? String(comentario).trim() : '',
       estado: 'pendiente' // requiere confirmación manual del administrador
@@ -180,7 +182,7 @@ async function solicitar({ fecha, contacto_nombre, institucion, telefono, menu_d
 }
 
 async function listar({ estado } = {}) {
-  let query = '/eventos?select=*,menu_desayuno:menu_opciones!menu_desayuno_id(nombre),menu_tarde:menu_opciones!menu_tarde_id(nombre)&order=fecha.asc';
+  let query = '/eventos?select=*,menu_desayuno:menu_opciones!menu_desayuno_id(nombre),menu_almuerzo:menu_opciones!menu_almuerzo_id(nombre),menu_once:menu_opciones!menu_once_id(nombre)&order=fecha.asc';
   if (estado) query += `&estado=eq.${estado}`;
   return pg(query);
 }

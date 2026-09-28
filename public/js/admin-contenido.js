@@ -56,7 +56,7 @@ async function mostrarPanelSiHaySesion() {
   seccionLogin.classList.add('oculto');
   seccionPanel.classList.remove('oculto');
   btnLogout.classList.remove('oculto');
-  await Promise.all([cargarInfoEventos(), cargarMenuOpciones(), cargarConfigCanchas()]);
+  await Promise.all([cargarInfoEventos(), cargarMenuOpciones(), cargarConfigCanchas(), cargarReels()]);
 }
 
 document.getElementById('form-login-contenido').addEventListener('submit', async (e) => {
@@ -147,7 +147,8 @@ function selectCategoria(valorActual) {
   return `
     <select data-campo="categoria">
       <option value="desayuno" ${valorActual === 'desayuno' ? 'selected' : ''}>Desayuno</option>
-      <option value="tarde" ${valorActual === 'tarde' ? 'selected' : ''}>Tarde</option>
+      <option value="almuerzo" ${valorActual === 'almuerzo' ? 'selected' : ''}>Almuerzo</option>
+      <option value="once" ${valorActual === 'once' ? 'selected' : ''}>Once</option>
     </select>
   `;
 }
@@ -238,6 +239,108 @@ document.getElementById('form-nueva-opcion').addEventListener('submit', async (e
     document.getElementById('form-nueva-opcion').reset();
     mostrarMensaje('Opción agregada.', 'exito');
     cargarMenuOpciones();
+  } catch (err) {
+    mostrarMensaje(err.message, 'error');
+  }
+});
+
+// ---- Reels de Instagram ----
+const NOMBRE_CUENTA_REEL = { vistas: 'Vistas Quillayquén', ferreteria: 'Ferretería PCY' };
+
+function selectCuentaReel(valorActual) {
+  return `
+    <select data-campo="cuenta">
+      <option value="vistas" ${valorActual === 'vistas' ? 'selected' : ''}>Vistas Quillayquén</option>
+      <option value="ferreteria" ${valorActual === 'ferreteria' ? 'selected' : ''}>Ferretería PCY</option>
+    </select>
+  `;
+}
+
+async function cargarReels() {
+  const tbody = document.querySelector('#tabla-reels tbody');
+  tbody.innerHTML = '<tr><td colspan="6">Cargando...</td></tr>';
+  try {
+    const lista = await llamarSuperadmin('/api/superadmin/reels');
+    if (lista.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6">No hay reels registrados.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = '';
+    lista.forEach(reel => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><input type="url" value="${reel.url}" data-campo="url" style="min-width:220px;"></td>
+        <td>${selectCuentaReel(reel.cuenta)}</td>
+        <td><input type="text" value="${reel.titulo || ''}" data-campo="titulo" style="min-width:140px;"></td>
+        <td style="text-align:center;"><input type="checkbox" ${reel.activo ? 'checked' : ''} data-campo="activo" style="width:auto;"></td>
+        <td><input type="number" value="${reel.orden}" data-campo="orden" style="width:70px;"></td>
+        <td></td>
+      `;
+      const tdAcciones = tr.querySelector('td:last-child');
+
+      const btnGuardar = document.createElement('button');
+      btnGuardar.textContent = 'Guardar';
+      btnGuardar.className = 'boton';
+      btnGuardar.type = 'button';
+      btnGuardar.style.marginRight = '0.4rem';
+      btnGuardar.addEventListener('click', () => guardarReel(reel.id, tr));
+
+      const btnEliminar = document.createElement('button');
+      btnEliminar.textContent = 'Eliminar';
+      btnEliminar.className = 'boton secundario';
+      btnEliminar.type = 'button';
+      btnEliminar.addEventListener('click', () => eliminarReel(reel.id));
+
+      tdAcciones.appendChild(btnGuardar);
+      tdAcciones.appendChild(btnEliminar);
+      tbody.appendChild(tr);
+    });
+  } catch (err) {
+    tbody.innerHTML = `<tr><td colspan="6">${err.message}</td></tr>`;
+  }
+}
+
+async function guardarReel(id, tr) {
+  const url = tr.querySelector('[data-campo="url"]').value;
+  const cuenta = tr.querySelector('[data-campo="cuenta"]').value;
+  const titulo = tr.querySelector('[data-campo="titulo"]').value;
+  const activo = tr.querySelector('[data-campo="activo"]').checked;
+  const orden = tr.querySelector('[data-campo="orden"]').value;
+  try {
+    await llamarSuperadmin(`/api/superadmin/reels/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify({ url, cuenta, titulo, activo, orden })
+    });
+    mostrarMensaje('Reel actualizado.', 'exito');
+    cargarReels();
+  } catch (err) {
+    mostrarMensaje(err.message, 'error');
+  }
+}
+
+async function eliminarReel(id) {
+  try {
+    await llamarSuperadmin(`/api/superadmin/reels/${id}`, { method: 'DELETE' });
+    mostrarMensaje('Reel eliminado.', 'exito');
+    cargarReels();
+  } catch (err) {
+    mostrarMensaje(err.message, 'error');
+  }
+}
+
+document.getElementById('form-nuevo-reel').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  try {
+    await llamarSuperadmin('/api/superadmin/reels', {
+      method: 'POST',
+      body: JSON.stringify({
+        url: document.getElementById('reel-url').value,
+        cuenta: document.getElementById('reel-cuenta').value
+      })
+    });
+    document.getElementById('form-nuevo-reel').reset();
+    mostrarMensaje('Reel agregado.', 'exito');
+    cargarReels();
   } catch (err) {
     mostrarMensaje(err.message, 'error');
   }

@@ -13,6 +13,7 @@ const canchas = require('./canchas');
 const eventos = require('./eventos');
 const auth = require('./auth');
 const galeria = require('./galeria');
+const reels = require('./reels');
 const supabaseAuth = require('./supabaseAuth');
 const { parseMultipart } = require('./multipart');
 
@@ -210,6 +211,9 @@ async function handleApi(req, res, pathname, query) {
     if (pathname === '/api/galeria' && req.method === 'GET') {
       return sendJSON(res, 200, galeria.listar());
     }
+    if (pathname === '/api/reels' && req.method === 'GET') {
+      return sendJSON(res, 200, await reels.listarPublicos());
+    }
 
     // ---- Autenticación admin ----
     if (pathname === '/api/admin/login' && req.method === 'POST') {
@@ -284,6 +288,25 @@ async function handleApi(req, res, pathname, query) {
       await requireSuperAdmin(req);
       const body = await readBody(req);
       return sendJSON(res, 200, { ok: true, config: await canchas.actualizarConfig(body) });
+    }
+    if (pathname === '/api/superadmin/reels' && req.method === 'GET') {
+      await requireSuperAdmin(req);
+      return sendJSON(res, 200, await reels.listarTodos());
+    }
+    if (pathname === '/api/superadmin/reels' && req.method === 'POST') {
+      await requireSuperAdmin(req);
+      const body = await readBody(req);
+      return sendJSON(res, 201, { ok: true, reel: await reels.crear(body) });
+    }
+    const matchReel = pathname.match(/^\/api\/superadmin\/reels\/(\d+)$/);
+    if (matchReel && req.method === 'PUT') {
+      await requireSuperAdmin(req);
+      const body = await readBody(req);
+      return sendJSON(res, 200, { ok: true, reel: await reels.actualizar(matchReel[1], body) });
+    }
+    if (matchReel && req.method === 'DELETE') {
+      await requireSuperAdmin(req);
+      return sendJSON(res, 200, { ok: true, reel: await reels.eliminar(matchReel[1]) });
     }
     if (pathname === '/api/superadmin/eventos-info' && req.method === 'GET') {
       await requireSuperAdmin(req);

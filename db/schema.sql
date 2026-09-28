@@ -81,13 +81,26 @@ create table if not exists menu_opciones (
   precio_por_persona integer,
   activo boolean not null default true,
   orden integer not null default 0,
-  -- 'desayuno' o 'tarde': un evento puede elegir un menú de cada categoría
-  -- a la vez (son independientes entre sí).
-  categoria text not null default 'tarde' check (categoria in ('desayuno', 'tarde'))
+  -- 'desayuno', 'almuerzo' u 'once': un evento puede elegir un menú de cada
+  -- categoría a la vez (son independientes entre sí).
+  categoria text not null default 'almuerzo' check (categoria in ('desayuno', 'almuerzo', 'once'))
 );
 
 alter table eventos add column if not exists menu_desayuno_id integer references menu_opciones(id);
-alter table eventos add column if not exists menu_tarde_id integer references menu_opciones(id);
+alter table eventos add column if not exists menu_almuerzo_id integer references menu_opciones(id);
+alter table eventos add column if not exists menu_once_id integer references menu_opciones(id);
+
+-- Reels de Instagram para la galería (se pegan a mano desde el panel de
+-- Contenido; ver README, sección "Reels").
+create table if not exists reels (
+  id serial primary key,
+  url text not null,
+  cuenta text not null check (cuenta in ('vistas', 'ferreteria')),
+  titulo text default '',
+  activo boolean not null default true,
+  orden integer not null default 0,
+  creado_en timestamptz not null default now()
+);
 
 -- El servidor accede con la clave "service_role" (nunca la "anon"), que ya
 -- salta las políticas de RLS. Igual dejamos RLS activado y sin políticas
@@ -98,6 +111,7 @@ alter table eventos enable row level security;
 alter table config enable row level security;
 alter table admin_usuarios enable row level security;
 alter table menu_opciones enable row level security;
+alter table reels enable row level security;
 
 -- Datos iniciales (equivalentes a los que traía data/db.json por defecto).
 insert into canchas (id, nombre) values (1, 'Cancha 1'), (2, 'Cancha 2')

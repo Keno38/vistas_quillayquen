@@ -1180,3 +1180,59 @@ footer.sitio .firma {
   .selector-fecha { justify-content: center; text-align: center; }
   .selector-fecha strong { width: 100%; order: -1; }
 }
+
+/* ---- Redes sociales ---- */
+.home-social {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.home-social a {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: rgba(6, 43, 79, 0.08);
+  color: var(--home-azul-oscuro, var(--verde-oscuro));
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+.home-social a:hover { transform: translateY(-2px); background: rgba(6, 43, 79, 0.15); }
+.home-social svg { width: 20px; height: 20px; fill: currentColor; }
+
+footer.sitio .home-social {
+  justify-content: center;
+  margin: 0.8rem 0;
+}
+footer.sitio .home-social a { background: rgba(6, 43, 79, 0.06); }
+
+/* ---- Reels (galería) ---- */
+.grilla-reels {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-top: 0.8rem;
+}
+
+.tarjeta-reel {
+  background: var(--blanco);
+  border-radius: var(--radio-chico);
+  box-shadow: var(--sombra-tarjeta);
+  overflow: hidden;
+  padding: 0.6rem;
+}
+
+.tarjeta-reel .reel-cuenta {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.3rem 0.4rem 0.5rem;
+  color: var(--verde-oscuro);
+}
+
+.tarjeta-reel iframe,
+.tarjeta-reel blockquote {
+  width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+}

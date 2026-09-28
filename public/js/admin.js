@@ -74,7 +74,11 @@ async function cargarEventos() {
         <td>${ev.institucion || '-'}</td>
         <td>${ev.telefono}</td>
         <td>${ev.cantidad_personas ?? '-'}</td>
-        <td>${[ev.menu_desayuno?.nombre && `Desayuno: ${ev.menu_desayuno.nombre}`, ev.menu_tarde?.nombre && `Tarde: ${ev.menu_tarde.nombre}`].filter(Boolean).join(' · ') || 'No'}</td>
+        <td>${[
+          ev.menu_desayuno?.nombre && `Desayuno: ${ev.menu_desayuno.nombre}`,
+          ev.menu_almuerzo?.nombre && `Almuerzo: ${ev.menu_almuerzo.nombre}`,
+          ev.menu_once?.nombre && `Once: ${ev.menu_once.nombre}`
+        ].filter(Boolean).join(' · ') || 'No'}</td>
         <td>${ev.comentario || '-'}</td>
         <td><span class="tag-estado ${ev.estado}">${ev.estado}</span></td>
         <td></td>

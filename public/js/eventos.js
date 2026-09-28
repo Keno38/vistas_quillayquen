@@ -36,14 +36,18 @@ async function cargarInfoPublica() {
     document.getElementById('info-servicios').textContent = data.servicios || '';
     document.getElementById('info-contacto').textContent = data.contacto || '';
 
-    const selectDesayuno = document.getElementById('ev-menu-desayuno');
-    const selectTarde = document.getElementById('ev-menu-tarde');
+    const selectsPorCategoria = {
+      desayuno: document.getElementById('ev-menu-desayuno'),
+      almuerzo: document.getElementById('ev-menu-almuerzo'),
+      once: document.getElementById('ev-menu-once')
+    };
     data.menu_opciones.forEach(opcion => {
       const precio = opcion.precio_por_persona ? ` (${formatoCLP(opcion.precio_por_persona)} p/p)` : '';
       const option = document.createElement('option');
       option.value = opcion.id;
       option.textContent = `${opcion.nombre}${precio}`;
-      (opcion.categoria === 'desayuno' ? selectDesayuno : selectTarde).appendChild(option);
+      const select = selectsPorCategoria[opcion.categoria];
+      if (select) select.appendChild(option);
     });
   } catch (err) {
     mostrarMensaje(err.message, 'error');
@@ -137,7 +141,8 @@ form.addEventListener('submit', async (e) => {
     telefono: document.getElementById('ev-telefono').value,
     cantidad_personas: document.getElementById('ev-personas').value,
     menu_desayuno_id: document.getElementById('ev-menu-desayuno').value || null,
-    menu_tarde_id: document.getElementById('ev-menu-tarde').value || null,
+    menu_almuerzo_id: document.getElementById('ev-menu-almuerzo').value || null,
+    menu_once_id: document.getElementById('ev-menu-once').value || null,
     comentario: document.getElementById('ev-comentario').value
   };
   try {

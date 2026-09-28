@@ -61,7 +61,7 @@
 
     <div class="home-panel">
       <h2 style="margin-top:0;">Opciones de menú</h2>
-      <p>Estas opciones son las que aparecen para elegir cuando alguien solicita el Centro de Eventos. Cada evento puede elegir un menú de desayuno y uno de tarde, independientemente. Si desactivas una opción, deja de ofrecerse pero no se borra su historial.</p>
+      <p>Estas opciones son las que aparecen para elegir cuando alguien solicita el Centro de Eventos. Cada evento puede elegir un menú de desayuno, uno de almuerzo y uno de once, independientemente. Si desactivas una opción, deja de ofrecerse pero no se borra su historial.</p>
       <table class="admin-tabla" id="tabla-menu-opciones">
         <thead>
           <tr><th>Nombre</th><th>Categoría</th><th>Precio por persona</th><th>Activo</th><th>Orden</th><th>Acciones</th></tr>
@@ -79,7 +79,8 @@
           <label for="mo-categoria">Categoría</label>
           <select id="mo-categoria">
             <option value="desayuno">Desayuno</option>
-            <option value="tarde" selected>Tarde</option>
+            <option value="almuerzo" selected>Almuerzo</option>
+            <option value="once">Once</option>
           </select>
         </div>
         <div style="flex:1;min-width:140px;">
@@ -103,6 +104,33 @@
           <input type="number" id="cfg-abono-porcentaje" min="1" max="100" required>
         </div>
         <button type="submit" class="boton" style="margin-bottom:0.2rem;">Guardar</button>
+      </form>
+    </div>
+
+    <div class="home-panel">
+      <h2 style="margin-top:0;">Reels de Instagram</h2>
+      <p>Pega el link de un reel (de Instagram, desde el botón "Compartir → Copiar enlace") para que aparezca en la pestaña "Reels" de la galería. Distingue entre la cuenta de Vistas Quillayquén y la de Ferretería PCY.</p>
+      <table class="admin-tabla" id="tabla-reels">
+        <thead>
+          <tr><th>URL</th><th>Cuenta</th><th>Título (opcional)</th><th>Activo</th><th>Orden</th><th>Acciones</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <h3>Agregar reel nuevo</h3>
+      <form id="form-nuevo-reel" style="display:flex;gap:1rem;align-items:flex-end;flex-wrap:wrap;">
+        <div style="flex:3;min-width:260px;">
+          <label for="reel-url">URL del reel</label>
+          <input type="url" id="reel-url" placeholder="https://www.instagram.com/reel/..." required>
+        </div>
+        <div style="flex:1;min-width:160px;">
+          <label for="reel-cuenta">Cuenta</label>
+          <select id="reel-cuenta">
+            <option value="vistas">Vistas Quillayquén</option>
+            <option value="ferreteria">Ferretería PCY</option>
+          </select>
+        </div>
+        <button type="submit" class="boton" style="margin-bottom:0.2rem;">Agregar</button>
       </form>
     </div>
   </section>
