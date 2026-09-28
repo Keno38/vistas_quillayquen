@@ -138,10 +138,14 @@ function cargarScriptInstagram() {
   document.body.appendChild(script);
 }
 
-function renderReels(lista) {
+let reelsCargados = [];
+let cuentaReelActiva = 'vistas';
+
+function renderReels() {
+  const lista = reelsCargados.filter(r => r.cuenta === cuentaReelActiva);
   grillaReels.innerHTML = '';
   if (lista.length === 0) {
-    grillaReels.innerHTML = '<p>Todavía no hay reels cargados.</p>';
+    grillaReels.innerHTML = `<p>Todavía no hay reels de ${NOMBRE_CUENTA[cuentaReelActiva]} cargados.</p>`;
     return;
   }
   lista.forEach(reel => {
@@ -155,6 +159,16 @@ function renderReels(lista) {
   });
   cargarScriptInstagram();
 }
+
+function activarTabReel(cuenta) {
+  cuentaReelActiva = cuenta;
+  document.getElementById('tab-reels-vistas').classList.toggle('secundario', cuenta !== 'vistas');
+  document.getElementById('tab-reels-ferreteria').classList.toggle('secundario', cuenta !== 'ferreteria');
+  renderReels();
+}
+
+document.getElementById('tab-reels-vistas').addEventListener('click', () => activarTabReel('vistas'));
+document.getElementById('tab-reels-ferreteria').addEventListener('click', () => activarTabReel('ferreteria'));
 
 function activarTab(tab) {
   tabRecinto.classList.toggle('secundario', tab !== 'recinto');
@@ -186,7 +200,8 @@ async function cargarReels() {
     const resp = await fetch('/api/reels');
     const data = await resp.json();
     if (!resp.ok) throw new Error(data.error || 'No se pudieron cargar los reels');
-    renderReels(data);
+    reelsCargados = data;
+    renderReels();
   } catch (err) {
     mostrarMensaje(err.message, 'error');
   }
