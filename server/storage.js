@@ -47,4 +47,46 @@ async function descargarComprobante(ruta) {
   return { buffer, contentType };
 }
 
-module.exports = { subirComprobante, descargarComprobante };
+// ---- Bucket público "galeria" (fotos/videos de recinto/eventos y hero) ----
+// A diferencia de "comprobantes", este bucket es público: las URLs devueltas
+// se pueden usar directamente en un <img>/<video> del sitio, sin pasar por el
+// servidor ni por la clave service_role.
+const BUCKET_GALERIA = 'galeria';
+
+// carpeta: p.ej. "recinto", "eventos", "hero". Devuelve la ruta interna
+// (para guardar en la base de datos) y ya incluye un timestamp para no pisar
+// archivos con el mismo nombre.
+async function subirGaleria(carpeta, nombreArchivo, buffer, contentType) {
+  const ruta = `${carpeta}/${Date.now()}-${nombreArchivo}`;
+  const resp = await fetch(`${STORAGE_URL}/object/${BUCKET_GALERIA}/${ruta}`, {
+    method: 'POST',
+    headers: { ...headersAuth(), 'Content-Type': contentType },
+    body: buffer
+  });
+  if (!resp.ok) {
+    const texto = await resp.text().catch(() => '');
+    const err = new Error(`No se pudo subir el archivo: ${texto || resp.statusText}`);
+    err.status = 500;
+    throw err;
+  }
+  return ruta;
+}
+
+async function eliminarGaleria(ruta) {
+  await fetch(`${STORAGE_URL}/object/${BUCKET_GALERIA}/${ruta}`, {
+    method: 'DELETE',
+    headers: headersAuth()
+  }).catch(() => {}); // si ya no existe, no es un error bloqueante
+}
+
+function urlPublicaGaleria(ruta) {
+  return `${SUPABASE_URL.replace(/\/$/, '')}/storage/v1/object/public/${BUCKET_GALERIA}/${ruta}`;
+}
+
+module.exports = {
+  subirComprobante,
+  descargarComprobante,
+  subirGaleria,
+  eliminarGaleria,
+  urlPublicaGaleria
+};

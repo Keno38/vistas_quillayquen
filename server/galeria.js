@@ -1,74 +1,85 @@
-// Galería de fotos y videos, basada en archivos.
-// No hay formulario de subida ni base de datos: el administrador copia sus fotos y
-// videos directamente en las carpetas public/galeria/recinto y public/galeria/eventos/<album>
-// (por ejemplo por FTP, escritorio remoto o copiando el archivo en el servidor).
-// Esta función solo escanea esas carpetas y arma la lista para la página pública.
-// Así la galería se puede ir actualizando con el tiempo sin tocar código.
+// Galería de fotos y videos (Recinto / Eventos). Antes se armaba escaneando
+// carpetas del servidor a mano; ahora las fotos se suben desde el panel de
+// Contenido (superadmin) y quedan guardadas en Supabase (tabla galeria_items
+// + bucket público "galeria"), para que sobrevivan a cada despliegue en Render.
 
-const fs = require('fs');
-const path = require('path');
+const { pg } = require('./supabaseClient');
+const storage = require('./storage');
 
-const GALERIA_DIR = path.join(__dirname, '..', 'public', 'galeria');
-const RECINTO_DIR = path.join(GALERIA_DIR, 'recinto');
-const EVENTOS_DIR = path.join(GALERIA_DIR, 'eventos');
+const SECCIONES = ['recinto', 'eventos'];
 
-const EXT_IMAGEN = ['.jpg', '.jpeg', '.png', '.webp', '.gif'];
-const EXT_VIDEO = ['.mp4', '.webm', '.mov'];
-
-function tipoDeArchivo(nombre) {
-  const ext = path.extname(nombre).toLowerCase();
-  if (EXT_IMAGEN.includes(ext)) return 'imagen';
-  if (EXT_VIDEO.includes(ext)) return 'video';
-  return null;
-}
-
-// Lista los archivos de imagen/video de una carpeta, más recientes primero,
-// como URLs públicas (relativas a /galeria/...).
-function listarArchivos(dirAbsoluto, prefijoUrl) {
-  if (!fs.existsSync(dirAbsoluto)) return [];
-  const items = fs.readdirSync(dirAbsoluto, { withFileTypes: true })
-    .filter(e => e.isFile())
-    .map(e => {
-      const tipo = tipoDeArchivo(e.name);
-      if (!tipo) return null;
-      const stat = fs.statSync(path.join(dirAbsoluto, e.name));
-      return {
-        nombre: e.name,
-        tipo,
-        url: `${prefijoUrl}/${encodeURIComponent(e.name)}`,
-        modificado: stat.mtimeMs
-      };
-    })
-    .filter(Boolean);
-  items.sort((a, b) => b.modificado - a.modificado);
-  return items.map(({ nombre, tipo, url }) => ({ nombre, tipo, url }));
-}
-
-// Recorre public/galeria/eventos/<album>/ y arma un álbum por subcarpeta.
-// Las subcarpetas más recientes (por fecha de modificación) van primero.
-function listarAlbumesEventos() {
-  if (!fs.existsSync(EVENTOS_DIR)) return [];
-  const carpetas = fs.readdirSync(EVENTOS_DIR, { withFileTypes: true })
-    .filter(e => e.isDirectory())
-    .map(e => {
-      const dirAbsoluto = path.join(EVENTOS_DIR, e.name);
-      const stat = fs.statSync(dirAbsoluto);
-      return {
-        nombre: e.name,
-        modificado: stat.mtimeMs,
-        items: listarArchivos(dirAbsoluto, `/galeria/eventos/${encodeURIComponent(e.name)}`)
-      };
-    })
-    .filter(album => album.items.length > 0);
-  carpetas.sort((a, b) => b.modificado - a.modificado);
-  return carpetas.map(({ nombre, items }) => ({ nombre, items }));
-}
-
-function listar() {
+function mapItem(fila) {
   return {
-    recinto: listarArchivos(RECINTO_DIR, '/galeria/recinto'),
-    eventos: listarAlbumesEventos()
+    id: fila.id,
+    tipo: fila.tipo_archivo === 'video' ? 'video' : 'imagen',
+    nombre: fila.storage_path.split('/').pop(),
+    url: storage.urlPublicaGaleria(fila.storage_path)
   };
 }
 
-module.exports = { listar };
+// Para la página pública: recinto como lista plana, eventos agrupados por álbum.
+async function listar() {
+  const filas = await pg('/galeria_items?select=*&order=orden.asc,creado_en.desc');
+  const recinto = filas.filter(f => f.seccion === 'recinto').map(mapItem);
+
+  const albumes = new Map();
+  filas.filter(f => f.seccion === 'eventos').forEach(fila => {
+    const nombre = fila.album && fila.album.trim() ? fila.album.trim() : 'Eventos';
+    if (!albumes.has(nombre)) albumes.set(nombre, []);
+    albumes.get(nombre).push(mapItem(fila));
+  });
+  const eventos = Array.from(albumes.entries()).map(([nombre, items]) => ({ nombre, items }));
+
+  return { recinto, eventos };
+}
+
+// Para el panel de admin: lista plana con todos los campos, para poder editar/borrar.
+async function listarTodos() {
+  const filas = await pg('/galeria_items?select=*&order=seccion.asc,orden.asc,creado_en.desc');
+  return filas.map(fila => ({ ...fila, url: storage.urlPublicaGaleria(fila.storage_path) }));
+}
+
+function validarSeccion(seccion) {
+  if (!SECCIONES.includes(seccion)) {
+    const err = new Error('La sección debe ser "recinto" o "eventos"');
+    err.status = 400;
+    throw err;
+  }
+}
+
+async function crear({ seccion, album }, archivo) {
+  if (!archivo) {
+    const err = new Error('Debes adjuntar una foto o video');
+    err.status = 400;
+    throw err;
+  }
+  validarSeccion(seccion);
+  const tipo_archivo = (archivo.contentType || '').startsWith('video/') ? 'video' : 'imagen';
+  const ruta = await storage.subirGaleria(seccion, archivo.filename, archivo.data, archivo.contentType);
+  const insertados = await pg('/galeria_items', {
+    method: 'POST',
+    body: {
+      seccion,
+      album: seccion === 'eventos' && album ? String(album).trim() : '',
+      storage_path: ruta,
+      tipo_archivo
+    }
+  });
+  const fila = insertados[0];
+  return { ...fila, url: storage.urlPublicaGaleria(fila.storage_path) };
+}
+
+async function eliminar(id) {
+  const filas = await pg(`/galeria_items?id=eq.${Number(id)}&select=*`);
+  const fila = filas[0];
+  if (!fila) {
+    const err = new Error('Foto/video no encontrado');
+    err.status = 404;
+    throw err;
+  }
+  await storage.eliminarGaleria(fila.storage_path);
+  await pg(`/galeria_items?id=eq.${Number(id)}`, { method: 'DELETE' });
+  return fila;
+}
+
+module.exports = { listar, listarTodos, crear, eliminar };

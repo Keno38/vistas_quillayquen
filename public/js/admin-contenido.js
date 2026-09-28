@@ -39,6 +39,19 @@ async function llamarSuperadmin(ruta, opciones = {}) {
   return data;
 }
 
+// Igual que llamarSuperadmin, pero para subir archivos: el navegador arma el
+// Content-Type con el boundary del multipart, así que no lo fijamos nosotros.
+async function llamarSuperadminArchivo(ruta, formData, method = 'POST') {
+  const resp = await fetch(ruta, {
+    method,
+    headers: { Authorization: `Bearer ${getToken()}` },
+    body: formData
+  });
+  const data = await resp.json();
+  if (!resp.ok) throw new Error(data.error || 'Error en la solicitud');
+  return data;
+}
+
 async function cargarConfigPublica() {
   const resp = await fetch('/api/config-publica');
   const data = await resp.json();
@@ -56,7 +69,10 @@ async function mostrarPanelSiHaySesion() {
   seccionLogin.classList.add('oculto');
   seccionPanel.classList.remove('oculto');
   btnLogout.classList.remove('oculto');
-  await Promise.all([cargarInfoEventos(), cargarMenuOpciones(), cargarConfigCanchas(), cargarReels()]);
+  await Promise.all([
+    cargarInfoEventos(), cargarMenuOpciones(), cargarConfigCanchas(), cargarReels(),
+    cargarHeroAdmin(), cargarGaleriaAdmin('recinto'), cargarGaleriaAdmin('eventos')
+  ]);
 }
 
 document.getElementById('form-login-contenido').addEventListener('submit', async (e) => {
@@ -341,6 +357,143 @@ document.getElementById('form-nuevo-reel').addEventListener('submit', async (e) 
     document.getElementById('form-nuevo-reel').reset();
     mostrarMensaje('Reel agregado.', 'exito');
     cargarReels();
+  } catch (err) {
+    mostrarMensaje(err.message, 'error');
+  }
+});
+
+// ---- Imágenes de portada (Hero) ----
+const NOMBRE_PAGINA_HERO = { index: 'Inicio', canchas: 'Reserva de canchas', eventos: 'Centro de Eventos' };
+
+async function cargarHeroAdmin() {
+  const cont = document.getElementById('grilla-hero-admin');
+  cont.innerHTML = 'Cargando...';
+  try {
+    const data = await llamarSuperadmin('/api/superadmin/hero');
+    cont.innerHTML = '';
+    Object.keys(NOMBRE_PAGINA_HERO).forEach(pagina => {
+      const tarjeta = document.createElement('div');
+      tarjeta.className = 'hero-admin-tarjeta';
+      tarjeta.innerHTML = `
+        <h4>${NOMBRE_PAGINA_HERO[pagina]}</h4>
+        ${data[pagina] ? `<img class="miniatura-hero" src="${data[pagina]}" alt="Hero de ${NOMBRE_PAGINA_HERO[pagina]}">` : '<div class="miniatura-hero" style="display:flex;align-items:center;justify-content:center;font-size:0.8rem;color:#64756c;">Foto de muestra actual</div>'}
+        <input type="file" accept="image/*" data-hero-input="${pagina}" style="margin-bottom:0.5rem;">
+        <div style="display:flex;gap:0.5rem;">
+          <button type="button" class="boton" data-hero-subir="${pagina}">Subir</button>
+          ${data[pagina] ? `<button type="button" class="boton secundario" data-hero-quitar="${pagina}">Quitar</button>` : ''}
+        </div>
+      `;
+      cont.appendChild(tarjeta);
+    });
+    cont.querySelectorAll('[data-hero-subir]').forEach(btn => {
+      btn.addEventListener('click', () => subirHero(btn.getAttribute('data-hero-subir')));
+    });
+    cont.querySelectorAll('[data-hero-quitar]').forEach(btn => {
+      btn.addEventListener('click', () => quitarHero(btn.getAttribute('data-hero-quitar')));
+    });
+  } catch (err) {
+    cont.innerHTML = err.message;
+  }
+}
+
+async function subirHero(pagina) {
+  const input = document.querySelector(`[data-hero-input="${pagina}"]`);
+  if (!input.files[0]) { mostrarMensaje('Elige una imagen primero.', 'error'); return; }
+  const formData = new FormData();
+  formData.append('archivo', input.files[0]);
+  try {
+    await llamarSuperadminArchivo(`/api/superadmin/hero/${pagina}`, formData);
+    mostrarMensaje('Imagen de portada actualizada.', 'exito');
+    cargarHeroAdmin();
+  } catch (err) {
+    mostrarMensaje(err.message, 'error');
+  }
+}
+
+async function quitarHero(pagina) {
+  try {
+    await llamarSuperadmin(`/api/superadmin/hero/${pagina}`, { method: 'DELETE' });
+    mostrarMensaje('Se volvió a la foto de muestra.', 'exito');
+    cargarHeroAdmin();
+  } catch (err) {
+    mostrarMensaje(err.message, 'error');
+  }
+}
+
+// ---- Galería de fotos (Recinto / Eventos) ----
+async function cargarGaleriaAdmin(seccion) {
+  const cont = document.getElementById(`grilla-galeria-${seccion}`);
+  cont.innerHTML = 'Cargando...';
+  try {
+    const todos = await llamarSuperadmin('/api/superadmin/galeria');
+    const items = todos.filter(i => i.seccion === seccion);
+    if (items.length === 0) {
+      cont.innerHTML = '<p>Todavía no hay fotos ni videos aquí.</p>';
+      return;
+    }
+    cont.innerHTML = '';
+    items.forEach(item => {
+      const tarjeta = document.createElement('div');
+      tarjeta.className = 'galeria-admin-tarjeta';
+      const media = item.tipo_archivo === 'video'
+        ? `<video src="${item.url}" muted></video>`
+        : `<img src="${item.url}" alt="">`;
+      tarjeta.innerHTML = `
+        ${item.album ? `<span class="galeria-admin-album">${item.album}</span>` : ''}
+        ${media}
+        <button type="button" class="galeria-admin-borrar" title="Eliminar" data-galeria-borrar="${item.id}">&times;</button>
+      `;
+      cont.appendChild(tarjeta);
+    });
+    cont.querySelectorAll('[data-galeria-borrar]').forEach(btn => {
+      btn.addEventListener('click', () => eliminarGaleriaItem(btn.getAttribute('data-galeria-borrar'), seccion));
+    });
+  } catch (err) {
+    cont.innerHTML = err.message;
+  }
+}
+
+async function eliminarGaleriaItem(id, seccion) {
+  if (!confirm('¿Eliminar esta foto/video? No se puede deshacer.')) return;
+  try {
+    await llamarSuperadmin(`/api/superadmin/galeria/${id}`, { method: 'DELETE' });
+    mostrarMensaje('Eliminado.', 'exito');
+    cargarGaleriaAdmin(seccion);
+  } catch (err) {
+    mostrarMensaje(err.message, 'error');
+  }
+}
+
+document.getElementById('form-galeria-recinto').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const input = document.getElementById('galeria-recinto-archivo');
+  if (!input.files[0]) return;
+  const formData = new FormData();
+  formData.append('seccion', 'recinto');
+  formData.append('archivo', input.files[0]);
+  try {
+    await llamarSuperadminArchivo('/api/superadmin/galeria', formData);
+    e.target.reset();
+    mostrarMensaje('Foto/video agregado a Recinto.', 'exito');
+    cargarGaleriaAdmin('recinto');
+  } catch (err) {
+    mostrarMensaje(err.message, 'error');
+  }
+});
+
+document.getElementById('form-galeria-eventos').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const input = document.getElementById('galeria-eventos-archivo');
+  if (!input.files[0]) return;
+  const formData = new FormData();
+  formData.append('seccion', 'eventos');
+  formData.append('album', document.getElementById('galeria-eventos-album').value);
+  formData.append('archivo', input.files[0]);
+  try {
+    await llamarSuperadminArchivo('/api/superadmin/galeria', formData);
+    e.target.reset();
+    mostrarMensaje('Foto/video agregado a Eventos.', 'exito');
+    cargarGaleriaAdmin('eventos');
   } catch (err) {
     mostrarMensaje(err.message, 'error');
   }

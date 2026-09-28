@@ -108,6 +108,42 @@
     </div>
 
     <div class="home-panel">
+      <h2 style="margin-top:0;">Imágenes de portada (Hero)</h2>
+      <p>La foto grande de arriba de cada página. Si no subes una, se sigue mostrando la foto de muestra.</p>
+      <div class="grilla-hero-admin" id="grilla-hero-admin"></div>
+    </div>
+
+    <div class="home-panel">
+      <h2 style="margin-top:0;">Galería de fotos — Recinto</h2>
+      <p>Fotos y videos de las instalaciones (canchas, piscina, quincho) que se muestran en la pestaña "Recinto" de la galería pública.</p>
+      <form id="form-galeria-recinto" style="display:flex;gap:1rem;align-items:flex-end;flex-wrap:wrap;">
+        <div style="flex:2;min-width:220px;">
+          <label for="galeria-recinto-archivo">Foto o video</label>
+          <input type="file" id="galeria-recinto-archivo" accept="image/*,video/*" required>
+        </div>
+        <button type="submit" class="boton" style="margin-bottom:0.2rem;">Subir</button>
+      </form>
+      <div class="grilla-galeria-admin" id="grilla-galeria-recinto"></div>
+    </div>
+
+    <div class="home-panel">
+      <h2 style="margin-top:0;">Galería de fotos — Eventos</h2>
+      <p>Fotos y videos de eventos realizados, agrupados por álbum (ej. "Matrimonio Pérez") para la pestaña "Eventos" de la galería pública.</p>
+      <form id="form-galeria-eventos" style="display:flex;gap:1rem;align-items:flex-end;flex-wrap:wrap;">
+        <div style="flex:1;min-width:160px;">
+          <label for="galeria-eventos-album">Álbum</label>
+          <input type="text" id="galeria-eventos-album" placeholder="Ej: Matrimonio Pérez" required>
+        </div>
+        <div style="flex:2;min-width:220px;">
+          <label for="galeria-eventos-archivo">Foto o video</label>
+          <input type="file" id="galeria-eventos-archivo" accept="image/*,video/*" required>
+        </div>
+        <button type="submit" class="boton" style="margin-bottom:0.2rem;">Subir</button>
+      </form>
+      <div class="grilla-galeria-admin" id="grilla-galeria-eventos"></div>
+    </div>
+
+    <div class="home-panel">
       <h2 style="margin-top:0;">Reels de Instagram</h2>
       <p>Pega el link de un reel (de Instagram, desde el botón "Compartir → Copiar enlace") para que aparezca en la pestaña "Reels" de la galería. Distingue entre la cuenta de Vistas Quillayquén y la de Ferretería PCY.</p>
       <table class="admin-tabla" id="tabla-reels">

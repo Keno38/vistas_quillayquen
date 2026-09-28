@@ -424,6 +424,78 @@ table.admin-tabla tr:last-child td { border-bottom: none; }
   margin-top: 0.2rem;
 }
 
+/* ---- Panel de Contenido: hero y galería (admin) ---- */
+.grilla-hero-admin {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-top: 0.8rem;
+}
+
+.hero-admin-tarjeta {
+  background: var(--gris-fondo);
+  border-radius: var(--radio-chico);
+  padding: 0.9rem;
+}
+
+.hero-admin-tarjeta h4 { margin: 0 0 0.6rem; }
+
+.hero-admin-tarjeta .miniatura-hero {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 10px;
+  background: var(--gris-borde);
+  margin-bottom: 0.6rem;
+}
+
+.grilla-galeria-admin {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
+.galeria-admin-tarjeta {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--gris-fondo);
+  aspect-ratio: 1;
+}
+
+.galeria-admin-tarjeta img,
+.galeria-admin-tarjeta video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.galeria-admin-tarjeta .galeria-admin-album {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: rgba(6, 43, 79, 0.75);
+  color: var(--blanco);
+  font-size: 0.7rem;
+  padding: 0.25rem 0.5rem;
+}
+
+.galeria-admin-tarjeta .galeria-admin-borrar {
+  position: absolute;
+  bottom: 0.4rem;
+  right: 0.4rem;
+  background: var(--rojo);
+  color: var(--blanco);
+  border: none;
+  border-radius: 999px;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
 .tag-estado {
   display: inline-block;
   padding: 0.25rem 0.7rem;

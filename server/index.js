@@ -14,10 +14,12 @@ const eventos = require('./eventos');
 const auth = require('./auth');
 const galeria = require('./galeria');
 const reels = require('./reels');
+const hero = require('./hero');
 const supabaseAuth = require('./supabaseAuth');
 const { parseMultipart } = require('./multipart');
 
 const MAX_COMPROBANTE_BYTES = 8 * 1024 * 1024; // 8MB, de sobra para una foto/PDF de comprobante
+const MAX_GALERIA_BYTES = 30 * 1024 * 1024; // 30MB, para fotos y videos cortos de la galería/hero
 
 const PORT = process.env.PORT || 3000;
 const PUBLIC_DIR = path.join(__dirname, '..', 'public');
@@ -214,6 +216,9 @@ async function handleApi(req, res, pathname, query) {
     if (pathname === '/api/reels' && req.method === 'GET') {
       return sendJSON(res, 200, await reels.listarPublicos());
     }
+    if (pathname === '/api/hero-publico' && req.method === 'GET') {
+      return sendJSON(res, 200, await hero.obtenerTodos());
+    }
 
     // ---- Autenticación admin ----
     if (pathname === '/api/admin/login' && req.method === 'POST') {
@@ -335,6 +340,52 @@ async function handleApi(req, res, pathname, query) {
     if (matchMenuOpcion && req.method === 'DELETE') {
       await requireSuperAdmin(req);
       return sendJSON(res, 200, { ok: true, opcion: await eventos.eliminarMenuOpcion(matchMenuOpcion[1]) });
+    }
+
+    // ---- Superadmin: galería (subir/borrar fotos y videos de Recinto/Eventos) ----
+    if (pathname === '/api/superadmin/galeria' && req.method === 'GET') {
+      await requireSuperAdmin(req);
+      return sendJSON(res, 200, await galeria.listarTodos());
+    }
+    if (pathname === '/api/superadmin/galeria' && req.method === 'POST') {
+      await requireSuperAdmin(req);
+      const contentType = req.headers['content-type'] || '';
+      if (!contentType.startsWith('multipart/form-data')) {
+        const err = new Error('Debe enviar el formulario con el archivo adjunto (multipart/form-data)');
+        err.status = 400;
+        throw err;
+      }
+      const raw = await readRawBody(req, MAX_GALERIA_BYTES);
+      const { campos, archivos } = parseMultipart(raw, contentType);
+      return sendJSON(res, 201, { ok: true, item: await galeria.crear(campos, archivos.archivo) });
+    }
+    const matchGaleriaItem = pathname.match(/^\/api\/superadmin\/galeria\/(\d+)$/);
+    if (matchGaleriaItem && req.method === 'DELETE') {
+      await requireSuperAdmin(req);
+      return sendJSON(res, 200, { ok: true, item: await galeria.eliminar(matchGaleriaItem[1]) });
+    }
+
+    // ---- Superadmin: imágenes de portada (hero) de cada página pública ----
+    if (pathname === '/api/superadmin/hero' && req.method === 'GET') {
+      await requireSuperAdmin(req);
+      return sendJSON(res, 200, await hero.obtenerTodos());
+    }
+    const matchHero = pathname.match(/^\/api\/superadmin\/hero\/(index|canchas|eventos)$/);
+    if (matchHero && req.method === 'POST') {
+      await requireSuperAdmin(req);
+      const contentType = req.headers['content-type'] || '';
+      if (!contentType.startsWith('multipart/form-data')) {
+        const err = new Error('Debe enviar el formulario con la imagen adjunta (multipart/form-data)');
+        err.status = 400;
+        throw err;
+      }
+      const raw = await readRawBody(req, MAX_GALERIA_BYTES);
+      const { archivos } = parseMultipart(raw, contentType);
+      return sendJSON(res, 200, { ok: true, hero: await hero.actualizar(matchHero[1], archivos.archivo) });
+    }
+    if (matchHero && req.method === 'DELETE') {
+      await requireSuperAdmin(req);
+      return sendJSON(res, 200, { ok: true, hero: await hero.eliminar(matchHero[1]) });
     }
 
     return sendJSON(res, 404, { error: 'Ruta de API no encontrada' });

@@ -102,6 +102,27 @@ create table if not exists reels (
   creado_en timestamptz not null default now()
 );
 
+-- Fotos y videos de la galería (Recinto / Eventos), subidos desde el panel de
+-- Contenido. "album" solo se usa en la sección "eventos" para agrupar fotos
+-- de un mismo evento.
+create table if not exists galeria_items (
+  id serial primary key,
+  seccion text not null check (seccion in ('recinto', 'eventos')),
+  album text not null default '',
+  storage_path text not null,
+  tipo_archivo text not null check (tipo_archivo in ('imagen', 'video')),
+  orden integer not null default 0,
+  creado_en timestamptz not null default now()
+);
+
+-- Imagen de portada (hero) de cada página pública. Si no hay fila, el sitio
+-- muestra la foto de muestra por defecto.
+create table if not exists hero_imagenes (
+  pagina text primary key check (pagina in ('index', 'canchas', 'eventos')),
+  storage_path text not null,
+  actualizado_en timestamptz not null default now()
+);
+
 -- El servidor accede con la clave "service_role" (nunca la "anon"), que ya
 -- salta las políticas de RLS. Igual dejamos RLS activado y sin políticas
 -- públicas, como defensa adicional por si alguna vez se usa la clave anon.
@@ -112,6 +133,8 @@ alter table config enable row level security;
 alter table admin_usuarios enable row level security;
 alter table menu_opciones enable row level security;
 alter table reels enable row level security;
+alter table galeria_items enable row level security;
+alter table hero_imagenes enable row level security;
 
 -- Datos iniciales (equivalentes a los que traía data/db.json por defecto).
 insert into canchas (id, nombre) values (1, 'Cancha 1'), (2, 'Cancha 2')
@@ -135,4 +158,10 @@ where not exists (select 1 from menu_opciones);
 -- (solo el servidor, con la clave service_role, puede leer/escribir aquí).
 insert into storage.buckets (id, name, public)
 values ('comprobantes', 'comprobantes', false)
+on conflict (id) do nothing;
+
+-- Bucket público para fotos/videos de la galería y las imágenes del hero
+-- (a diferencia de "comprobantes", cualquiera puede leer aquí).
+insert into storage.buckets (id, name, public)
+values ('galeria', 'galeria', true)
 on conflict (id) do nothing;
