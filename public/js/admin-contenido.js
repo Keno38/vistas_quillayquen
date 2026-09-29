@@ -1,38 +1,20 @@
-// Panel de "Contenido": login aparte con Supabase Authentication (no usa
-// admin_usuarios ni las cookies del panel de agenda). El token se guarda solo
-// en sessionStorage (se pierde al cerrar la pestaña) y se manda como
-// "Authorization: Bearer <token>" en cada llamada a /api/superadmin/*.
+// Panel de "Contenido": usa la misma sesión (cookie admin_token) que
+// /admin.html — un solo login para todo el sitio. Solo se puede ver si el
+// usuario logueado tiene rol "general"; si no, se redirige a /admin.html.
 
-const seccionLogin = document.getElementById('seccion-login-contenido');
 const seccionPanel = document.getElementById('seccion-panel-contenido');
 const btnLogout = document.getElementById('btn-logout-contenido');
 const mensajeDiv = document.getElementById('mensaje-contenido');
-
-let supabaseUrl = null;
-let supabaseAnonKey = null;
 
 function mostrarMensaje(texto, tipo) {
   mensajeDiv.innerHTML = `<div class="mensaje ${tipo}">${texto}</div>`;
   setTimeout(() => { mensajeDiv.innerHTML = ''; }, 6000);
 }
 
-function getToken() {
-  return sessionStorage.getItem('superadmin_token');
-}
-
-function setToken(token) {
-  if (token) sessionStorage.setItem('superadmin_token', token);
-  else sessionStorage.removeItem('superadmin_token');
-}
-
 async function llamarSuperadmin(ruta, opciones = {}) {
   const resp = await fetch(ruta, {
     ...opciones,
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${getToken()}`,
-      ...(opciones.headers || {})
-    }
+    headers: { 'Content-Type': 'application/json', ...(opciones.headers || {}) }
   });
   const data = await resp.json();
   if (!resp.ok) throw new Error(data.error || 'Error en la solicitud');
@@ -42,31 +24,19 @@ async function llamarSuperadmin(ruta, opciones = {}) {
 // Igual que llamarSuperadmin, pero para subir archivos: el navegador arma el
 // Content-Type con el boundary del multipart, así que no lo fijamos nosotros.
 async function llamarSuperadminArchivo(ruta, formData, method = 'POST') {
-  const resp = await fetch(ruta, {
-    method,
-    headers: { Authorization: `Bearer ${getToken()}` },
-    body: formData
-  });
+  const resp = await fetch(ruta, { method, body: formData });
   const data = await resp.json();
   if (!resp.ok) throw new Error(data.error || 'Error en la solicitud');
   return data;
 }
 
-async function cargarConfigPublica() {
-  const resp = await fetch('/api/config-publica');
-  const data = await resp.json();
-  supabaseUrl = data.supabaseUrl;
-  supabaseAnonKey = data.supabaseAnonKey;
-}
-
 async function mostrarPanelSiHaySesion() {
-  if (!getToken()) {
-    seccionLogin.classList.remove('oculto');
-    seccionPanel.classList.add('oculto');
-    btnLogout.classList.add('oculto');
+  const resp = await fetch('/api/admin/sesion');
+  const data = await resp.json();
+  if (!data.autenticado || data.rol !== 'general') {
+    window.location.href = '/admin.html';
     return;
   }
-  seccionLogin.classList.add('oculto');
   seccionPanel.classList.remove('oculto');
   btnLogout.classList.remove('oculto');
   await Promise.all([
@@ -75,31 +45,10 @@ async function mostrarPanelSiHaySesion() {
   ]);
 }
 
-document.getElementById('form-login-contenido').addEventListener('submit', async (e) => {
+btnLogout.addEventListener('click', async (e) => {
   e.preventDefault();
-  const email = document.getElementById('ca-email').value;
-  const password = document.getElementById('ca-password').value;
-  try {
-    await cargarConfigPublica();
-    const resp = await fetch(`${supabaseUrl}/auth/v1/token?grant_type=password`, {
-      method: 'POST',
-      headers: { apikey: supabaseAnonKey, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
-    });
-    const data = await resp.json();
-    if (!resp.ok) throw new Error(data.error_description || data.msg || 'No se pudo iniciar sesión');
-    setToken(data.access_token);
-    document.getElementById('ca-password').value = '';
-    await mostrarPanelSiHaySesion();
-  } catch (err) {
-    mostrarMensaje(err.message, 'error');
-  }
-});
-
-btnLogout.addEventListener('click', (e) => {
-  e.preventDefault();
-  setToken(null);
-  mostrarPanelSiHaySesion();
+  await fetch('/api/admin/logout', { method: 'POST' });
+  window.location.href = '/admin.html';
 });
 
 // ---- Información del Centro de Eventos ----

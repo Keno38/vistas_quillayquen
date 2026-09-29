@@ -20,23 +20,28 @@ async function login(usuario, password) {
   if (hash !== admin.password_hash) return null;
 
   const token = crypto.randomBytes(24).toString('hex');
-  sesiones.set(token, { usuario, expira: Date.now() + DURACION_SESION_MS });
-  return token;
+  sesiones.set(token, { usuario, rol: admin.rol || 'agenda', expira: Date.now() + DURACION_SESION_MS });
+  return { token, rol: admin.rol || 'agenda' };
+}
+
+// Devuelve { usuario, rol } si la sesión es válida, o null si no.
+function obtenerSesion(token) {
+  if (!token) return null;
+  const sesion = sesiones.get(token);
+  if (!sesion) return null;
+  if (Date.now() > sesion.expira) {
+    sesiones.delete(token);
+    return null;
+  }
+  return { usuario: sesion.usuario, rol: sesion.rol };
 }
 
 function verificar(token) {
-  if (!token) return false;
-  const sesion = sesiones.get(token);
-  if (!sesion) return false;
-  if (Date.now() > sesion.expira) {
-    sesiones.delete(token);
-    return false;
-  }
-  return true;
+  return obtenerSesion(token) !== null;
 }
 
 function logout(token) {
   sesiones.delete(token);
 }
 
-module.exports = { login, verificar, logout, hashPassword };
+module.exports = { login, verificar, logout, hashPassword, obtenerSesion };

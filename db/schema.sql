@@ -70,7 +70,9 @@ create table if not exists config (
 create table if not exists admin_usuarios (
   usuario text primary key,
   salt text not null,
-  password_hash text not null
+  password_hash text not null,
+  -- 'agenda': solo Solicitudes y Reservas. 'general': todo (agenda + Contenido).
+  rol text not null default 'agenda' check (rol in ('agenda', 'general'))
 );
 
 -- Opciones de menú para el Centro de Eventos, administradas por el
@@ -143,11 +145,20 @@ insert into canchas (id, nombre) values (1, 'Cancha 1'), (2, 'Cancha 2')
 insert into config (id) values (1)
   on conflict (id) do nothing;
 
--- Usuario admin por defecto: admin / quillaiquen2026 (cámbiala luego, ver README.md).
-insert into admin_usuarios (usuario, salt, password_hash) values (
+-- Usuario admin por defecto (rol agenda): admin / quillaiquen2026 (cámbiala luego, ver README.md).
+insert into admin_usuarios (usuario, salt, password_hash, rol) values (
   'admin',
   '208fb32c53880573ce1ecf58cafc6d33',
-  'a91f8e6447fe62157750e96a35b21f2b7924a84c0b9aaf6b647e4b4a86d8ede6'
+  'a91f8e6447fe62157750e96a35b21f2b7924a84c0b9aaf6b647e4b4a86d8ede6',
+  'agenda'
+) on conflict (usuario) do nothing;
+
+-- Usuario general por defecto (rol general: agenda + Contenido): general / general2026.
+insert into admin_usuarios (usuario, salt, password_hash, rol) values (
+  'general',
+  '5fc73ec61def3d0bbcf26b499797496e',
+  '7c60ef2d5c41915f2979d93f4388924bdb1cdd2b2f02f61cbf9106f7ebd6a024',
+  'general'
 ) on conflict (usuario) do nothing;
 
 insert into menu_opciones (nombre, precio_por_persona, orden)

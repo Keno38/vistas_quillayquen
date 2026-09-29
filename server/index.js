@@ -15,7 +15,6 @@ const auth = require('./auth');
 const galeria = require('./galeria');
 const reels = require('./reels');
 const hero = require('./hero');
-const supabaseAuth = require('./supabaseAuth');
 const { parseMultipart } = require('./multipart');
 
 const MAX_COMPROBANTE_BYTES = 8 * 1024 * 1024; // 8MB, de sobra para una foto/PDF de comprobante
@@ -118,15 +117,13 @@ function requireAdmin(req) {
   }
 }
 
-// El panel de "Contenido" usa un login totalmente aparte: Supabase Authentication.
-// Acá solo confirmamos con la propia API de Supabase que el token que manda el
-// navegador (header Authorization: Bearer <token>) corresponde a un usuario real.
-async function requireSuperAdmin(req) {
-  const encabezado = req.headers.authorization || '';
-  const token = encabezado.startsWith('Bearer ') ? encabezado.slice(7) : null;
-  const usuario = await supabaseAuth.verificarToken(token);
-  if (!usuario) {
-    const err = new Error('No autorizado. Debe iniciar sesión con la cuenta de superadministrador.');
+// El panel de "Contenido" (precios, menú, galería, hero, reels) usa el mismo
+// login que la agenda, pero solo lo pueden ver los usuarios con rol "general".
+function requireGeneral(req) {
+  const cookies = parseCookies(req);
+  const sesion = auth.obtenerSesion(cookies.admin_token);
+  if (!sesion || sesion.rol !== 'general') {
+    const err = new Error('No autorizado. Debe iniciar sesión con un usuario de rol "general".');
     err.status = 401;
     throw err;
   }
@@ -200,18 +197,9 @@ async function handleApi(req, res, pathname, query) {
       return sendJSON(res, 200, await eventos.infoPublica());
     }
 
-    // ---- Configuración pública (para que el navegador pueda hablar con
-    // Supabase Authentication directamente al iniciar sesión como superadmin) ----
-    if (pathname === '/api/config-publica' && req.method === 'GET') {
-      return sendJSON(res, 200, {
-        supabaseUrl: process.env.SUPABASE_URL,
-        supabaseAnonKey: process.env.SUPABASE_ANON_KEY
-      });
-    }
-
     // ---- Galería (recinto y eventos) ----
     if (pathname === '/api/galeria' && req.method === 'GET') {
-      return sendJSON(res, 200, galeria.listar());
+      return sendJSON(res, 200, await galeria.listar());
     }
     if (pathname === '/api/reels' && req.method === 'GET') {
       return sendJSON(res, 200, await reels.listarPublicos());
@@ -223,10 +211,10 @@ async function handleApi(req, res, pathname, query) {
     // ---- Autenticación admin ----
     if (pathname === '/api/admin/login' && req.method === 'POST') {
       const body = await readBody(req);
-      const token = await auth.login(body.usuario, body.password);
-      if (!token) return sendJSON(res, 401, { ok: false, error: 'Usuario o contraseña incorrectos' });
-      res.setHeader('Set-Cookie', `admin_token=${token}; HttpOnly; Path=/; SameSite=Strict; Max-Age=28800`);
-      return sendJSON(res, 200, { ok: true });
+      const resultado = await auth.login(body.usuario, body.password);
+      if (!resultado) return sendJSON(res, 401, { ok: false, error: 'Usuario o contraseña incorrectos' });
+      res.setHeader('Set-Cookie', `admin_token=${resultado.token}; HttpOnly; Path=/; SameSite=Strict; Max-Age=28800`);
+      return sendJSON(res, 200, { ok: true, rol: resultado.rol });
     }
     if (pathname === '/api/admin/logout' && req.method === 'POST') {
       const cookies = parseCookies(req);
@@ -236,7 +224,8 @@ async function handleApi(req, res, pathname, query) {
     }
     if (pathname === '/api/admin/sesion' && req.method === 'GET') {
       const cookies = parseCookies(req);
-      return sendJSON(res, 200, { autenticado: auth.verificar(cookies.admin_token) });
+      const sesion = auth.obtenerSesion(cookies.admin_token);
+      return sendJSON(res, 200, { autenticado: !!sesion, rol: sesion ? sesion.rol : null });
     }
 
     // ---- Admin: canchas ----
@@ -286,69 +275,69 @@ async function handleApi(req, res, pathname, query) {
 
     // ---- Superadmin: contenido y precios (Supabase Authentication) ----
     if (pathname === '/api/superadmin/canchas-config' && req.method === 'GET') {
-      await requireSuperAdmin(req);
+      requireGeneral(req);
       return sendJSON(res, 200, await canchas.getConfig());
     }
     if (pathname === '/api/superadmin/canchas-config' && req.method === 'PUT') {
-      await requireSuperAdmin(req);
+      requireGeneral(req);
       const body = await readBody(req);
       return sendJSON(res, 200, { ok: true, config: await canchas.actualizarConfig(body) });
     }
     if (pathname === '/api/superadmin/reels' && req.method === 'GET') {
-      await requireSuperAdmin(req);
+      requireGeneral(req);
       return sendJSON(res, 200, await reels.listarTodos());
     }
     if (pathname === '/api/superadmin/reels' && req.method === 'POST') {
-      await requireSuperAdmin(req);
+      requireGeneral(req);
       const body = await readBody(req);
       return sendJSON(res, 201, { ok: true, reel: await reels.crear(body) });
     }
     const matchReel = pathname.match(/^\/api\/superadmin\/reels\/(\d+)$/);
     if (matchReel && req.method === 'PUT') {
-      await requireSuperAdmin(req);
+      requireGeneral(req);
       const body = await readBody(req);
       return sendJSON(res, 200, { ok: true, reel: await reels.actualizar(matchReel[1], body) });
     }
     if (matchReel && req.method === 'DELETE') {
-      await requireSuperAdmin(req);
+      requireGeneral(req);
       return sendJSON(res, 200, { ok: true, reel: await reels.eliminar(matchReel[1]) });
     }
     if (pathname === '/api/superadmin/eventos-info' && req.method === 'GET') {
-      await requireSuperAdmin(req);
+      requireGeneral(req);
       return sendJSON(res, 200, await eventos.infoPublica());
     }
     if (pathname === '/api/superadmin/eventos-info' && req.method === 'PUT') {
-      await requireSuperAdmin(req);
+      requireGeneral(req);
       const body = await readBody(req);
       return sendJSON(res, 200, { ok: true, info: await eventos.actualizarInfo(body) });
     }
     if (pathname === '/api/superadmin/menu-opciones' && req.method === 'GET') {
-      await requireSuperAdmin(req);
+      requireGeneral(req);
       return sendJSON(res, 200, await eventos.listarMenuOpciones());
     }
     if (pathname === '/api/superadmin/menu-opciones' && req.method === 'POST') {
-      await requireSuperAdmin(req);
+      requireGeneral(req);
       const body = await readBody(req);
       return sendJSON(res, 201, { ok: true, opcion: await eventos.crearMenuOpcion(body) });
     }
     const matchMenuOpcion = pathname.match(/^\/api\/superadmin\/menu-opciones\/(\d+)$/);
     if (matchMenuOpcion && req.method === 'PUT') {
-      await requireSuperAdmin(req);
+      requireGeneral(req);
       const body = await readBody(req);
       return sendJSON(res, 200, { ok: true, opcion: await eventos.actualizarMenuOpcion(matchMenuOpcion[1], body) });
     }
     if (matchMenuOpcion && req.method === 'DELETE') {
-      await requireSuperAdmin(req);
+      requireGeneral(req);
       return sendJSON(res, 200, { ok: true, opcion: await eventos.eliminarMenuOpcion(matchMenuOpcion[1]) });
     }
 
     // ---- Superadmin: galería (subir/borrar fotos y videos de Recinto/Eventos) ----
     if (pathname === '/api/superadmin/galeria' && req.method === 'GET') {
-      await requireSuperAdmin(req);
+      requireGeneral(req);
       return sendJSON(res, 200, await galeria.listarTodos());
     }
     if (pathname === '/api/superadmin/galeria' && req.method === 'POST') {
-      await requireSuperAdmin(req);
+      requireGeneral(req);
       const contentType = req.headers['content-type'] || '';
       if (!contentType.startsWith('multipart/form-data')) {
         const err = new Error('Debe enviar el formulario con el archivo adjunto (multipart/form-data)');
@@ -361,18 +350,18 @@ async function handleApi(req, res, pathname, query) {
     }
     const matchGaleriaItem = pathname.match(/^\/api\/superadmin\/galeria\/(\d+)$/);
     if (matchGaleriaItem && req.method === 'DELETE') {
-      await requireSuperAdmin(req);
+      requireGeneral(req);
       return sendJSON(res, 200, { ok: true, item: await galeria.eliminar(matchGaleriaItem[1]) });
     }
 
     // ---- Superadmin: imágenes de portada (hero) de cada página pública ----
     if (pathname === '/api/superadmin/hero' && req.method === 'GET') {
-      await requireSuperAdmin(req);
+      requireGeneral(req);
       return sendJSON(res, 200, await hero.obtenerTodos());
     }
     const matchHero = pathname.match(/^\/api\/superadmin\/hero\/(index|canchas|eventos)$/);
     if (matchHero && req.method === 'POST') {
-      await requireSuperAdmin(req);
+      requireGeneral(req);
       const contentType = req.headers['content-type'] || '';
       if (!contentType.startsWith('multipart/form-data')) {
         const err = new Error('Debe enviar el formulario con la imagen adjunta (multipart/form-data)');
@@ -384,7 +373,7 @@ async function handleApi(req, res, pathname, query) {
       return sendJSON(res, 200, { ok: true, hero: await hero.actualizar(matchHero[1], archivos.archivo) });
     }
     if (matchHero && req.method === 'DELETE') {
-      await requireSuperAdmin(req);
+      requireGeneral(req);
       return sendJSON(res, 200, { ok: true, hero: await hero.eliminar(matchHero[1]) });
     }
 

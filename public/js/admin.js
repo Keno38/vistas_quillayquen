@@ -3,6 +3,7 @@ const seccionPanel = document.getElementById('seccion-panel');
 const btnLogout = document.getElementById('btn-logout');
 const mensajeDiv = document.getElementById('mensaje-admin');
 const badgePendientes = document.getElementById('badge-pendientes');
+const navLinkContenido = document.getElementById('nav-link-contenido');
 
 function mostrarMensaje(texto, tipo) {
   mensajeDiv.innerHTML = `<div class="mensaje ${tipo}">${texto}</div>`;
@@ -21,12 +22,14 @@ async function verificarSesion() {
     seccionLogin.classList.add('oculto');
     seccionPanel.classList.remove('oculto');
     btnLogout.classList.remove('oculto');
+    navLinkContenido.classList.toggle('oculto', data.rol !== 'general');
     cargarEventos();
     cargarCanchas();
   } else {
     seccionLogin.classList.remove('oculto');
     seccionPanel.classList.add('oculto');
     btnLogout.classList.add('oculto');
+    navLinkContenido.classList.add('oculto');
   }
 }
 
