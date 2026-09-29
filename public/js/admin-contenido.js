@@ -41,7 +41,8 @@ async function mostrarPanelSiHaySesion() {
   btnLogout.classList.remove('oculto');
   await Promise.all([
     cargarInfoEventos(), cargarMenuOpciones(), cargarConfigCanchas(), cargarReels(),
-    cargarHeroAdmin(), cargarGaleriaAdmin('recinto'), cargarGaleriaAdmin('eventos'), cargarUsuarios()
+    cargarHeroAdmin(), cargarGaleriaAdmin('recinto'), cargarGaleriaAdmin('eventos'), cargarUsuarios(),
+    cargarConfigGeneral()
   ]);
 }
 
@@ -443,6 +444,29 @@ document.getElementById('form-galeria-eventos').addEventListener('submit', async
     e.target.reset();
     mostrarMensaje('Foto/video agregado a Eventos.', 'exito');
     cargarGaleriaAdmin('eventos');
+  } catch (err) {
+    mostrarMensaje(err.message, 'error');
+  }
+});
+
+// ---- Correo de contacto y notificaciones ----
+async function cargarConfigGeneral() {
+  try {
+    const data = await llamarSuperadmin('/api/superadmin/config-general');
+    document.getElementById('cfg-correo-contacto').value = data.correo_contacto || '';
+  } catch (err) {
+    mostrarMensaje(err.message, 'error');
+  }
+}
+
+document.getElementById('form-config-general').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  try {
+    await llamarSuperadmin('/api/superadmin/config-general', {
+      method: 'PUT',
+      body: JSON.stringify({ correo_contacto: document.getElementById('cfg-correo-contacto').value })
+    });
+    mostrarMensaje('Correo de contacto actualizado.', 'exito');
   } catch (err) {
     mostrarMensaje(err.message, 'error');
   }

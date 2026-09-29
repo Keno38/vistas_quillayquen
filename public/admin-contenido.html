@@ -96,6 +96,18 @@
     </div>
 
     <div class="home-panel">
+      <h2 style="margin-top:0;">Correo de contacto y notificaciones</h2>
+      <p>Este correo recibe el aviso cuando llega una reserva/solicitud nueva, envía los avisos de aceptada/rechazada al cliente, y se muestra como contacto público del sitio. Requiere haber configurado <code>SMTP_USER</code> y <code>SMTP_PASSWORD</code> (contraseña de aplicación) en Render.</p>
+      <form id="form-config-general" style="max-width:420px;display:flex;gap:1rem;align-items:flex-end;flex-wrap:wrap;">
+        <div style="flex:1;min-width:220px;">
+          <label for="cfg-correo-contacto">Correo</label>
+          <input type="email" id="cfg-correo-contacto" placeholder="contacto@empresa.cl">
+        </div>
+        <button type="submit" class="boton" style="margin-bottom:0.2rem;">Guardar</button>
+      </form>
+    </div>
+
+    <div class="home-panel">
       <h2 style="margin-top:0;">Usuarios y accesos</h2>
       <p>Quién puede entrar a la administración. Rol <strong>agenda</strong>: solo ve Solicitudes y Reservas. Rol <strong>general</strong>: ve todo, incluida esta página de Contenido.</p>
       <table class="admin-tabla" id="tabla-usuarios">

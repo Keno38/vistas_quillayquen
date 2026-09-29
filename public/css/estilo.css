@@ -520,6 +520,16 @@ footer.sitio .firma {
   opacity: 0.8;
 }
 
+.footer-contacto {
+  margin: 0.6rem 0 0;
+  font-size: 0.85rem;
+}
+
+.footer-contacto a {
+  color: var(--verde-oscuro);
+  font-weight: 600;
+}
+
 /* ---- Hero de portada (imagen grande + galería lateral) ---- */
 .hero-portada {
   display: grid;

@@ -1,4 +1,5 @@
 const { pg } = require('./supabaseClient');
+const mailer = require('./mailer');
 
 function validarFecha(fecha) {
   return /^\d{4}-\d{2}-\d{2}$/.test(fecha) && !isNaN(Date.parse(fecha));
@@ -137,7 +138,7 @@ async function validarMenuOpcion(id, categoriaEsperada) {
   return opcion.id;
 }
 
-async function solicitar({ fecha, contacto_nombre, institucion, telefono, menu_desayuno_id, menu_almuerzo_id, menu_once_id, cantidad_personas, comentario }) {
+async function solicitar({ fecha, contacto_nombre, institucion, telefono, correo_cliente, menu_desayuno_id, menu_almuerzo_id, menu_once_id, cantidad_personas, comentario }) {
   if (!validarFecha(fecha)) {
     const err = new Error('Fecha inválida, use formato AAAA-MM-DD');
     err.status = 400;
@@ -169,6 +170,7 @@ async function solicitar({ fecha, contacto_nombre, institucion, telefono, menu_d
       contacto_nombre: String(contacto_nombre).trim(),
       institucion: institucion ? String(institucion).trim() : '',
       telefono: String(telefono).trim(),
+      correo_cliente: correo_cliente ? String(correo_cliente).trim() : null,
       con_menu: menuDesayunoId !== null || menuAlmuerzoId !== null || menuOnceId !== null,
       menu_desayuno_id: menuDesayunoId,
       menu_almuerzo_id: menuAlmuerzoId,
@@ -178,7 +180,25 @@ async function solicitar({ fecha, contacto_nombre, institucion, telefono, menu_d
       estado: 'pendiente' // requiere confirmación manual del administrador
     }
   });
-  return insertados[0];
+  const evento = insertados[0];
+  mailer.obtenerCorreoContacto().then(correo => {
+    if (!correo) return;
+    mailer.enviarCorreoSeguro({
+      to: correo,
+      subject: `Nueva solicitud de evento por revisar — ${evento.fecha}`,
+      html: `
+        <p>Hay una solicitud nueva pendiente de confirmación:</p>
+        <ul>
+          <li><strong>Fecha:</strong> ${evento.fecha}</li>
+          <li><strong>Contacto:</strong> ${evento.contacto_nombre} (${evento.telefono})</li>
+          ${evento.institucion ? `<li><strong>Institución:</strong> ${evento.institucion}</li>` : ''}
+          ${evento.cantidad_personas ? `<li><strong>Personas:</strong> ${evento.cantidad_personas}</li>` : ''}
+        </ul>
+        <p>Confírmala o recházala desde el panel de administración.</p>
+      `
+    });
+  }).catch(() => {});
+  return evento;
 }
 
 async function listar({ estado } = {}) {
@@ -217,7 +237,24 @@ async function cambiarEstado(id, nuevoEstado) {
       method: 'PATCH',
       body: { estado: nuevoEstado }
     });
-    return actualizados[0];
+    const actualizado = actualizados[0];
+    if (evento.correo_cliente && (nuevoEstado === 'confirmado' || nuevoEstado === 'rechazado')) {
+      const confirmado = nuevoEstado === 'confirmado';
+      mailer.enviarCorreoSeguro({
+        to: evento.correo_cliente,
+        subject: confirmado ? 'Tu solicitud de evento fue confirmada' : 'Tu solicitud de evento fue rechazada',
+        html: confirmado
+          ? `
+            <p>Hola ${evento.contacto_nombre}, tu solicitud para el <strong>${evento.fecha}</strong> fue <strong>confirmada</strong>.</p>
+            <p>Nos pondremos en contacto para coordinar los detalles del pago y el evento.</p>
+          `
+          : `
+            <p>Hola ${evento.contacto_nombre}, tu solicitud para el <strong>${evento.fecha}</strong> fue <strong>rechazada</strong>.</p>
+            <p>Si tienes dudas, contáctanos para revisarlo.</p>
+          `
+      });
+    }
+    return actualizado;
   } catch (err) {
     if (err.status === 409) {
       err.message = 'Ya existe otro evento confirmado ese mismo día';

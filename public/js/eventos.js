@@ -139,6 +139,7 @@ form.addEventListener('submit', async (e) => {
     contacto_nombre: document.getElementById('ev-contacto').value,
     institucion: document.getElementById('ev-institucion').value,
     telefono: document.getElementById('ev-telefono').value,
+    correo_cliente: document.getElementById('ev-correo').value,
     cantidad_personas: document.getElementById('ev-personas').value,
     menu_desayuno_id: document.getElementById('ev-menu-desayuno').value || null,
     menu_almuerzo_id: document.getElementById('ev-menu-almuerzo').value || null,

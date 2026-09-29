@@ -1,5 +1,10 @@
 const { pg } = require('./supabaseClient');
 const { subirComprobante, descargarComprobante } = require('./storage');
+const mailer = require('./mailer');
+
+function formatoCLP(monto) {
+  return Number(monto).toLocaleString('es-CL', { style: 'currency', currency: 'CLP', maximumFractionDigits: 0 });
+}
 
 // Estados que "ocupan" el horario (bloquean el bloque para otras personas).
 const ESTADOS_ACTIVOS = ['pendiente_verificacion', 'confirmada'];
@@ -180,7 +185,25 @@ async function reservar({ cancha_id, fecha, hora_inicio, nombre_cliente, telefon
         estado: 'pendiente_verificacion'
       }
     });
-    return insertadas[0];
+    const reserva = insertadas[0];
+    mailer.obtenerCorreoContacto().then(correo => {
+      if (!correo) return;
+      mailer.enviarCorreoSeguro({
+        to: correo,
+        subject: `Nueva reserva de cancha por revisar — ${cancha.nombre} ${fecha} ${bloque.hora_inicio}`,
+        html: `
+          <p>Hay una reserva nueva pendiente de verificación:</p>
+          <ul>
+            <li><strong>Cancha:</strong> ${cancha.nombre}</li>
+            <li><strong>Fecha:</strong> ${fecha} — ${bloque.hora_inicio} a ${bloque.hora_fin}</li>
+            <li><strong>Cliente:</strong> ${reserva.nombre_cliente} (${reserva.telefono})</li>
+            <li><strong>Pago:</strong> ${tipo_pago === 'completo' ? 'Completo' : 'Abono'} — ${formatoCLP(reserva.monto_esperado)}</li>
+          </ul>
+          <p>Revisa el comprobante y confírmala o recházala desde el panel de administración.</p>
+        `
+      });
+    }).catch(() => {});
+    return reserva;
   } catch (err) {
     // Restricción única de la tabla: cubre el caso raro de dos reservas casi simultáneas.
     if (err.status === 409) {
@@ -209,23 +232,50 @@ async function obtenerReserva(id) {
 
 // El personal revisó el comprobante y es válido: la reserva queda confirmada.
 async function confirmarReserva(id) {
-  await obtenerReserva(id);
+  const reservaAnterior = await obtenerReserva(id);
   const actualizadas = await pg(`/reservas_cancha?id=eq.${Number(id)}`, {
     method: 'PATCH',
     body: { estado: 'confirmada' }
   });
-  return actualizadas[0];
+  const reserva = actualizadas[0];
+  if (reservaAnterior.correo_cliente) {
+    mailer.enviarCorreoSeguro({
+      to: reservaAnterior.correo_cliente,
+      subject: 'Tu reserva de cancha fue confirmada',
+      html: `
+        <p>Hola ${reserva.nombre_cliente}, tu reserva fue <strong>confirmada</strong>:</p>
+        <ul>
+          <li><strong>Fecha:</strong> ${reserva.fecha} — ${reserva.hora_inicio} a ${reserva.hora_fin}</li>
+        </ul>
+        <p>Te esperamos. ¡Gracias por reservar con nosotros!</p>
+      `
+    });
+  }
+  return reserva;
 }
 
 // El comprobante no es válido (o no llegó la transferencia): se rechaza y el
 // horario queda libre automáticamente para que otra persona lo reserve.
 async function rechazarReserva(id, motivo) {
-  await obtenerReserva(id);
+  const reservaAnterior = await obtenerReserva(id);
+  const motivoFinal = motivo ? String(motivo).trim() : 'Comprobante inválido';
   const actualizadas = await pg(`/reservas_cancha?id=eq.${Number(id)}`, {
     method: 'PATCH',
-    body: { estado: 'rechazada', motivo: motivo ? String(motivo).trim() : 'Comprobante inválido' }
+    body: { estado: 'rechazada', motivo: motivoFinal }
   });
-  return actualizadas[0];
+  const reserva = actualizadas[0];
+  if (reservaAnterior.correo_cliente) {
+    mailer.enviarCorreoSeguro({
+      to: reservaAnterior.correo_cliente,
+      subject: 'Tu reserva de cancha fue rechazada',
+      html: `
+        <p>Hola ${reserva.nombre_cliente}, tu reserva para el ${reserva.fecha} (${reserva.hora_inicio} a ${reserva.hora_fin}) fue <strong>rechazada</strong>.</p>
+        <p><strong>Motivo:</strong> ${motivoFinal}</p>
+        <p>Si crees que es un error, contáctanos para revisarlo.</p>
+      `
+    });
+  }
+  return reserva;
 }
 
 // Cancelación manual (ej. el cliente avisó con más de 2 horas de anticipación

@@ -39,6 +39,7 @@ create table if not exists eventos (
   contacto_nombre text not null,
   institucion text default '',
   telefono text not null,
+  correo_cliente text,
   cantidad_personas integer,
   con_menu boolean not null default false,
   comentario text default '',
@@ -64,6 +65,9 @@ create table if not exists config (
   eventos_capacidad text default 'Hasta 80 personas en el salón techado, más la terraza y el área de piscina.',
   eventos_servicios text default 'Salón techado, piscina, mesas y sillas, estacionamiento.',
   eventos_contacto text default 'Coordina tu evento eligiendo una fecha libre en el calendario. Te contactamos por teléfono/WhatsApp para confirmar los detalles y el pago.',
+  -- Correo de Workspace que envía notificaciones, recibe avisos de reservas/
+  -- solicitudes nuevas, y se muestra como contacto público.
+  correo_contacto text,
   constraint config_fila_unica check (id = 1)
 );
 
