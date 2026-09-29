@@ -96,6 +96,37 @@
     </div>
 
     <div class="home-panel">
+      <h2 style="margin-top:0;">Usuarios y accesos</h2>
+      <p>Quién puede entrar a la administración. Rol <strong>agenda</strong>: solo ve Solicitudes y Reservas. Rol <strong>general</strong>: ve todo, incluida esta página de Contenido.</p>
+      <table class="admin-tabla" id="tabla-usuarios">
+        <thead>
+          <tr><th>Usuario</th><th>Rol</th><th>Acciones</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <h3>Agregar usuario nuevo</h3>
+      <form id="form-nuevo-usuario" style="display:flex;gap:1rem;align-items:flex-end;flex-wrap:wrap;">
+        <div style="flex:1;min-width:160px;">
+          <label for="us-usuario">Usuario</label>
+          <input type="text" id="us-usuario" required>
+        </div>
+        <div style="flex:1;min-width:160px;">
+          <label for="us-password">Contraseña</label>
+          <input type="password" id="us-password" minlength="6" required>
+        </div>
+        <div style="flex:1;min-width:140px;">
+          <label for="us-rol">Rol</label>
+          <select id="us-rol">
+            <option value="agenda" selected>Agenda (solo reservas)</option>
+            <option value="general">General (todo)</option>
+          </select>
+        </div>
+        <button type="submit" class="boton" style="margin-bottom:0.2rem;">Crear usuario</button>
+      </form>
+    </div>
+
+    <div class="home-panel">
       <h2 style="margin-top:0;">Imágenes de portada (Hero)</h2>
       <p>La foto grande de arriba de cada página. Si no subes una, se sigue mostrando la foto de muestra.</p>
       <div class="grilla-hero-admin" id="grilla-hero-admin"></div>

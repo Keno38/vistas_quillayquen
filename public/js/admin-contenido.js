@@ -41,7 +41,7 @@ async function mostrarPanelSiHaySesion() {
   btnLogout.classList.remove('oculto');
   await Promise.all([
     cargarInfoEventos(), cargarMenuOpciones(), cargarConfigCanchas(), cargarReels(),
-    cargarHeroAdmin(), cargarGaleriaAdmin('recinto'), cargarGaleriaAdmin('eventos')
+    cargarHeroAdmin(), cargarGaleriaAdmin('recinto'), cargarGaleriaAdmin('eventos'), cargarUsuarios()
   ]);
 }
 
@@ -443,6 +443,90 @@ document.getElementById('form-galeria-eventos').addEventListener('submit', async
     e.target.reset();
     mostrarMensaje('Foto/video agregado a Eventos.', 'exito');
     cargarGaleriaAdmin('eventos');
+  } catch (err) {
+    mostrarMensaje(err.message, 'error');
+  }
+});
+
+// ---- Usuarios y accesos ----
+const NOMBRE_ROL = { agenda: 'Agenda (solo reservas)', general: 'General (todo)' };
+
+async function cargarUsuarios() {
+  const tbody = document.querySelector('#tabla-usuarios tbody');
+  tbody.innerHTML = '<tr><td colspan="3">Cargando...</td></tr>';
+  try {
+    const lista = await llamarSuperadmin('/api/superadmin/usuarios');
+    tbody.innerHTML = '';
+    lista.forEach(u => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${u.usuario}</td>
+        <td>${NOMBRE_ROL[u.rol] || u.rol}</td>
+        <td></td>
+      `;
+      const tdAcciones = tr.querySelector('td:last-child');
+
+      const btnClave = document.createElement('button');
+      btnClave.textContent = 'Cambiar clave';
+      btnClave.className = 'boton secundario';
+      btnClave.type = 'button';
+      btnClave.style.marginRight = '0.4rem';
+      btnClave.addEventListener('click', () => cambiarClaveUsuario(u.usuario));
+
+      const btnEliminar = document.createElement('button');
+      btnEliminar.textContent = 'Eliminar';
+      btnEliminar.className = 'boton secundario';
+      btnEliminar.type = 'button';
+      btnEliminar.addEventListener('click', () => eliminarUsuario(u.usuario));
+
+      tdAcciones.appendChild(btnClave);
+      tdAcciones.appendChild(btnEliminar);
+      tbody.appendChild(tr);
+    });
+  } catch (err) {
+    tbody.innerHTML = `<tr><td colspan="3">${err.message}</td></tr>`;
+  }
+}
+
+async function cambiarClaveUsuario(usuario) {
+  const nueva = prompt(`Nueva contraseña para "${usuario}" (mínimo 6 caracteres):`);
+  if (!nueva) return;
+  try {
+    await llamarSuperadmin(`/api/superadmin/usuarios/${encodeURIComponent(usuario)}`, {
+      method: 'PUT',
+      body: JSON.stringify({ password: nueva })
+    });
+    mostrarMensaje('Contraseña actualizada.', 'exito');
+  } catch (err) {
+    mostrarMensaje(err.message, 'error');
+  }
+}
+
+async function eliminarUsuario(usuario) {
+  if (!confirm(`¿Eliminar el usuario "${usuario}"? No se puede deshacer.`)) return;
+  try {
+    await llamarSuperadmin(`/api/superadmin/usuarios/${encodeURIComponent(usuario)}`, { method: 'DELETE' });
+    mostrarMensaje('Usuario eliminado.', 'exito');
+    cargarUsuarios();
+  } catch (err) {
+    mostrarMensaje(err.message, 'error');
+  }
+}
+
+document.getElementById('form-nuevo-usuario').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  try {
+    await llamarSuperadmin('/api/superadmin/usuarios', {
+      method: 'POST',
+      body: JSON.stringify({
+        usuario: document.getElementById('us-usuario').value,
+        password: document.getElementById('us-password').value,
+        rol: document.getElementById('us-rol').value
+      })
+    });
+    e.target.reset();
+    mostrarMensaje('Usuario creado.', 'exito');
+    cargarUsuarios();
   } catch (err) {
     mostrarMensaje(err.message, 'error');
   }

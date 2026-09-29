@@ -15,6 +15,7 @@ const auth = require('./auth');
 const galeria = require('./galeria');
 const reels = require('./reels');
 const hero = require('./hero');
+const usuarios = require('./usuarios');
 const { parseMultipart } = require('./multipart');
 
 const MAX_COMPROBANTE_BYTES = 8 * 1024 * 1024; // 8MB, de sobra para una foto/PDF de comprobante
@@ -375,6 +376,27 @@ async function handleApi(req, res, pathname, query) {
     if (matchHero && req.method === 'DELETE') {
       requireGeneral(req);
       return sendJSON(res, 200, { ok: true, hero: await hero.eliminar(matchHero[1]) });
+    }
+
+    // ---- Superadmin: usuarios y accesos (crear/eliminar cuentas de admin.html) ----
+    if (pathname === '/api/superadmin/usuarios' && req.method === 'GET') {
+      requireGeneral(req);
+      return sendJSON(res, 200, await usuarios.listar());
+    }
+    if (pathname === '/api/superadmin/usuarios' && req.method === 'POST') {
+      requireGeneral(req);
+      const body = await readBody(req);
+      return sendJSON(res, 201, { ok: true, usuario: await usuarios.crear(body) });
+    }
+    const matchUsuario = pathname.match(/^\/api\/superadmin\/usuarios\/([^/]+)$/);
+    if (matchUsuario && req.method === 'PUT') {
+      requireGeneral(req);
+      const body = await readBody(req);
+      return sendJSON(res, 200, { ok: true, usuario: await usuarios.cambiarPassword(matchUsuario[1], body.password) });
+    }
+    if (matchUsuario && req.method === 'DELETE') {
+      requireGeneral(req);
+      return sendJSON(res, 200, { ok: true, usuario: await usuarios.eliminar(matchUsuario[1]) });
     }
 
     return sendJSON(res, 404, { error: 'Ruta de API no encontrada' });
