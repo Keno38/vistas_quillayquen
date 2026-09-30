@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+Disallow: /admin.html
+Disallow: /admin-contenido.html
+
+Sitemap: https://vistasdequillayquen.cl/sitemap.xml
