@@ -1,4 +1,4 @@
-// Servidor del sitio Vistas Quillayquen.
+// Servidor del sitio Vistas de Quillayquen.
 // Escrito solo con módulos nativos de Node.js (sin Express ni otras dependencias),
 // para poder ejecutarse con `node server/index.js` sin necesidad de `npm install`.
 
@@ -434,7 +434,7 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`Vistas Quillayquen escuchando en http://localhost:${PORT}`);
+  console.log(`Vistas de Quillayquen escuchando en http://localhost:${PORT}`);
   console.log(`Panel admin: http://localhost:${PORT}/admin.html`);
   console.log('Usuario admin por defecto: admin / quillaiquen2026  (cámbialo apenas puedas, ver README.md)');
 });

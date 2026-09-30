@@ -1,7 +1,7 @@
 {
   "name": "vistas-quillaiquen",
   "version": "1.0.0",
-  "description": "Sitio y sistema de reservas para Vistas Quillayquen (canchas de pasto sintetico y centro de eventos con piscina). Sin dependencias externas: solo Node.js.",
+  "description": "Sitio y sistema de reservas para Vistas de Quillayquen (canchas de pasto sintetico y centro de eventos con piscina). Sin dependencias externas: solo Node.js.",
   "main": "server/index.js",
   "scripts": {
     "start": "node server/index.js"

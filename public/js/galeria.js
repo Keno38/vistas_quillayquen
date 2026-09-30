@@ -7,7 +7,7 @@ const grillaRecinto = document.getElementById('grilla-recinto');
 const listaAlbumes = document.getElementById('lista-albumes');
 const grillaReels = document.getElementById('grilla-reels');
 
-const NOMBRE_CUENTA = { vistas: 'Vistas Quillayquén', ferreteria: 'Ferretería PCY' };
+const NOMBRE_CUENTA = { vistas: 'Vistas de Quillayquén', ferreteria: 'Ferretería PCY' };
 
 const lightbox = document.getElementById('lightbox');
 const lightboxContenido = document.getElementById('lightbox-contenido');

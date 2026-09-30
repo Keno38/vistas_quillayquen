@@ -211,12 +211,12 @@ document.getElementById('form-nueva-opcion').addEventListener('submit', async (e
 });
 
 // ---- Reels de Instagram ----
-const NOMBRE_CUENTA_REEL = { vistas: 'Vistas Quillayquén', ferreteria: 'Ferretería PCY' };
+const NOMBRE_CUENTA_REEL = { vistas: 'Vistas de Quillayquén', ferreteria: 'Ferretería PCY' };
 
 function selectCuentaReel(valorActual) {
   return `
     <select data-campo="cuenta">
-      <option value="vistas" ${valorActual === 'vistas' ? 'selected' : ''}>Vistas Quillayquén</option>
+      <option value="vistas" ${valorActual === 'vistas' ? 'selected' : ''}>Vistas de Quillayquén</option>
       <option value="ferreteria" ${valorActual === 'ferreteria' ? 'selected' : ''}>Ferretería PCY</option>
     </select>
   `;
