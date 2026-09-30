@@ -1,4 +1,4 @@
--- Esquema de base de datos para Vistas Quillaiquen.
+-- Esquema de base de datos para Vistas Quillayquen.
 -- Ejecutar una sola vez en Supabase: Panel del proyecto > SQL Editor > New query > pegar todo > Run.
 -- Reemplaza el almacenamiento anterior en data/db.json.
 

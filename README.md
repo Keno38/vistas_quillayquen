@@ -1,6 +1,6 @@
-# Vistas Quillaiquen — sitio y sistema de reservas
+# Vistas Quillayquen — sitio y sistema de reservas
 
-Proyecto para Vistas Quillaiquen (canchas de pasto sintético y centro de eventos con
+Proyecto para Vistas Quillayquen (canchas de pasto sintético y centro de eventos con
 piscina, parte de Comercializadora PCY). Construido solo con Node.js (sin Express ni
 otras librerías: no requiere `npm install`). Los datos se guardan en una base de datos
 Postgres en [Supabase](https://supabase.com), a la que el servidor se conecta usando

@@ -20,7 +20,7 @@ const SMTP_HOST = process.env.SMTP_HOST || 'smtp.gmail.com';
 const SMTP_PORT = Number(process.env.SMTP_PORT || 465);
 const SMTP_USER = process.env.SMTP_USER;
 const SMTP_PASSWORD = process.env.SMTP_PASSWORD;
-const FROM_NOMBRE = process.env.SMTP_FROM_NAME || 'Vistas Quillaiquen';
+const FROM_NOMBRE = process.env.SMTP_FROM_NAME || 'Vistas Quillayquen';
 
 function leerRespuesta(socket) {
   return new Promise((resolve, reject) => {
