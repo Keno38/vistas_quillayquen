@@ -167,11 +167,9 @@ async function handleApi(req, res, pathname, query) {
     }
     if (pathname === '/api/canchas/config' && req.method === 'GET') {
       const config = await canchas.getConfig();
-      const monto_abono = Math.round((config.valor_cancha_hora * config.abono_porcentaje) / 100);
       return sendJSON(res, 200, {
         valor_cancha_hora: config.valor_cancha_hora,
-        abono_porcentaje: config.abono_porcentaje,
-        monto_abono,
+        monto_abono: config.monto_abono_fijo,
         monto_completo: config.valor_cancha_hora,
         datos_transferencia: config.datos_transferencia
       });

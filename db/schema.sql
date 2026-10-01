@@ -62,6 +62,8 @@ create table if not exists config (
   menu_evento_precio_por_persona integer,
   valor_cancha_hora integer not null default 24000,
   abono_porcentaje integer not null default 30 check (abono_porcentaje between 1 and 100),
+  -- Monto fijo del abono en pesos (reemplaza al porcentaje de arriba, que ya no se usa).
+  monto_abono_fijo integer not null default 7200,
   eventos_capacidad text default 'Hasta 80 personas en el salón techado, más la terraza y el área de piscina.',
   eventos_servicios text default 'Salón techado, piscina, mesas y sillas, estacionamiento.',
   eventos_contacto text default 'Coordina tu evento eligiendo una fecha libre en el calendario. Te contactamos por teléfono/WhatsApp para confirmar los detalles y el pago.',

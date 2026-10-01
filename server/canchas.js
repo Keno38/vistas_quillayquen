@@ -48,7 +48,7 @@ async function getConfig() {
   return filas[0];
 }
 
-async function actualizarConfig({ valor_cancha_hora, abono_porcentaje, datos_transferencia }) {
+async function actualizarConfig({ valor_cancha_hora, monto_abono_fijo, datos_transferencia }) {
   const cambios = {};
   if (datos_transferencia !== undefined) cambios.datos_transferencia = String(datos_transferencia).trim();
   if (valor_cancha_hora !== undefined) {
@@ -60,14 +60,14 @@ async function actualizarConfig({ valor_cancha_hora, abono_porcentaje, datos_tra
     }
     cambios.valor_cancha_hora = valor;
   }
-  if (abono_porcentaje !== undefined) {
-    const porcentaje = Number(abono_porcentaje);
-    if (!Number.isFinite(porcentaje) || porcentaje < 1 || porcentaje > 100) {
-      const err = new Error('El porcentaje de abono debe estar entre 1 y 100');
+  if (monto_abono_fijo !== undefined) {
+    const monto = Number(monto_abono_fijo);
+    if (!Number.isFinite(monto) || monto <= 0) {
+      const err = new Error('El monto del abono debe ser un número mayor a 0');
       err.status = 400;
       throw err;
     }
-    cambios.abono_porcentaje = porcentaje;
+    cambios.monto_abono_fijo = monto;
   }
   if (Object.keys(cambios).length === 0) return getConfig();
   const actualizados = await pg('/config?id=eq.1', { method: 'PATCH', body: cambios });
@@ -110,7 +110,7 @@ async function disponibilidad(fecha) {
 
 function calcularMonto(config, tipoPago) {
   if (tipoPago === 'completo') return config.valor_cancha_hora;
-  return Math.round((config.valor_cancha_hora * config.abono_porcentaje) / 100);
+  return config.monto_abono_fijo;
 }
 
 // Reserva con pago por transferencia: queda "pendiente_verificacion" (el horario

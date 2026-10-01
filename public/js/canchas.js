@@ -48,7 +48,7 @@ async function cargarConfigPago() {
   try {
     const resp = await fetch('/api/canchas/config');
     configPago = await resp.json();
-    document.getElementById('texto-abono').textContent = `${configPago.abono_porcentaje}%`;
+    document.getElementById('texto-abono').textContent = formatoCLP(configPago.monto_abono);
     document.getElementById('monto-abono').textContent = formatoCLP(configPago.monto_abono);
     document.getElementById('monto-completo').textContent = formatoCLP(configPago.monto_completo);
     if (configPago.datos_transferencia) {
