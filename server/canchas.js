@@ -48,8 +48,9 @@ async function getConfig() {
   return filas[0];
 }
 
-async function actualizarConfig({ valor_cancha_hora, abono_porcentaje }) {
+async function actualizarConfig({ valor_cancha_hora, abono_porcentaje, datos_transferencia }) {
   const cambios = {};
+  if (datos_transferencia !== undefined) cambios.datos_transferencia = String(datos_transferencia).trim();
   if (valor_cancha_hora !== undefined) {
     const valor = Number(valor_cancha_hora);
     if (!Number.isFinite(valor) || valor <= 0) {

@@ -51,6 +51,9 @@ async function cargarConfigPago() {
     document.getElementById('texto-abono').textContent = `${configPago.abono_porcentaje}%`;
     document.getElementById('monto-abono').textContent = formatoCLP(configPago.monto_abono);
     document.getElementById('monto-completo').textContent = formatoCLP(configPago.monto_completo);
+    if (configPago.datos_transferencia) {
+      document.getElementById('datos-transferencia').textContent = configPago.datos_transferencia;
+    }
   } catch {
     // Si falla, igual se puede reservar; el monto exacto lo confirma el personal.
   }

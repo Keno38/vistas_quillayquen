@@ -80,9 +80,9 @@
     </div>
 
     <div class="home-panel">
-      <h2 style="margin-top:0;">Precio de canchas</h2>
-      <p>Valor de la hora y porcentaje de abono para las reservas de cancha.</p>
-      <form id="form-config-canchas" style="max-width:420px;display:flex;gap:1rem;align-items:flex-end;flex-wrap:wrap;">
+      <h2 style="margin-top:0;">Precio de canchas y datos de transferencia</h2>
+      <p>Valor de la hora, porcentaje de abono, y los datos bancarios que se muestran a los clientes al pagar (Canchas y Eventos).</p>
+      <form id="form-config-canchas" style="max-width:520px;display:flex;gap:1rem;align-items:flex-end;flex-wrap:wrap;">
         <div style="flex:1;min-width:160px;">
           <label for="cfg-valor-cancha">Valor de la hora (CLP)</label>
           <input type="number" id="cfg-valor-cancha" min="1" required>
@@ -90,6 +90,10 @@
         <div style="flex:1;min-width:160px;">
           <label for="cfg-abono-porcentaje">% de abono</label>
           <input type="number" id="cfg-abono-porcentaje" min="1" max="100" required>
+        </div>
+        <div style="flex-basis:100%;">
+          <label for="cfg-datos-transferencia">Datos de transferencia</label>
+          <textarea id="cfg-datos-transferencia" rows="5" placeholder="RUT, Banco, Tipo de cuenta, N° Cuenta, Correo..."></textarea>
         </div>
         <button type="submit" class="boton" style="margin-bottom:0.2rem;">Guardar</button>
       </form>

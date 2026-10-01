@@ -172,7 +172,8 @@ async function handleApi(req, res, pathname, query) {
         valor_cancha_hora: config.valor_cancha_hora,
         abono_porcentaje: config.abono_porcentaje,
         monto_abono,
-        monto_completo: config.valor_cancha_hora
+        monto_completo: config.valor_cancha_hora,
+        datos_transferencia: config.datos_transferencia
       });
     }
     if (pathname === '/api/canchas/reservar' && req.method === 'POST') {

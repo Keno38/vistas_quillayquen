@@ -43,12 +43,13 @@ async function calendario(mes) {
 // superadmin) + las opciones de menú activas, para el formulario de
 // solicitud. El menú solo se muestra ahí, no como texto fijo en la página.
 async function infoPublica() {
-  const [config] = await pg('/config?id=eq.1&select=eventos_capacidad,eventos_servicios,eventos_contacto');
+  const [config] = await pg('/config?id=eq.1&select=eventos_capacidad,eventos_servicios,eventos_contacto,datos_transferencia');
   const menuOpciones = await pg('/menu_opciones?activo=eq.true&select=id,nombre,precio_por_persona,categoria&order=orden.asc,id.asc');
   return {
     capacidad: config.eventos_capacidad,
     servicios: config.eventos_servicios,
     contacto: config.eventos_contacto,
+    datos_transferencia: config.datos_transferencia,
     menu_opciones: menuOpciones
   };
 }

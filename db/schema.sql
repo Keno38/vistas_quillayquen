@@ -68,6 +68,13 @@ create table if not exists config (
   -- Correo de Workspace que envía notificaciones, recibe avisos de reservas/
   -- solicitudes nuevas, y se muestra como contacto público.
   correo_contacto text,
+  -- Datos bancarios para transferencia, mostrados en Canchas y Eventos.
+  datos_transferencia text default
+    'RUT: 76.672.268-7
+Banco: Banco Santander
+Cuenta: Cuenta Corriente
+N° Cuenta: 73015359
+Correo: vistasquillayquen@gmail.com',
   constraint config_fila_unica check (id = 1)
 );
 

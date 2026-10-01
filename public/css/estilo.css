@@ -520,6 +520,16 @@ footer.sitio .firma {
   opacity: 0.8;
 }
 
+.datos-transferencia {
+  background: var(--gris-fondo);
+  border: 1px solid var(--gris-borde);
+  border-radius: var(--radio-chico);
+  padding: 0.9rem 1.1rem;
+  margin: 0.4rem 0 1rem;
+  font-size: 0.9rem;
+  white-space: pre-line;
+}
+
 .footer-contacto {
   margin: 0.6rem 0 0;
   font-size: 0.85rem;

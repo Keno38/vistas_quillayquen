@@ -35,6 +35,7 @@ async function cargarInfoPublica() {
     document.getElementById('info-capacidad').textContent = data.capacidad || '';
     document.getElementById('info-servicios').textContent = data.servicios || '';
     document.getElementById('info-contacto').textContent = data.contacto || '';
+    document.getElementById('info-transferencia').textContent = data.datos_transferencia || 'Te los enviamos al confirmar tu solicitud.';
 
     const selectsPorCategoria = {
       desayuno: document.getElementById('ev-menu-desayuno'),

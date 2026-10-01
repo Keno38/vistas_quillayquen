@@ -87,6 +87,7 @@ async function cargarConfigCanchas() {
     const config = await llamarSuperadmin('/api/superadmin/canchas-config');
     document.getElementById('cfg-valor-cancha').value = config.valor_cancha_hora;
     document.getElementById('cfg-abono-porcentaje').value = config.abono_porcentaje;
+    document.getElementById('cfg-datos-transferencia').value = config.datos_transferencia || '';
   } catch (err) {
     mostrarMensaje(err.message, 'error');
   }
@@ -99,7 +100,8 @@ document.getElementById('form-config-canchas').addEventListener('submit', async 
       method: 'PUT',
       body: JSON.stringify({
         valor_cancha_hora: document.getElementById('cfg-valor-cancha').value,
-        abono_porcentaje: document.getElementById('cfg-abono-porcentaje').value
+        abono_porcentaje: document.getElementById('cfg-abono-porcentaje').value,
+        datos_transferencia: document.getElementById('cfg-datos-transferencia').value
       })
     });
     mostrarMensaje('Precio de canchas actualizado.', 'exito');
