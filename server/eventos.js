@@ -297,11 +297,17 @@ async function enviarMensajeSolicitud(id, texto) {
     err.status = 400;
     throw err;
   }
-  await mailer.enviarCorreo({
-    to: evento.correo_cliente,
-    subject: `Sobre tu solicitud de evento (${evento.fecha})`,
-    html: `<p>Hola ${evento.contacto_nombre},</p><p>${mensaje.replace(/\n/g, '<br>')}</p><p>Vistas de Quillayquén</p>`
-  });
+  try {
+    await mailer.enviarCorreo({
+      to: evento.correo_cliente,
+      subject: `Sobre tu solicitud de evento (${evento.fecha})`,
+      html: `<p>Hola ${evento.contacto_nombre},</p><p>${mensaje.replace(/\n/g, '<br>')}</p><p>Vistas de Quillayquén</p>`
+    });
+  } catch (error) {
+    const err = new Error(`No se pudo enviar el correo: ${error.message || error.code || 'error desconocido'}`);
+    err.status = 502;
+    throw err;
+  }
   return { ok: true };
 }
 
