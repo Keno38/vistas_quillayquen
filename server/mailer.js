@@ -19,7 +19,7 @@ const { pg } = require('./supabaseClient');
 const SMTP_HOST = process.env.SMTP_HOST || 'smtp.gmail.com';
 const SMTP_PORT = Number(process.env.SMTP_PORT || 465);
 const SMTP_USER = process.env.SMTP_USER;
-const SMTP_PASSWORD = process.env.SMTP_PASSWORD;
+const SMTP_PASSWORD = (process.env.SMTP_PASSWORD || '').replace(/\s+/g, '');
 const FROM_NOMBRE = process.env.SMTP_FROM_NAME || 'Vistas de Quillayquen';
 
 function leerRespuesta(socket) {
