@@ -5,7 +5,7 @@
 
 require('./env');
 
-const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_URL = (process.env.SUPABASE_URL || '').trim();
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 const STORAGE_URL = `${(SUPABASE_URL || '').replace(/\/$/, '')}/storage/v1`;
 const BUCKET = 'comprobantes';
