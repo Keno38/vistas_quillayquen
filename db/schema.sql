@@ -50,9 +50,6 @@ create table if not exists eventos (
 );
 
 -- Evita dos eventos "confirmado" el mismo día, aunque se confirmen casi al mismo tiempo.
-create unique index if not exists un_evento_confirmado_por_fecha
-  on eventos (fecha)
-  where estado = 'confirmado';
 
 create table if not exists config (
   id integer primary key default 1,

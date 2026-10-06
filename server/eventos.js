@@ -9,6 +9,32 @@ function validarMes(mes) {
   return /^\d{4}-\d{2}$/.test(mes);
 }
 
+// Más de 120 personas ocupa el recinto completo; con 120 o menos, el recinto se comparte.
+const UMBRAL_EVENTO_EXCLUSIVO = 120;
+
+// Sin cantidad informada se trata como exclusivo, para no compartir el recinto por error.
+function esExclusivo(evento) {
+  const personas = evento.cantidad_personas;
+  return personas === null || personas === undefined || Number(personas) > UMBRAL_EVENTO_EXCLUSIVO;
+}
+
+// Lanza un error si la fecha no se puede usar con esta cantidad de personas.
+async function verificarDisponibilidad(fecha, cantidadPersonas, idExcluir) {
+  const exclusivoNuevo = esExclusivo({ cantidad_personas: cantidadPersonas });
+  const filtroId = idExcluir ? `&id=neq.${Number(idExcluir)}` : '';
+  const otros = await pg(
+    `/eventos?fecha=eq.${fecha}&estado=in.(pendiente,aprobada,confirmado)&select=id,cantidad_personas,estado${filtroId}`
+  );
+  const conflicto = otros.find(o => exclusivoNuevo || esExclusivo(o));
+  if (conflicto) {
+    const err = new Error(exclusivoNuevo
+      ? `El ${fecha} ya tiene otra solicitud activa. Un evento de más de ${UMBRAL_EVENTO_EXCLUSIVO} personas necesita el recinto completo.`
+      : `El ${fecha} está reservado en exclusiva por otro evento (más de ${UMBRAL_EVENTO_EXCLUSIVO} personas).`);
+    err.status = 409;
+    throw err;
+  }
+}
+
 // Devuelve, para cada día del mes solicitado, el estado del salón de eventos:
 // 'libre'      -> no hay ninguna solicitud ni evento confirmado ese día
 // 'pendiente'  -> hay una solicitud esperando confirmación (aún se puede seguir cotizando)
@@ -24,16 +50,16 @@ async function calendario(mes) {
   const diasEnMes = new Date(anio, mesNum, 0).getDate();
 
   const eventosDelMes = await pg(
-    `/eventos?fecha=gte.${mes}-01&fecha=lte.${mes}-${diasEnMes}&estado=neq.rechazado&select=fecha,estado`
+    `/eventos?fecha=gte.${mes}-01&fecha=lte.${mes}-${diasEnMes}&estado=neq.rechazado&select=fecha,estado,cantidad_personas`
   );
 
   const dias = [];
   for (let d = 1; d <= diasEnMes; d++) {
     const fecha = `${mes}-${String(d).padStart(2, '0')}`;
-    const delDia = eventosDelMes.filter(e => e.fecha === fecha);
+    const exclusivos = eventosDelMes.filter(e => e.fecha === fecha && esExclusivo(e));
     let estado = 'libre';
-    if (delDia.some(e => e.estado === 'confirmado')) estado = 'confirmado';
-    else if (delDia.some(e => e.estado === 'pendiente' || e.estado === 'aprobada')) estado = 'pendiente';
+    if (exclusivos.some(e => e.estado === 'confirmado')) estado = 'confirmado';
+    else if (exclusivos.some(e => e.estado === 'pendiente' || e.estado === 'aprobada')) estado = 'pendiente';
     dias.push({ fecha, estado });
   }
   return { mes, dias };
@@ -157,12 +183,8 @@ async function solicitar({ fecha, contacto_nombre, institucion, telefono, correo
     validarMenuOpcion(menu_once_id, 'once')
   ]);
 
-  const confirmados = await pg(`/eventos?fecha=eq.${fecha}&estado=eq.confirmado&select=id`);
-  if (confirmados.length > 0) {
-    const err = new Error('Ese día ya está confirmado con otro evento. Elige otra fecha.');
-    err.status = 409;
-    throw err;
-  }
+  const cantidadNumero = cantidad_personas ? Number(cantidad_personas) : null;
+  await verificarDisponibilidad(fecha, cantidadNumero);
 
   const insertados = await pg('/eventos', {
     method: 'POST',
@@ -234,6 +256,7 @@ async function aprobarSolicitud(id, montoTotal) {
     err.status = 400;
     throw err;
   }
+  await verificarDisponibilidad(evento.fecha, evento.cantidad_personas, evento.id);
   const abono = Math.round(total * 0.5);
   const [actualizado] = await pg(`/eventos?id=eq.${evento.id}`, {
     method: 'PATCH',
@@ -302,14 +325,7 @@ async function cambiarEstado(id, nuevoEstado) {
   }
 
   if (nuevoEstado === 'confirmado') {
-    const otroConfirmado = await pg(
-      `/eventos?id=neq.${evento.id}&fecha=eq.${evento.fecha}&estado=eq.confirmado&select=id`
-    );
-    if (otroConfirmado.length > 0) {
-      const err = new Error('Ya existe otro evento confirmado ese mismo día');
-      err.status = 409;
-      throw err;
-    }
+    await verificarDisponibilidad(evento.fecha, evento.cantidad_personas, evento.id);
   }
 
   try {
