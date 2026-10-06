@@ -55,10 +55,4 @@ async function obtenerCorreoContacto() {
   return config ? config.correo_contacto : null;
 }
 
-async function actualizarCorreoContacto(correo) {
-  const valor = correo ? String(correo).trim() : null;
-  const actualizados = await pg('/config?id=eq.1', { method: 'PATCH', body: { correo_contacto: valor } });
-  return actualizados[0].correo_contacto;
-}
-
-module.exports = { enviarCorreo, enviarCorreoSeguro, obtenerCorreoContacto, actualizarCorreoContacto };
+module.exports = { enviarCorreo, enviarCorreoSeguro, obtenerCorreoContacto };

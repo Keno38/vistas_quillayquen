@@ -17,6 +17,7 @@ const reels = require('./reels');
 const hero = require('./hero');
 const usuarios = require('./usuarios');
 const mailer = require('./mailer');
+const contacto = require('./contacto');
 const { parseMultipart } = require('./multipart');
 
 const MAX_COMPROBANTE_BYTES = 8 * 1024 * 1024; // 8MB, de sobra para una foto/PDF de comprobante
@@ -211,7 +212,7 @@ async function handleApi(req, res, pathname, query) {
       return sendJSON(res, 200, await hero.obtenerTodos());
     }
     if (pathname === '/api/contacto-publico' && req.method === 'GET') {
-      return sendJSON(res, 200, { correo: await mailer.obtenerCorreoContacto() });
+      return sendJSON(res, 200, await contacto.obtenerContacto());
     }
 
     // ---- Autenticación admin ----
@@ -420,12 +421,12 @@ async function handleApi(req, res, pathname, query) {
     // ---- Superadmin: correo de contacto y notificaciones ----
     if (pathname === '/api/superadmin/config-general' && req.method === 'GET') {
       requireGeneral(req);
-      return sendJSON(res, 200, { correo_contacto: await mailer.obtenerCorreoContacto() });
+      return sendJSON(res, 200, await contacto.obtenerContacto());
     }
     if (pathname === '/api/superadmin/config-general' && req.method === 'PUT') {
       requireGeneral(req);
       const body = await readBody(req);
-      return sendJSON(res, 200, { ok: true, correo_contacto: await mailer.actualizarCorreoContacto(body.correo_contacto) });
+      return sendJSON(res, 200, { ok: true, ...(await contacto.actualizarContacto(body)) });
     }
 
     return sendJSON(res, 404, { error: 'Ruta de API no encontrada' });

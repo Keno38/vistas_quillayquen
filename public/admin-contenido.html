@@ -102,12 +102,30 @@
     <div class="home-panel">
       <h2 style="margin-top:0;">Correo de contacto y notificaciones</h2>
       <p>Este correo recibe el aviso cuando llega una reserva/solicitud nueva, envía los avisos de aceptada/rechazada al cliente, y se muestra como contacto público del sitio. Requiere haber configurado <code>SMTP_USER</code> y <code>SMTP_PASSWORD</code> (contraseña de aplicación) en Render.</p>
-      <form id="form-config-general" style="max-width:420px;display:flex;gap:1rem;align-items:flex-end;flex-wrap:wrap;">
+      <form id="form-config-general" style="max-width:620px;display:flex;gap:1rem;flex-wrap:wrap;">
         <div style="flex:1;min-width:220px;">
           <label for="cfg-correo-contacto">Correo</label>
           <input type="email" id="cfg-correo-contacto" placeholder="contacto@empresa.cl">
         </div>
-        <button type="submit" class="boton" style="margin-bottom:0.2rem;">Guardar</button>
+        <div style="flex:1;min-width:220px;">
+          <label for="cfg-telefono-contacto">Teléfono / WhatsApp</label>
+          <input type="tel" id="cfg-telefono-contacto" placeholder="+56 9 ...">
+        </div>
+        <div style="flex-basis:100%;">
+          <label for="cfg-direccion-recinto">Dirección del recinto</label>
+          <textarea id="cfg-direccion-recinto" rows="2" placeholder="Calle, número, comuna, región"></textarea>
+        </div>
+        <div style="flex-basis:100%;">
+          <label for="cfg-mapa-embed-url">Enlace para insertar el mapa (Google Maps → Compartir → Insertar un mapa → copiar la dirección del src)</label>
+          <input type="url" id="cfg-mapa-embed-url" placeholder="https://www.google.com/maps/embed?pb=...">
+        </div>
+        <div style="flex-basis:100%;">
+          <label for="cfg-video-como-llegar">Enlace del video de cómo llegar</label>
+          <input type="url" id="cfg-video-como-llegar" placeholder="https://www.youtube.com/watch?v=... o Instagram">
+        </div>
+        <div style="flex-basis:100%;">
+          <button type="submit" class="boton">Guardar contacto</button>
+        </div>
       </form>
     </div>
 

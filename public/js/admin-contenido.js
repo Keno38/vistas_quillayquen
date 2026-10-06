@@ -465,10 +465,20 @@ document.getElementById('form-galeria-eventos').addEventListener('submit', async
 });
 
 // ---- Correo de contacto y notificaciones ----
+const CAMPOS_CONTACTO = {
+  correo_contacto: 'cfg-correo-contacto',
+  telefono_contacto: 'cfg-telefono-contacto',
+  direccion_recinto: 'cfg-direccion-recinto',
+  mapa_embed_url: 'cfg-mapa-embed-url',
+  video_como_llegar_url: 'cfg-video-como-llegar'
+};
+
 async function cargarConfigGeneral() {
   try {
     const data = await llamarSuperadmin('/api/superadmin/config-general');
-    document.getElementById('cfg-correo-contacto').value = data.correo_contacto || '';
+    Object.entries(CAMPOS_CONTACTO).forEach(([campo, id]) => {
+      document.getElementById(id).value = data[campo] || '';
+    });
   } catch (err) {
     mostrarMensaje(err.message, 'error');
   }
@@ -476,12 +486,16 @@ async function cargarConfigGeneral() {
 
 document.getElementById('form-config-general').addEventListener('submit', async (e) => {
   e.preventDefault();
+  const cuerpo = {};
+  Object.entries(CAMPOS_CONTACTO).forEach(([campo, id]) => {
+    cuerpo[campo] = document.getElementById(id).value;
+  });
   try {
     await llamarSuperadmin('/api/superadmin/config-general', {
       method: 'PUT',
-      body: JSON.stringify({ correo_contacto: document.getElementById('cfg-correo-contacto').value })
+      body: JSON.stringify(cuerpo)
     });
-    mostrarMensaje('Correo de contacto actualizado.', 'exito');
+    mostrarMensaje('Datos de contacto actualizados.', 'exito');
   } catch (err) {
     mostrarMensaje(err.message, 'error');
   }
