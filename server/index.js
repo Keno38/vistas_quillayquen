@@ -278,6 +278,19 @@ async function handleApi(req, res, pathname, query) {
       const actualizado = await eventos.cambiarEstado(matchEstadoEvento[1], body.estado);
       return sendJSON(res, 200, { ok: true, evento: actualizado });
     }
+    const matchAprobarEvento = pathname.match(/^\/api\/admin\/eventos\/(\d+)\/aprobar$/);
+    if (matchAprobarEvento && req.method === 'POST') {
+      requireAdmin(req);
+      const body = await readBody(req);
+      const actualizado = await eventos.aprobarSolicitud(matchAprobarEvento[1], body.monto_total);
+      return sendJSON(res, 200, { ok: true, evento: actualizado });
+    }
+    const matchMensajeEvento = pathname.match(/^\/api\/admin\/eventos\/(\d+)\/mensaje$/);
+    if (matchMensajeEvento && req.method === 'POST') {
+      requireAdmin(req);
+      const body = await readBody(req);
+      return sendJSON(res, 200, await eventos.enviarMensajeSolicitud(matchMensajeEvento[1], body.texto));
+    }
 
     // ---- Superadmin: contenido y precios (Supabase Authentication) ----
     if (pathname === '/api/superadmin/canchas-config' && req.method === 'GET') {

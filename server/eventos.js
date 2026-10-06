@@ -33,7 +33,7 @@ async function calendario(mes) {
     const delDia = eventosDelMes.filter(e => e.fecha === fecha);
     let estado = 'libre';
     if (delDia.some(e => e.estado === 'confirmado')) estado = 'confirmado';
-    else if (delDia.some(e => e.estado === 'pendiente')) estado = 'pendiente';
+    else if (delDia.some(e => e.estado === 'pendiente' || e.estado === 'aprobada')) estado = 'pendiente';
     dias.push({ fecha, estado });
   }
   return { mes, dias };
@@ -208,17 +208,96 @@ async function listar({ estado } = {}) {
   return pg(query);
 }
 
+async function obtenerEvento(id) {
+  const [evento] = await pg(`/eventos?id=eq.${Number(id)}&select=*`);
+  if (!evento) {
+    const err = new Error('Solicitud no encontrada');
+    err.status = 404;
+    throw err;
+  }
+  return evento;
+}
+
+// Aprobar: se fija el total del evento, se calcula el abono (50%) y se envía al
+// cliente el monto y los datos de transferencia. Queda "aprobada" hasta que
+// verifiques el abono y la confirmes.
+async function aprobarSolicitud(id, montoTotal) {
+  const total = Number(montoTotal);
+  if (!Number.isInteger(total) || total <= 0) {
+    const err = new Error('El monto total debe ser un número entero mayor a 0');
+    err.status = 400;
+    throw err;
+  }
+  const evento = await obtenerEvento(id);
+  if (evento.estado !== 'pendiente') {
+    const err = new Error('Solo se pueden aprobar solicitudes pendientes');
+    err.status = 400;
+    throw err;
+  }
+  const abono = Math.round(total * 0.5);
+  const [actualizado] = await pg(`/eventos?id=eq.${evento.id}`, {
+    method: 'PATCH',
+    body: { estado: 'aprobada', monto_total: total, monto_abono: abono }
+  });
+
+  if (evento.correo_cliente) {
+    const datos = (await pg('/config?id=eq.1&select=datos_transferencia'))[0]?.datos_transferencia || '';
+    mailer.enviarCorreoSeguro({
+      to: evento.correo_cliente,
+      subject: 'Tu solicitud de evento fue aprobada — datos para el abono',
+      html: `
+        <p>Hola ${evento.contacto_nombre}, tu solicitud para el <strong>${evento.fecha}</strong> fue aprobada.</p>
+        <ul>
+          <li><strong>Total del evento:</strong> ${formatoCLP(total)}</li>
+          <li><strong>Abono a transferir (50%):</strong> ${formatoCLP(abono)}</li>
+        </ul>
+        <p><strong>Datos para la transferencia:</strong></p>
+        <pre style="font-family:inherit;white-space:pre-line;">${datos}</pre>
+        <p>Una vez que recibamos el abono, confirmamos tu fecha y te enviamos la confirmación final.</p>
+      `
+    });
+  }
+  return actualizado;
+}
+
+// Mensaje libre al cliente (para coordinar detalles: menú, horario, etc.).
+async function enviarMensajeSolicitud(id, texto) {
+  const mensaje = String(texto || '').trim();
+  if (!mensaje) {
+    const err = new Error('El mensaje no puede estar vacío');
+    err.status = 400;
+    throw err;
+  }
+  const evento = await obtenerEvento(id);
+  if (!evento.correo_cliente) {
+    const err = new Error('Esta solicitud no tiene correo de cliente registrado');
+    err.status = 400;
+    throw err;
+  }
+  await mailer.enviarCorreo({
+    to: evento.correo_cliente,
+    subject: `Sobre tu solicitud de evento (${evento.fecha})`,
+    html: `<p>Hola ${evento.contacto_nombre},</p><p>${mensaje.replace(/\n/g, '<br>')}</p><p>Vistas de Quillayquén</p>`
+  });
+  return { ok: true };
+}
+
+function formatoCLP(monto) {
+  return Number(monto).toLocaleString('es-CL', { style: 'currency', currency: 'CLP', maximumFractionDigits: 0 });
+}
+
 async function cambiarEstado(id, nuevoEstado) {
-  if (!['pendiente', 'confirmado', 'rechazado'].includes(nuevoEstado)) {
+  if (!['confirmado', 'rechazado'].includes(nuevoEstado)) {
     const err = new Error('Estado inválido');
     err.status = 400;
     throw err;
   }
 
-  const [evento] = await pg(`/eventos?id=eq.${Number(id)}&select=*`);
-  if (!evento) {
-    const err = new Error('Solicitud no encontrada');
-    err.status = 404;
+  const evento = await obtenerEvento(id);
+
+  if (nuevoEstado === 'confirmado' && evento.estado !== 'aprobada') {
+    const err = new Error('Primero aprueba la solicitud y envía los datos de pago; confirma cuando el abono esté verificado');
+    err.status = 400;
     throw err;
   }
 
@@ -274,5 +353,7 @@ module.exports = {
   eliminarMenuOpcion,
   solicitar,
   listar,
-  cambiarEstado
+  cambiarEstado,
+  aprobarSolicitud,
+  enviarMensajeSolicitud
 };

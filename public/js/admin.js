@@ -116,28 +116,87 @@ async function cargarEventos() {
         <td data-label="Acciones"></td>
       `;
       const tdAcciones = tr.querySelector('td:last-child');
-      if (ev.estado === 'pendiente') {
-        const btnConfirmar = document.createElement('button');
-        btnConfirmar.textContent = 'Confirmar';
-        btnConfirmar.className = 'boton';
-        btnConfirmar.style.marginRight = '0.4rem';
-        btnConfirmar.addEventListener('click', () => cambiarEstadoEvento(ev.id, 'confirmado'));
+      const estadoCell = tr.querySelector('td[data-label="Estado"]');
+      if (ev.monto_total) {
+        estadoCell.insertAdjacentHTML('beforeend', `<br><small>Total ${formatoCLP(ev.monto_total)} · Abono ${formatoCLP(ev.monto_abono)}</small>`);
+      }
 
-        const btnRechazar = document.createElement('button');
-        btnRechazar.textContent = 'Rechazar';
-        btnRechazar.className = 'boton';
-        btnRechazar.style.background = '#888';
-        btnRechazar.addEventListener('click', () => cambiarEstadoEvento(ev.id, 'rechazado'));
+      const agregarBoton = (texto, estilo, accion) => {
+        const b = document.createElement('button');
+        b.textContent = texto;
+        b.className = estilo;
+        b.type = 'button';
+        b.style.marginRight = '0.4rem';
+        b.style.marginBottom = '0.3rem';
+        b.addEventListener('click', accion);
+        tdAcciones.appendChild(b);
+      };
 
-        tdAcciones.appendChild(btnConfirmar);
-        tdAcciones.appendChild(btnRechazar);
-      } else {
-        tdAcciones.textContent = '—';
+      agregarBoton('Ver', 'boton secundario', () => toggleDetalleEvento(tr, ev));
+      if (ev.estado === 'pendiente') agregarBoton('Aprobar y enviar abono', 'boton', () => aprobarEvento(ev));
+      if (ev.estado === 'aprobada') agregarBoton('Confirmar (abono recibido)', 'boton', () => cambiarEstadoEvento(ev.id, 'confirmado'));
+      agregarBoton('Mensaje', 'boton secundario', () => enviarMensajeEvento(ev));
+      if (ev.estado === 'pendiente' || ev.estado === 'aprobada') {
+        agregarBoton('Rechazar', 'boton secundario', () => cambiarEstadoEvento(ev.id, 'rechazado'));
       }
       tbody.appendChild(tr);
     });
   } catch (err) {
     tbody.innerHTML = `<tr><td colspan="9">${err.message}</td></tr>`;
+  }
+}
+
+function toggleDetalleEvento(tr, ev) {
+  const siguiente = tr.nextElementSibling;
+  if (siguiente && siguiente.classList.contains('fila-detalle-evento')) {
+    siguiente.remove();
+    return;
+  }
+  const detalle = document.createElement('tr');
+  detalle.className = 'fila-detalle-evento';
+  detalle.innerHTML = `
+    <td colspan="9" style="background:#f7faf8;">
+      <strong>Correo:</strong> ${ev.correo_cliente || 'No dejó correo'} ·
+      <strong>Teléfono:</strong> ${ev.telefono} ·
+      <strong>Personas:</strong> ${ev.cantidad_personas ?? '-'}<br>
+      <strong>Comentario:</strong> ${ev.comentario || '-'}
+    </td>
+  `;
+  tr.after(detalle);
+}
+
+async function aprobarEvento(ev) {
+  const entrada = prompt(`Total del evento para ${ev.contacto_nombre} (CLP, número entero). Se enviará el abono del 50% por correo:`);
+  if (!entrada) return;
+  try {
+    const resp = await fetch(`/api/admin/eventos/${ev.id}/aprobar`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ monto_total: entrada })
+    });
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.error || 'No se pudo aprobar');
+    mostrarMensaje('Solicitud aprobada y datos de pago enviados por correo.', 'exito');
+    cargarEventos();
+  } catch (err) {
+    mostrarMensaje(err.message, 'error');
+  }
+}
+
+async function enviarMensajeEvento(ev) {
+  const texto = prompt(`Mensaje para ${ev.contacto_nombre}:`);
+  if (!texto) return;
+  try {
+    const resp = await fetch(`/api/admin/eventos/${ev.id}/mensaje`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ texto })
+    });
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.error || 'No se pudo enviar el mensaje');
+    mostrarMensaje('Mensaje enviado por correo.', 'exito');
+  } catch (err) {
+    mostrarMensaje(err.message, 'error');
   }
 }
 

@@ -43,7 +43,9 @@ create table if not exists eventos (
   cantidad_personas integer,
   con_menu boolean not null default false,
   comentario text default '',
-  estado text not null default 'pendiente' check (estado in ('pendiente', 'confirmado', 'rechazado')),
+  estado text not null default 'pendiente' check (estado in ('pendiente', 'aprobada', 'confirmado', 'rechazado')),
+  monto_total integer,
+  monto_abono integer,
   creado_en timestamptz not null default now()
 );
 
