@@ -416,39 +416,52 @@ async function eliminarGaleriaItem(id, seccion) {
   }
 }
 
+const EXT_GALERIA = /\.(jpe?g|png|webp|gif|mp4|webm|mov)$/i;
+
+// Sube una lista de archivos (varios elegidos o de una carpeta), uno por uno.
+async function subirArchivosGaleria(seccion, archivos, album) {
+  const lista = Array.from(archivos).filter(f => EXT_GALERIA.test(f.name));
+  if (lista.length === 0) {
+    mostrarMensaje('No hay fotos ni videos válidos en la selección.', 'error');
+    return;
+  }
+  let subidos = 0;
+  for (const archivo of lista) {
+    const formData = new FormData();
+    formData.append('seccion', seccion);
+    if (album) formData.append('album', album);
+    formData.append('archivo', archivo);
+    try {
+      await llamarSuperadminArchivo('/api/superadmin/galeria', formData);
+      subidos++;
+    } catch (err) {
+      mostrarMensaje(`Se subieron ${subidos} de ${lista.length}. Error con "${archivo.name}": ${err.message}`, 'error');
+      cargarGaleriaAdmin(seccion);
+      return;
+    }
+  }
+  mostrarMensaje(`Se subieron ${subidos} archivo(s).`, 'exito');
+  cargarGaleriaAdmin(seccion);
+}
+
 document.getElementById('form-galeria-recinto').addEventListener('submit', async (e) => {
   e.preventDefault();
-  const input = document.getElementById('galeria-recinto-archivo');
-  if (!input.files[0]) return;
-  const formData = new FormData();
-  formData.append('seccion', 'recinto');
-  formData.append('archivo', input.files[0]);
-  try {
-    await llamarSuperadminArchivo('/api/superadmin/galeria', formData);
-    e.target.reset();
-    mostrarMensaje('Foto/video agregado a Recinto.', 'exito');
-    cargarGaleriaAdmin('recinto');
-  } catch (err) {
-    mostrarMensaje(err.message, 'error');
-  }
+  const archivos = [
+    ...document.getElementById('galeria-recinto-archivo').files,
+    ...document.getElementById('galeria-recinto-carpeta').files
+  ];
+  await subirArchivosGaleria('recinto', archivos);
+  e.target.reset();
 });
 
 document.getElementById('form-galeria-eventos').addEventListener('submit', async (e) => {
   e.preventDefault();
-  const input = document.getElementById('galeria-eventos-archivo');
-  if (!input.files[0]) return;
-  const formData = new FormData();
-  formData.append('seccion', 'eventos');
-  formData.append('album', document.getElementById('galeria-eventos-album').value);
-  formData.append('archivo', input.files[0]);
-  try {
-    await llamarSuperadminArchivo('/api/superadmin/galeria', formData);
-    e.target.reset();
-    mostrarMensaje('Foto/video agregado a Eventos.', 'exito');
-    cargarGaleriaAdmin('eventos');
-  } catch (err) {
-    mostrarMensaje(err.message, 'error');
-  }
+  const archivos = [
+    ...document.getElementById('galeria-eventos-archivo').files,
+    ...document.getElementById('galeria-eventos-carpeta').files
+  ];
+  await subirArchivosGaleria('eventos', archivos, document.getElementById('galeria-eventos-album').value);
+  e.target.reset();
 });
 
 // ---- Correo de contacto y notificaciones ----
