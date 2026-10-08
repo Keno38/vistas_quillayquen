@@ -427,6 +427,7 @@ async function subirArchivosGaleria(seccion, archivos, album) {
   }
   let subidos = 0;
   for (const archivo of lista) {
+    mostrarMensaje(`Subiendo ${subidos + 1} de ${lista.length}: ${archivo.name}...`, 'exito');
     const formData = new FormData();
     formData.append('seccion', seccion);
     if (album) formData.append('album', album);
