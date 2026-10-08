@@ -150,7 +150,8 @@ function renderReels() {
     const tarjeta = document.createElement('div');
     tarjeta.className = 'tarjeta-reel';
     tarjeta.innerHTML = `
-      <span class="reel-cuenta">${reel.titulo || NOMBRE_CUENTA[reel.cuenta] || ''}</span>
+      <span class="reel-cuenta">${NOMBRE_CUENTA[reel.cuenta] || ''}</span>
+      ${reel.titulo ? `<span class="reel-titulo">${reel.titulo}</span>` : ''}
       <blockquote class="instagram-media" data-instgrm-permalink="${reel.url}" data-instgrm-version="14"></blockquote>
     `;
     grillaReels.appendChild(tarjeta);

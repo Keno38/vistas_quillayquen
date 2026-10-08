@@ -1485,8 +1485,15 @@ footer.sitio .home-social a { background: rgba(6, 43, 79, 0.06); }
   display: block;
   font-size: 0.78rem;
   font-weight: 700;
-  padding: 0.3rem 0.4rem 0.5rem;
+  padding: 0.3rem 0.4rem 0;
   color: var(--verde-oscuro);
+}
+
+.tarjeta-reel .reel-titulo {
+  display: block;
+  font-size: 0.78rem;
+  padding: 0.1rem 0.4rem 0.5rem;
+  color: #64756c;
 }
 
 .tarjeta-reel iframe,
