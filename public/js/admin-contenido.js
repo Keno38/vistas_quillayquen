@@ -431,13 +431,16 @@ function renderGaleriaEventosAdmin(cont, items) {
     bloque.innerHTML = `
       <div class="galeria-admin-album-header">
         <strong>${nombreAlbum}</strong> <small>(${fotos.length} archivo(s) · subido ${new Date(fechaReciente).toLocaleDateString('es-CL')})</small>
+        <button type="button" class="boton secundario" data-album-editar="${nombreAlbum}">Editar</button>
         <button type="button" class="boton secundario" data-album-borrar="${nombreAlbum}">Eliminar álbum completo</button>
       </div>
-      <table class="admin-tabla">
+      <table class="admin-tabla oculto">
         <thead><tr><th></th><th>Archivo</th><th>Fecha</th><th>Álbum</th><th>Acciones</th></tr></thead>
         <tbody></tbody>
       </table>
     `;
+    const tabla = bloque.querySelector('table');
+    bloque.querySelector('[data-album-editar]').addEventListener('click', () => tabla.classList.toggle('oculto'));
     const tbody = bloque.querySelector('tbody');
     fotos.forEach(item => {
       const tr = document.createElement('tr');
