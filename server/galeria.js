@@ -69,6 +69,22 @@ async function crear({ seccion, album }, archivo) {
   return { ...fila, url: storage.urlPublicaGaleria(fila.storage_path) };
 }
 
+async function actualizar(id, { album }) {
+  const cambios = {};
+  if (album !== undefined) cambios.album = String(album).trim();
+  if (Object.keys(cambios).length === 0) {
+    const filas = await pg(`/galeria_items?id=eq.${Number(id)}&select=*`);
+    return filas[0];
+  }
+  const actualizados = await pg(`/galeria_items?id=eq.${Number(id)}`, { method: 'PATCH', body: cambios });
+  if (!actualizados[0]) {
+    const err = new Error('Foto/video no encontrado');
+    err.status = 404;
+    throw err;
+  }
+  return actualizados[0];
+}
+
 async function eliminar(id) {
   const filas = await pg(`/galeria_items?id=eq.${Number(id)}&select=*`);
   const fila = filas[0];
@@ -82,4 +98,4 @@ async function eliminar(id) {
   return fila;
 }
 
-module.exports = { listar, listarTodos, crear, eliminar };
+module.exports = { listar, listarTodos, crear, actualizar, eliminar };

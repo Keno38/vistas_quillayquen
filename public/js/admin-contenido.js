@@ -383,25 +383,110 @@ async function cargarGaleriaAdmin(seccion) {
       cont.innerHTML = '<p>Todavía no hay fotos ni videos aquí.</p>';
       return;
     }
-    cont.innerHTML = '';
-    items.forEach(item => {
-      const tarjeta = document.createElement('div');
-      tarjeta.className = 'galeria-admin-tarjeta';
-      const media = item.tipo_archivo === 'video'
-        ? `<video src="${item.url}" muted></video>`
-        : `<img src="${item.url}" alt="">`;
-      tarjeta.innerHTML = `
-        ${item.album ? `<span class="galeria-admin-album">${item.album}</span>` : ''}
-        ${media}
-        <button type="button" class="galeria-admin-borrar" title="Eliminar" data-galeria-borrar="${item.id}">&times;</button>
-      `;
-      cont.appendChild(tarjeta);
-    });
-    cont.querySelectorAll('[data-galeria-borrar]').forEach(btn => {
-      btn.addEventListener('click', () => eliminarGaleriaItem(btn.getAttribute('data-galeria-borrar'), seccion));
-    });
+    if (seccion === 'eventos') {
+      renderGaleriaEventosAdmin(cont, items);
+    } else {
+      renderGaleriaGrilla(cont, items, seccion);
+    }
   } catch (err) {
     cont.innerHTML = err.message;
+  }
+}
+
+function renderGaleriaGrilla(cont, items, seccion) {
+  cont.innerHTML = '';
+  items.forEach(item => {
+    const tarjeta = document.createElement('div');
+    tarjeta.className = 'galeria-admin-tarjeta';
+    const media = item.tipo_archivo === 'video'
+      ? `<video src="${item.url}" muted></video>`
+      : `<img src="${item.url}" alt="">`;
+    tarjeta.innerHTML = `
+      ${media}
+      <button type="button" class="galeria-admin-borrar" title="Eliminar" data-galeria-borrar="${item.id}">&times;</button>
+    `;
+    cont.appendChild(tarjeta);
+  });
+  cont.querySelectorAll('[data-galeria-borrar]').forEach(btn => {
+    btn.addEventListener('click', () => eliminarGaleriaItem(btn.getAttribute('data-galeria-borrar'), seccion));
+  });
+}
+
+// Lista agrupada por álbum (como Reels): fecha de cada foto, reasignar álbum
+// o eliminar una por una, y un botón para borrar el álbum completo si ya
+// quedó viejo.
+function renderGaleriaEventosAdmin(cont, items) {
+  const albumes = new Map();
+  items.forEach(item => {
+    const nombre = item.album && item.album.trim() ? item.album.trim() : 'Sin álbum';
+    if (!albumes.has(nombre)) albumes.set(nombre, []);
+    albumes.get(nombre).push(item);
+  });
+
+  cont.innerHTML = '';
+  albumes.forEach((fotos, nombreAlbum) => {
+    const fechaReciente = fotos.reduce((max, f) => f.creado_en > max ? f.creado_en : max, fotos[0].creado_en);
+    const bloque = document.createElement('div');
+    bloque.className = 'galeria-admin-album-bloque';
+    bloque.innerHTML = `
+      <div class="galeria-admin-album-header">
+        <strong>${nombreAlbum}</strong> <small>(${fotos.length} archivo(s) · subido ${new Date(fechaReciente).toLocaleDateString('es-CL')})</small>
+        <button type="button" class="boton secundario" data-album-borrar="${nombreAlbum}">Eliminar álbum completo</button>
+      </div>
+      <table class="admin-tabla">
+        <thead><tr><th></th><th>Archivo</th><th>Fecha</th><th>Álbum</th><th>Acciones</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    `;
+    const tbody = bloque.querySelector('tbody');
+    fotos.forEach(item => {
+      const tr = document.createElement('tr');
+      const miniatura = item.tipo_archivo === 'video'
+        ? `<video src="${item.url}" muted style="width:70px;height:70px;object-fit:cover;border-radius:8px;"></video>`
+        : `<img src="${item.url}" alt="" style="width:70px;height:70px;object-fit:cover;border-radius:8px;">`;
+      tr.innerHTML = `
+        <td data-label="">${miniatura}</td>
+        <td data-label="Archivo">${item.nombre || item.storage_path}</td>
+        <td data-label="Fecha">${new Date(item.creado_en).toLocaleDateString('es-CL')}</td>
+        <td data-label="Álbum"><input type="text" value="${nombreAlbum === 'Sin álbum' ? '' : nombreAlbum}" data-campo="album" style="min-width:140px;"></td>
+        <td data-label="Acciones"></td>
+      `;
+      const tdAcciones = tr.querySelector('td:last-child');
+      const btnGuardar = document.createElement('button');
+      btnGuardar.textContent = 'Guardar';
+      btnGuardar.type = 'button';
+      btnGuardar.className = 'boton';
+      btnGuardar.style.marginRight = '0.4rem';
+      btnGuardar.addEventListener('click', () => actualizarGaleriaItem(item.id, tr.querySelector('[data-campo="album"]').value));
+
+      const btnEliminar = document.createElement('button');
+      btnEliminar.textContent = 'Eliminar';
+      btnEliminar.type = 'button';
+      btnEliminar.className = 'boton secundario';
+      btnEliminar.addEventListener('click', () => eliminarGaleriaItem(item.id, 'eventos'));
+
+      tdAcciones.appendChild(btnGuardar);
+      tdAcciones.appendChild(btnEliminar);
+      tbody.appendChild(tr);
+    });
+    cont.appendChild(bloque);
+  });
+
+  cont.querySelectorAll('[data-album-borrar]').forEach(btn => {
+    btn.addEventListener('click', () => eliminarAlbumCompleto(btn.getAttribute('data-album-borrar'), albumes.get(btn.getAttribute('data-album-borrar'))));
+  });
+}
+
+async function actualizarGaleriaItem(id, nuevoAlbum) {
+  try {
+    await llamarSuperadmin(`/api/superadmin/galeria/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify({ album: nuevoAlbum })
+    });
+    mostrarMensaje('Álbum actualizado.', 'exito');
+    cargarGaleriaAdmin('eventos');
+  } catch (err) {
+    mostrarMensaje(err.message, 'error');
   }
 }
 
@@ -411,6 +496,19 @@ async function eliminarGaleriaItem(id, seccion) {
     await llamarSuperadmin(`/api/superadmin/galeria/${id}`, { method: 'DELETE' });
     mostrarMensaje('Eliminado.', 'exito');
     cargarGaleriaAdmin(seccion);
+  } catch (err) {
+    mostrarMensaje(err.message, 'error');
+  }
+}
+
+async function eliminarAlbumCompleto(nombreAlbum, fotos) {
+  if (!confirm(`¿Eliminar el álbum "${nombreAlbum}" completo (${fotos.length} archivo(s))? No se puede deshacer.`)) return;
+  try {
+    for (const foto of fotos) {
+      await llamarSuperadmin(`/api/superadmin/galeria/${foto.id}`, { method: 'DELETE' });
+    }
+    mostrarMensaje(`Álbum "${nombreAlbum}" eliminado.`, 'exito');
+    cargarGaleriaAdmin('eventos');
   } catch (err) {
     mostrarMensaje(err.message, 'error');
   }

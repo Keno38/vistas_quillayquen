@@ -369,6 +369,11 @@ async function handleApi(req, res, pathname, query) {
       return sendJSON(res, 201, { ok: true, item: await galeria.crear(campos, archivos.archivo) });
     }
     const matchGaleriaItem = pathname.match(/^\/api\/superadmin\/galeria\/(\d+)$/);
+    if (matchGaleriaItem && req.method === 'PUT') {
+      requireGeneral(req);
+      const body = await readBody(req);
+      return sendJSON(res, 200, { ok: true, item: await galeria.actualizar(matchGaleriaItem[1], body) });
+    }
     if (matchGaleriaItem && req.method === 'DELETE') {
       requireGeneral(req);
       return sendJSON(res, 200, { ok: true, item: await galeria.eliminar(matchGaleriaItem[1]) });
