@@ -137,16 +137,14 @@ function cargarScriptInstagram() {
 }
 
 let reelsCargados = [];
-let cuentaReelActiva = 'vistas';
 
 function renderReels() {
-  const lista = reelsCargados.filter(r => r.cuenta === cuentaReelActiva);
   grillaReels.innerHTML = '';
-  if (lista.length === 0) {
-    grillaReels.innerHTML = `<p>Todavía no hay reels de ${NOMBRE_CUENTA[cuentaReelActiva]} cargados.</p>`;
+  if (reelsCargados.length === 0) {
+    grillaReels.innerHTML = '<p>Todavía no hay reels cargados.</p>';
     return;
   }
-  lista.forEach(reel => {
+  reelsCargados.forEach(reel => {
     const tarjeta = document.createElement('div');
     tarjeta.className = 'tarjeta-reel';
     tarjeta.innerHTML = `
@@ -158,16 +156,6 @@ function renderReels() {
   });
   cargarScriptInstagram();
 }
-
-function activarTabReel(cuenta) {
-  cuentaReelActiva = cuenta;
-  document.getElementById('tab-reels-vistas').classList.toggle('secundario', cuenta !== 'vistas');
-  document.getElementById('tab-reels-ferreteria').classList.toggle('secundario', cuenta !== 'ferreteria');
-  renderReels();
-}
-
-document.getElementById('tab-reels-vistas').addEventListener('click', () => activarTabReel('vistas'));
-document.getElementById('tab-reels-ferreteria').addEventListener('click', () => activarTabReel('ferreteria'));
 
 function activarTab(tab) {
   tabRecinto.classList.toggle('secundario', tab !== 'recinto');
