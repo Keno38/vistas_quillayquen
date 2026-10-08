@@ -8,6 +8,7 @@ const mensajeDiv = document.getElementById('mensaje-contenido');
 
 function mostrarMensaje(texto, tipo) {
   mensajeDiv.innerHTML = `<div class="mensaje ${tipo}">${texto}</div>`;
+  mensajeDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
   setTimeout(() => { mensajeDiv.innerHTML = ''; }, 6000);
 }
 
