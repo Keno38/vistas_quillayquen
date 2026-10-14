@@ -26,7 +26,12 @@ async function llamarSuperadmin(ruta, opciones = {}) {
 // Content-Type con el boundary del multipart, así que no lo fijamos nosotros.
 async function llamarSuperadminArchivo(ruta, formData, method = 'POST') {
   const resp = await fetch(ruta, { method, body: formData });
-  const data = await resp.json();
+  let data;
+  try {
+    data = await resp.json();
+  } catch {
+    throw new Error('El archivo es muy grande o la conexión se cortó antes de terminar de subirlo.');
+  }
   if (!resp.ok) throw new Error(data.error || 'Error en la solicitud');
   return data;
 }

@@ -21,7 +21,7 @@ const contacto = require('./contacto');
 const { parseMultipart } = require('./multipart');
 
 const MAX_COMPROBANTE_BYTES = 8 * 1024 * 1024; // 8MB, de sobra para una foto/PDF de comprobante
-const MAX_GALERIA_BYTES = 30 * 1024 * 1024; // 30MB, para fotos y videos cortos de la galería/hero
+const MAX_GALERIA_BYTES = 150 * 1024 * 1024; // 150MB, los videos de celular (.mov/.mp4) pueden pesar bastante
 
 const PORT = process.env.PORT || 3000;
 const PUBLIC_DIR = path.join(__dirname, '..', 'public');
@@ -99,16 +99,22 @@ function readRawBody(req, maxBytes = MAX_COMPROBANTE_BYTES) {
   return new Promise((resolve, reject) => {
     const chunks = [];
     let total = 0;
+    let excedido = false;
     req.on('data', chunk => {
       total += chunk.length;
       if (total > maxBytes) {
-        reject(Object.assign(new Error('El archivo adjunto es demasiado grande (máximo 8MB)'), { status: 413 }));
-        req.destroy();
+        // No se corta la conexión de golpe (req.destroy() puede dejar la
+        // respuesta a medio enviar y el navegador recibe un JSON cortado).
+        // Se deja que termine de llegar y se rechaza una sola vez al final.
+        if (!excedido) {
+          excedido = true;
+          reject(Object.assign(new Error(`El archivo adjunto es demasiado grande (máximo ${Math.round(maxBytes / (1024 * 1024))}MB)`), { status: 413 }));
+        }
         return;
       }
       chunks.push(chunk);
     });
-    req.on('end', () => resolve(Buffer.concat(chunks)));
+    req.on('end', () => { if (!excedido) resolve(Buffer.concat(chunks)); });
     req.on('error', reject);
   });
 }
