@@ -435,13 +435,26 @@ function renderGaleriaEventosAdmin(cont, items) {
         <button type="button" class="boton secundario" data-album-editar="${nombreAlbum}">Editar</button>
         <button type="button" class="boton secundario" data-album-borrar="${nombreAlbum}">Eliminar álbum completo</button>
       </div>
-      <table class="admin-tabla oculto">
-        <thead><tr><th></th><th>Archivo</th><th>Fecha</th><th>Álbum</th><th>Acciones</th></tr></thead>
-        <tbody></tbody>
-      </table>
+      <div class="galeria-admin-album-editar oculto">
+        <div style="display:flex;gap:0.6rem;align-items:flex-end;flex-wrap:wrap;margin-bottom:0.8rem;">
+          <div style="flex:1;min-width:220px;">
+            <label>Agregar más fotos a este álbum (selecciona varios con Ctrl+click o Shift+click)</label>
+            <input type="file" accept="image/*,video/*" multiple data-album-input="${nombreAlbum}">
+          </div>
+          <button type="button" class="boton" data-album-subir="${nombreAlbum}">Subir a este álbum</button>
+        </div>
+        <table class="admin-tabla">
+          <thead><tr><th></th><th>Archivo</th><th>Fecha</th><th>Álbum</th><th>Acciones</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
     `;
-    const tabla = bloque.querySelector('table');
-    bloque.querySelector('[data-album-editar]').addEventListener('click', () => tabla.classList.toggle('oculto'));
+    const panelEditar = bloque.querySelector('.galeria-admin-album-editar');
+    bloque.querySelector('[data-album-editar]').addEventListener('click', () => panelEditar.classList.toggle('oculto'));
+    bloque.querySelector('[data-album-subir]').addEventListener('click', async () => {
+      const input = bloque.querySelector('[data-album-input]');
+      await subirArchivosGaleria('eventos', input.files, nombreAlbum === 'Sin álbum' ? '' : nombreAlbum);
+    });
     const tbody = bloque.querySelector('tbody');
     fotos.forEach(item => {
       const tr = document.createElement('tr');
@@ -549,20 +562,14 @@ async function subirArchivosGaleria(seccion, archivos, album) {
 
 document.getElementById('form-galeria-recinto').addEventListener('submit', async (e) => {
   e.preventDefault();
-  const archivos = [
-    ...document.getElementById('galeria-recinto-archivo').files,
-    ...document.getElementById('galeria-recinto-carpeta').files
-  ];
+  const archivos = document.getElementById('galeria-recinto-archivo').files;
   await subirArchivosGaleria('recinto', archivos);
   e.target.reset();
 });
 
 document.getElementById('form-galeria-eventos').addEventListener('submit', async (e) => {
   e.preventDefault();
-  const archivos = [
-    ...document.getElementById('galeria-eventos-archivo').files,
-    ...document.getElementById('galeria-eventos-carpeta').files
-  ];
+  const archivos = document.getElementById('galeria-eventos-archivo').files;
   await subirArchivosGaleria('eventos', archivos, document.getElementById('galeria-eventos-album').value);
   e.target.reset();
 });
