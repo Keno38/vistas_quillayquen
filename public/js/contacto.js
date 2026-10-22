@@ -15,7 +15,8 @@
     if (datos.telefono_contacto) {
       const numero = datos.telefono_contacto.replace(/[^\d+]/g, '');
       const whatsapp = numero.replace(/^\+/, '');
-      textoTelefono.innerHTML = `${datos.telefono_contacto}<br><a href="https://wa.me/${whatsapp}" target="_blank" rel="noopener">Escribir por WhatsApp</a>`;
+      const mensaje = encodeURIComponent('Hola, quisiera hacer una consulta sobre Vistas de Quillayquén.');
+      textoTelefono.innerHTML = `${datos.telefono_contacto}<br><a class="boton" style="margin-top:0.6rem;display:inline-block;" href="https://wa.me/${whatsapp}?text=${mensaje}" target="_blank" rel="noopener">Escribir por WhatsApp</a>`;
     } else {
       textoTelefono.textContent = 'Pronto publicaremos nuestro teléfono.';
     }
