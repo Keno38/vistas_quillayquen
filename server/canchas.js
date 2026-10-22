@@ -56,7 +56,7 @@ function validarHora(hhmm, etiqueta) {
   }
 }
 
-async function actualizarConfig({ valor_cancha_hora, monto_abono_fijo, datos_transferencia, hora_inicio_canchas, hora_fin_canchas }) {
+async function actualizarConfig({ valor_cancha_hora, monto_abono_fijo, datos_transferencia, hora_inicio_canchas, hora_fin_canchas, buffer_cambio_min }) {
   const cambios = {};
   if (datos_transferencia !== undefined) cambios.datos_transferencia = String(datos_transferencia).trim();
   if (hora_inicio_canchas !== undefined) {
@@ -66,6 +66,15 @@ async function actualizarConfig({ valor_cancha_hora, monto_abono_fijo, datos_tra
   if (hora_fin_canchas !== undefined) {
     validarHora(hora_fin_canchas, 'La hora de término');
     cambios.hora_fin_canchas = hora_fin_canchas;
+  }
+  if (buffer_cambio_min !== undefined) {
+    const buffer = Number(buffer_cambio_min);
+    if (!Number.isFinite(buffer) || buffer < 0) {
+      const err = new Error('El tiempo entre bloques debe ser un número mayor o igual a 0');
+      err.status = 400;
+      throw err;
+    }
+    cambios.buffer_cambio_min = buffer;
   }
   if (valor_cancha_hora !== undefined) {
     const valor = Number(valor_cancha_hora);

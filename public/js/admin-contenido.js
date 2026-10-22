@@ -96,6 +96,7 @@ async function cargarConfigCanchas() {
     document.getElementById('cfg-datos-transferencia').value = config.datos_transferencia || '';
     document.getElementById('cfg-hora-inicio').value = config.hora_inicio_canchas || '';
     document.getElementById('cfg-hora-fin').value = config.hora_fin_canchas || '';
+    document.getElementById('cfg-buffer-min').value = config.buffer_cambio_min ?? 0;
   } catch (err) {
     mostrarMensaje(err.message, 'error');
   }
@@ -111,7 +112,8 @@ document.getElementById('form-config-canchas').addEventListener('submit', async 
         monto_abono_fijo: document.getElementById('cfg-monto-abono').value,
         datos_transferencia: document.getElementById('cfg-datos-transferencia').value,
         hora_inicio_canchas: document.getElementById('cfg-hora-inicio').value,
-        hora_fin_canchas: document.getElementById('cfg-hora-fin').value
+        hora_fin_canchas: document.getElementById('cfg-hora-fin').value,
+        buffer_cambio_min: document.getElementById('cfg-buffer-min').value
       })
     });
     mostrarMensaje('Precio de canchas actualizado.', 'exito');
