@@ -48,9 +48,25 @@ async function getConfig() {
   return filas[0];
 }
 
-async function actualizarConfig({ valor_cancha_hora, monto_abono_fijo, datos_transferencia }) {
+function validarHora(hhmm, etiqueta) {
+  if (!/^\d{2}:\d{2}$/.test(hhmm)) {
+    const err = new Error(`${etiqueta} debe tener formato HH:MM`);
+    err.status = 400;
+    throw err;
+  }
+}
+
+async function actualizarConfig({ valor_cancha_hora, monto_abono_fijo, datos_transferencia, hora_inicio_canchas, hora_fin_canchas }) {
   const cambios = {};
   if (datos_transferencia !== undefined) cambios.datos_transferencia = String(datos_transferencia).trim();
+  if (hora_inicio_canchas !== undefined) {
+    validarHora(hora_inicio_canchas, 'La hora de inicio');
+    cambios.hora_inicio_canchas = hora_inicio_canchas;
+  }
+  if (hora_fin_canchas !== undefined) {
+    validarHora(hora_fin_canchas, 'La hora de término');
+    cambios.hora_fin_canchas = hora_fin_canchas;
+  }
   if (valor_cancha_hora !== undefined) {
     const valor = Number(valor_cancha_hora);
     if (!Number.isFinite(valor) || valor <= 0) {
