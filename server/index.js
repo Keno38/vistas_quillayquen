@@ -224,7 +224,13 @@ async function handleApi(req, res, pathname, query) {
     // ---- Autenticación admin ----
     if (pathname === '/api/admin/login' && req.method === 'POST') {
       const body = await readBody(req);
-      const resultado = await auth.login(body.usuario, body.password);
+      let resultado;
+      try {
+        resultado = await auth.login(body.usuario, body.password, req.socket.remoteAddress || '');
+      } catch (error) {
+        if (error.bloqueado) return sendJSON(res, 429, { ok: false, error: error.message });
+        throw error;
+      }
       if (!resultado) return sendJSON(res, 401, { ok: false, error: 'Usuario o contraseña incorrectos' });
       res.setHeader('Set-Cookie', `admin_token=${resultado.token}; HttpOnly; Path=/; SameSite=Strict; Max-Age=28800`);
       return sendJSON(res, 200, { ok: true, rol: resultado.rol });
