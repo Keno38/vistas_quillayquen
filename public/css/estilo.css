@@ -534,6 +534,35 @@ footer.sitio .firma {
   opacity: 0.8;
 }
 
+.whatsapp-flotante {
+  position: fixed;
+  right: 1.1rem;
+  bottom: 1.1rem;
+  width: 56px;
+  height: 56px;
+  background: #25d366;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.35);
+  z-index: 999;
+  transition: transform 0.15s ease;
+}
+
+.whatsapp-flotante:hover {
+  transform: scale(1.08);
+}
+
+@media (max-width: 480px) {
+  .whatsapp-flotante {
+    width: 50px;
+    height: 50px;
+    right: 0.8rem;
+    bottom: 0.8rem;
+  }
+}
+
 .datos-transferencia {
   background: var(--gris-fondo);
   border: 1px solid var(--gris-borde);
