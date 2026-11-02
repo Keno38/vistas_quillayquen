@@ -232,7 +232,13 @@ async function handleApi(req, res, pathname, query) {
         throw error;
       }
       if (!resultado) return sendJSON(res, 401, { ok: false, error: 'Usuario o contraseña incorrectos' });
-      res.setHeader('Set-Cookie', `admin_token=${resultado.token}; HttpOnly; Path=/; SameSite=Strict; Max-Age=28800`);
+      // [Revisión de seguridad] Se agrega "Secure" cuando la conexión llega por HTTPS
+      // (directo o a través de un proxy, ej. Nginx en el VPS) para que el navegador
+      // nunca envíe esta cookie por HTTP sin cifrar. Se omite en HTTP plano (ej.
+      // pruebas locales) porque el navegador la ignoraría por completo.
+      const esHttps = req.socket.encrypted || (req.headers['x-forwarded-proto'] || '').includes('https');
+      const atributoSecure = esHttps ? '; Secure' : '';
+      res.setHeader('Set-Cookie', `admin_token=${resultado.token}; HttpOnly; Path=/; SameSite=Strict; Max-Age=28800${atributoSecure}`);
       return sendJSON(res, 200, { ok: true, rol: resultado.rol });
     }
     if (pathname === '/api/admin/logout' && req.method === 'POST') {
@@ -276,7 +282,16 @@ async function handleApi(req, res, pathname, query) {
     if (matchComprobante && req.method === 'GET') {
       requireAdmin(req);
       const { buffer, contentType } = await canchas.obtenerArchivoComprobante(matchComprobante[1]);
-      res.writeHead(200, { 'Content-Type': contentType });
+      // [Revisión de seguridad] El comprobante lo sube una persona NO autenticada
+      // (quien reserva), así que su contenido no es confiable. Forzamos descarga
+      // (en vez de mostrarlo inline) y "nosniff" para que el navegador no intente
+      // interpretar el archivo como HTML/script dentro del dominio del sitio,
+      // aunque alguien haya falsificado el tipo de archivo al subirlo.
+      res.writeHead(200, {
+        'Content-Type': contentType,
+        'X-Content-Type-Options': 'nosniff',
+        'Content-Disposition': 'attachment; filename="comprobante"'
+      });
       return res.end(buffer);
     }
     // ---- Admin: eventos ----
@@ -466,5 +481,5 @@ const server = http.createServer((req, res) => {
 server.listen(PORT, () => {
   console.log(`Vistas de Quillayquen escuchando en http://localhost:${PORT}`);
   console.log(`Panel admin: http://localhost:${PORT}/admin.html`);
-  console.log('Usuario admin por defecto: admin / quillaiquen2026  (cámbialo apenas puedas, ver README.md)');
+  console.log('Recuerda cambiar las contraseñas por defecto del panel de administración (ver README.md).');
 });

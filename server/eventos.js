@@ -224,9 +224,17 @@ async function solicitar({ fecha, contacto_nombre, institucion, telefono, correo
   return evento;
 }
 
+const ESTADOS_EVENTO = ['pendiente', 'aprobada', 'confirmado', 'rechazado'];
+
 async function listar({ estado } = {}) {
+  // [Revisión de seguridad] estado viene de un query param; antes se insertaba
+  // sin validar en el filtro de PostgREST (riesgo de inyección de parámetros
+  // extra si alguien con sesión de administrador manipulaba la URL).
   let query = '/eventos?select=*,menu_desayuno:menu_opciones!menu_desayuno_id(nombre),menu_almuerzo:menu_opciones!menu_almuerzo_id(nombre),menu_once:menu_opciones!menu_once_id(nombre)&order=fecha.asc';
-  if (estado) query += `&estado=eq.${estado}`;
+  if (estado) {
+    if (!ESTADOS_EVENTO.includes(estado)) { const err = new Error('Estado inválido'); err.status = 400; throw err; }
+    query += `&estado=eq.${estado}`;
+  }
   return pg(query);
 }
 

@@ -162,6 +162,16 @@ async function reservar({ cancha_id, fecha, hora_inicio, nombre_cliente, telefon
     err.status = 400;
     throw err;
   }
+  // [Revisión de seguridad] Antes se aceptaba cualquier Content-Type declarado
+  // por quien reserva (dato no autenticado). Sin esto, alguien podía subir un
+  // HTML/SVG con script y, al abrirlo el administrador desde el panel, se
+  // ejecutaría en el dominio del sitio. Solo se permiten imágenes y PDF.
+  const TIPOS_COMPROBANTE_PERMITIDOS = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'application/pdf'];
+  if (!TIPOS_COMPROBANTE_PERMITIDOS.includes((comprobante.contentType || '').toLowerCase())) {
+    const err = new Error('El comprobante debe ser una imagen (jpg/png/webp) o un PDF');
+    err.status = 400;
+    throw err;
+  }
 
   const [config, canchasEncontradas] = await Promise.all([
     getConfig(),
@@ -240,9 +250,19 @@ async function reservar({ cancha_id, fecha, hora_inicio, nombre_cliente, telefon
 }
 
 async function listarReservas({ desde, hasta } = {}) {
+  // [Revisión de seguridad] desde/hasta vienen de query params de la URL; antes
+  // se insertaban tal cual en el filtro de PostgREST sin validar formato ni
+  // escapar, lo que permitía a alguien con sesión de administrador inyectar
+  // parámetros extra de PostgREST (ej. agregando "&..." al valor).
   let query = '/reservas_cancha?select=*&order=fecha.asc,hora_inicio.asc';
-  if (desde) query += `&fecha=gte.${desde}`;
-  if (hasta) query += `&fecha=lte.${hasta}`;
+  if (desde) {
+    if (!validarFecha(desde)) { const err = new Error('Fecha "desde" inválida, use formato AAAA-MM-DD'); err.status = 400; throw err; }
+    query += `&fecha=gte.${desde}`;
+  }
+  if (hasta) {
+    if (!validarFecha(hasta)) { const err = new Error('Fecha "hasta" inválida, use formato AAAA-MM-DD'); err.status = 400; throw err; }
+    query += `&fecha=lte.${hasta}`;
+  }
   return pg(query);
 }
 

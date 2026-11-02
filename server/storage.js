@@ -10,6 +10,19 @@ const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 const STORAGE_URL = `${(SUPABASE_URL || '').replace(/\/$/, '')}/storage/v1`;
 const BUCKET = 'comprobantes';
 
+// Quita caracteres peligrosos del nombre original del archivo subido por el
+// usuario (barras, "..", espacios, etc.) para que no pueda alterar la ruta
+// dentro del bucket de Storage (ej. escapar de la carpeta del día, pisar el
+// archivo de otra persona, o inyectar "/" en la URL de la API de Storage).
+// [Revisión de seguridad] Antes el nombre de archivo se insertaba sin tocar.
+function sanitizarNombreArchivo(nombre) {
+  const base = String(nombre || 'archivo').split(/[\/]/).pop();
+  let limpio = base.replace(/[^a-zA-Z0-9._-]/g, '_');
+  limpio = limpio.replace(/^\.+/, ''); // sin puntos al inicio (evita ".." o archivos ocultos)
+  if (!limpio) limpio = 'archivo';
+  return limpio.slice(-150); // evita nombres absurdamente largos
+}
+
 function headersAuth() {
   return {
     apikey: SUPABASE_SERVICE_KEY,
@@ -19,7 +32,7 @@ function headersAuth() {
 
 // Sube un comprobante y devuelve la ruta interna (para guardar en la base de datos).
 async function subirComprobante(nombreArchivo, buffer, contentType) {
-  const ruta = `${new Date().toISOString().slice(0, 10)}/${Date.now()}-${nombreArchivo}`;
+  const ruta = `${new Date().toISOString().slice(0, 10)}/${Date.now()}-${sanitizarNombreArchivo(nombreArchivo)}`;
   const resp = await fetch(`${STORAGE_URL}/object/${BUCKET}/${ruta}`, {
     method: 'POST',
     headers: { ...headersAuth(), 'Content-Type': contentType },
@@ -57,7 +70,7 @@ const BUCKET_GALERIA = 'galeria';
 // (para guardar en la base de datos) y ya incluye un timestamp para no pisar
 // archivos con el mismo nombre.
 async function subirGaleria(carpeta, nombreArchivo, buffer, contentType) {
-  const ruta = `${carpeta}/${Date.now()}-${nombreArchivo}`;
+  const ruta = `${carpeta}/${Date.now()}-${sanitizarNombreArchivo(nombreArchivo)}`;
   const resp = await fetch(`${STORAGE_URL}/object/${BUCKET_GALERIA}/${ruta}`, {
     method: 'POST',
     headers: { ...headersAuth(), 'Content-Type': contentType },
