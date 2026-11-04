@@ -1252,11 +1252,6 @@ footer.sitio .firma {
   margin-top: 1.1rem;
   padding: 0.9rem 1.2rem;
   background: var(--home-gris-suave);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.8rem;
-  flex-wrap: wrap;
 }
 
 .home-cancha-pie p {
@@ -1281,6 +1276,68 @@ footer.sitio .firma {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.7rem;
   padding-bottom: 1.2rem;
+}
+
+.home-banner-reserva {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.2rem;
+  margin-top: 1.6rem;
+  padding: 1.3rem 1.6rem;
+  border-radius: var(--home-radio-grande, 18px);
+  background: linear-gradient(110deg, var(--home-azul-oscuro) 0%, var(--home-verde) 65%, #7fd858 100%);
+  text-decoration: none;
+  isolation: isolate;
+}
+
+.home-banner-reserva::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.07) 0 14px, transparent 14px 28px);
+}
+
+.home-banner-reserva-texto strong {
+  display: block;
+  color: var(--home-blanco);
+  font-size: 1.5rem;
+  font-weight: 800;
+  font-style: italic;
+  letter-spacing: 0.01em;
+}
+
+.home-banner-reserva-texto strong span { color: var(--home-dorado); }
+
+.home-banner-reserva-texto small {
+  display: block;
+  margin-top: 0.3rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.home-banner-reserva-icono {
+  flex-shrink: 0;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  border: 2px solid var(--home-dorado);
+  color: var(--home-dorado);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.home-banner-reserva-icono svg { width: 28px; height: 28px; }
+
+@media (max-width: 560px) {
+  .home-banner-reserva { flex-direction: column; text-align: center; }
+  .home-banner-reserva-texto strong { font-size: 1.25rem; }
 }
 
 @media (min-width: 1200px) {
