@@ -13,13 +13,17 @@ function mapItem(fila) {
     id: fila.id,
     tipo: fila.tipo_archivo === 'video' ? 'video' : 'imagen',
     nombre: fila.storage_path.split('/').pop(),
-    url: storage.urlPublicaGaleria(fila.storage_path)
+    url: storage.urlPublicaGaleria(fila.storage_path),
+    fijado: fila.fijado
   };
 }
 
+// Las fijadas van primero (respetando su "orden"), luego el resto de más nueva a más antigua.
+const ORDEN_GALERIA = 'fijado.desc,orden.asc,creado_en.desc';
+
 // Para la página pública: recinto como lista plana, eventos agrupados por álbum.
 async function listar() {
-  const filas = await pg('/galeria_items?select=*&order=orden.asc,creado_en.desc');
+  const filas = await pg(`/galeria_items?select=*&order=${ORDEN_GALERIA}`);
   const recinto = filas.filter(f => f.seccion === 'recinto').map(mapItem);
 
   const albumes = new Map();
@@ -35,7 +39,7 @@ async function listar() {
 
 // Para el panel de admin: lista plana con todos los campos, para poder editar/borrar.
 async function listarTodos() {
-  const filas = await pg('/galeria_items?select=*&order=seccion.asc,orden.asc,creado_en.desc');
+  const filas = await pg(`/galeria_items?select=*&order=seccion.asc,${ORDEN_GALERIA}`);
   return filas.map(fila => ({ ...fila, url: storage.urlPublicaGaleria(fila.storage_path) }));
 }
 
@@ -69,9 +73,11 @@ async function crear({ seccion, album }, archivo) {
   return { ...fila, url: storage.urlPublicaGaleria(fila.storage_path) };
 }
 
-async function actualizar(id, { album }) {
+async function actualizar(id, { album, orden, fijado }) {
   const cambios = {};
   if (album !== undefined) cambios.album = String(album).trim();
+  if (orden !== undefined) cambios.orden = Number(orden) || 0;
+  if (fijado !== undefined) cambios.fijado = Boolean(fijado);
   if (Object.keys(cambios).length === 0) {
     const filas = await pg(`/galeria_items?id=eq.${Number(id)}&select=*`);
     return filas[0];

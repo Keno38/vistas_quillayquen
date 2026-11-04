@@ -416,11 +416,24 @@ function renderGaleriaGrilla(cont, items, seccion) {
     tarjeta.innerHTML = `
       ${media}
       <button type="button" class="galeria-admin-borrar" title="Eliminar" data-galeria-borrar="${item.id}">&times;</button>
+      <div class="galeria-admin-orden">
+        <label>Orden <input type="number" value="${item.orden || 0}" data-campo="orden" style="width:55px;"></label>
+        <label><input type="checkbox" ${item.fijado ? 'checked' : ''} data-campo="fijado" style="width:auto;"> Fijado</label>
+        <button type="button" class="boton" data-galeria-guardar="${item.id}">Guardar</button>
+      </div>
     `;
     cont.appendChild(tarjeta);
   });
   cont.querySelectorAll('[data-galeria-borrar]').forEach(btn => {
     btn.addEventListener('click', () => eliminarGaleriaItem(btn.getAttribute('data-galeria-borrar'), seccion));
+  });
+  cont.querySelectorAll('[data-galeria-guardar]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tarjeta = btn.closest('.galeria-admin-tarjeta');
+      const orden = tarjeta.querySelector('[data-campo="orden"]').value;
+      const fijado = tarjeta.querySelector('[data-campo="fijado"]').checked;
+      actualizarGaleriaItem(btn.getAttribute('data-galeria-guardar'), { orden, fijado }, seccion);
+    });
   });
 }
 
@@ -434,14 +447,19 @@ function renderGaleriaEventosAdmin(cont, items) {
     if (!albumes.has(nombre)) albumes.set(nombre, []);
     albumes.get(nombre).push(item);
   });
+  const albumesArr = Array.from(albumes.entries());
 
   cont.innerHTML = '';
-  albumes.forEach((fotos, nombreAlbum) => {
+  albumesArr.forEach(([nombreAlbum, fotos], indice) => {
     const fechaReciente = fotos.reduce((max, f) => f.creado_en > max ? f.creado_en : max, fotos[0].creado_en);
     const bloque = document.createElement('div');
     bloque.className = 'galeria-admin-album-bloque';
     bloque.innerHTML = `
       <div class="galeria-admin-album-header">
+        <div class="galeria-admin-album-flechas">
+          <button type="button" class="boton secundario" data-album-mover-arriba="${indice}" ${indice === 0 ? 'disabled' : ''} title="Subir álbum">&uarr;</button>
+          <button type="button" class="boton secundario" data-album-mover-abajo="${indice}" ${indice === albumesArr.length - 1 ? 'disabled' : ''} title="Bajar álbum">&darr;</button>
+        </div>
         <strong>${nombreAlbum}</strong> <small>(${fotos.length} archivo(s) · subido ${new Date(fechaReciente).toLocaleDateString('es-CL')})</small>
         <button type="button" class="boton secundario" data-album-editar="${nombreAlbum}">Editar</button>
         <button type="button" class="boton secundario" data-album-borrar="${nombreAlbum}">Eliminar álbum completo</button>
@@ -455,7 +473,7 @@ function renderGaleriaEventosAdmin(cont, items) {
           <button type="button" class="boton" data-album-subir="${nombreAlbum}">Subir a este álbum</button>
         </div>
         <table class="admin-tabla">
-          <thead><tr><th></th><th>Archivo</th><th>Fecha</th><th>Álbum</th><th>Acciones</th></tr></thead>
+          <thead><tr><th></th><th>Archivo</th><th>Fecha</th><th>Álbum</th><th>Orden</th><th>Fijado</th><th>Acciones</th></tr></thead>
           <tbody></tbody>
         </table>
       </div>
@@ -477,6 +495,8 @@ function renderGaleriaEventosAdmin(cont, items) {
         <td data-label="Archivo">${item.nombre || item.storage_path}</td>
         <td data-label="Fecha">${new Date(item.creado_en).toLocaleDateString('es-CL')}</td>
         <td data-label="Álbum"><input type="text" value="${nombreAlbum === 'Sin álbum' ? '' : nombreAlbum}" data-campo="album" style="min-width:140px;"></td>
+        <td data-label="Orden"><input type="number" value="${item.orden || 0}" data-campo="orden" style="width:55px;"></td>
+        <td data-label="Fijado" style="text-align:center;"><input type="checkbox" ${item.fijado ? 'checked' : ''} data-campo="fijado" style="width:auto;"></td>
         <td data-label="Acciones"></td>
       `;
       const tdAcciones = tr.querySelector('td:last-child');
@@ -485,7 +505,11 @@ function renderGaleriaEventosAdmin(cont, items) {
       btnGuardar.type = 'button';
       btnGuardar.className = 'boton';
       btnGuardar.style.marginRight = '0.4rem';
-      btnGuardar.addEventListener('click', () => actualizarGaleriaItem(item.id, tr.querySelector('[data-campo="album"]').value));
+      btnGuardar.addEventListener('click', () => actualizarGaleriaItem(item.id, {
+        album: tr.querySelector('[data-campo="album"]').value,
+        orden: tr.querySelector('[data-campo="orden"]').value,
+        fijado: tr.querySelector('[data-campo="fijado"]').checked
+      }, 'eventos'));
 
       const btnEliminar = document.createElement('button');
       btnEliminar.textContent = 'Eliminar';
@@ -503,16 +527,48 @@ function renderGaleriaEventosAdmin(cont, items) {
   cont.querySelectorAll('[data-album-borrar]').forEach(btn => {
     btn.addEventListener('click', () => eliminarAlbumCompleto(btn.getAttribute('data-album-borrar'), albumes.get(btn.getAttribute('data-album-borrar'))));
   });
+  cont.querySelectorAll('[data-album-mover-arriba]').forEach(btn => {
+    btn.addEventListener('click', () => moverAlbumEventos(albumesArr, Number(btn.getAttribute('data-album-mover-arriba')), -1));
+  });
+  cont.querySelectorAll('[data-album-mover-abajo]').forEach(btn => {
+    btn.addEventListener('click', () => moverAlbumEventos(albumesArr, Number(btn.getAttribute('data-album-mover-abajo')), 1));
+  });
 }
 
-async function actualizarGaleriaItem(id, nuevoAlbum) {
+// Mueve el álbum de posición `indice` un lugar hacia arriba o abajo (delta -1/+1)
+// y reescribe el campo "orden" de cada foto de los dos álbumes afectados para
+// que el nuevo orden quede guardado (no hay tabla propia de álbumes: el orden
+// de álbum se deriva del orden de sus fotos).
+async function moverAlbumEventos(albumesArr, indice, delta) {
+  const destino = indice + delta;
+  if (destino < 0 || destino >= albumesArr.length) return;
+  const reordenado = albumesArr.slice();
+  [reordenado[indice], reordenado[destino]] = [reordenado[destino], reordenado[indice]];
+
+  try {
+    await Promise.all(reordenado.flatMap(([, fotos], posAlbum) =>
+      fotos.map((foto, posFoto) =>
+        llamarSuperadmin(`/api/superadmin/galeria/${foto.id}`, {
+          method: 'PUT',
+          body: JSON.stringify({ orden: posAlbum * 1000 + posFoto })
+        })
+      )
+    ));
+    mostrarMensaje('Orden de álbumes actualizado.', 'exito');
+    cargarGaleriaAdmin('eventos');
+  } catch (err) {
+    mostrarMensaje(err.message, 'error');
+  }
+}
+
+async function actualizarGaleriaItem(id, cambios, seccion) {
   try {
     await llamarSuperadmin(`/api/superadmin/galeria/${id}`, {
       method: 'PUT',
-      body: JSON.stringify({ album: nuevoAlbum })
+      body: JSON.stringify(cambios)
     });
-    mostrarMensaje('Álbum actualizado.', 'exito');
-    cargarGaleriaAdmin('eventos');
+    mostrarMensaje('Cambios guardados.', 'exito');
+    cargarGaleriaAdmin(seccion);
   } catch (err) {
     mostrarMensaje(err.message, 'error');
   }
