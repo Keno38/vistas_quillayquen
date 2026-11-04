@@ -5,20 +5,20 @@
 const { pg } = require('./supabaseClient');
 const storage = require('./storage');
 
-const PAGINAS = ['index', 'canchas', 'eventos'];
+const PAGINAS = ['index', 'canchas', 'eventos', 'cancha1', 'cancha2'];
 
 function validarPagina(pagina) {
   if (!PAGINAS.includes(pagina)) {
-    const err = new Error('La página debe ser "index", "canchas" o "eventos"');
+    const err = new Error(`La página debe ser una de: ${PAGINAS.join(', ')}`);
     err.status = 400;
     throw err;
   }
 }
 
-// Para el sitio público: { index: url|null, canchas: url|null, eventos: url|null }
+// Para el sitio público: { index: url|null, canchas: url|null, eventos: url|null, cancha1: url|null, cancha2: url|null }
 async function obtenerTodos() {
   const filas = await pg('/hero_imagenes?select=*');
-  const resultado = { index: null, canchas: null, eventos: null };
+  const resultado = Object.fromEntries(PAGINAS.map(p => [p, null]));
   filas.forEach(fila => {
     resultado[fila.pagina] = storage.urlPublicaGaleria(fila.storage_path);
   });

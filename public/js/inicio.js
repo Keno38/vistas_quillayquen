@@ -2,7 +2,7 @@
 // real (misma API que usa /canchas.html), filtrada por el día elegido.
 
 const inputFechaHome = document.getElementById('home-fecha');
-const contBloquesHome = document.getElementById('home-bloques');
+const tarjetasCancha = document.querySelectorAll('[data-tarjeta-cancha]');
 const mensajeHomeDiv = document.getElementById('home-mensaje');
 
 function hoyISOHome() {
@@ -37,7 +37,6 @@ function crearBloqueHome(cancha, horario, fecha) {
       <span class="home-bloque-hora">${horario.hora_inicio}</span>
       <span class="home-chip ${info.clase}">${info.texto}</span>
     </div>
-    <p class="home-bloque-tipo">Pasto sintético</p>
     ${accionHTML}
   `;
   return art;
@@ -46,30 +45,28 @@ function crearBloqueHome(cancha, horario, fecha) {
 async function cargarDisponibilidadHome() {
   const fecha = inputFechaHome.value;
   if (!fecha) return;
-  contBloquesHome.innerHTML = 'Cargando disponibilidad...';
+  tarjetasCancha.forEach(t => { t.querySelector('[data-grilla-cancha]').innerHTML = 'Cargando disponibilidad...'; });
   try {
     const resp = await fetch(`/api/canchas/disponibilidad?fecha=${fecha}`);
     const data = await resp.json();
     if (!resp.ok) throw new Error(data.error || 'No se pudo cargar la disponibilidad');
 
-    contBloquesHome.innerHTML = '';
-    data.forEach(cancha => {
-      const grupo = document.createElement('section');
-      grupo.className = 'home-cancha-grupo';
-      grupo.innerHTML = `<h3 class="home-cancha-titulo">${cancha.nombre} <span>· Pasto sintético</span></h3>`;
-      const grilla = document.createElement('div');
-      grilla.className = 'home-bloques';
+    data.forEach((cancha, indice) => {
+      const tarjeta = document.querySelector(`[data-tarjeta-cancha="${indice}"]`);
+      if (!tarjeta) return;
+      const nombreEl = tarjeta.querySelector('[data-campo-nombre]');
+      if (nombreEl) nombreEl.textContent = cancha.nombre;
+      const grilla = tarjeta.querySelector('[data-grilla-cancha]');
+      grilla.innerHTML = '';
       cancha.horarios.forEach(horario => {
         grilla.appendChild(crearBloqueHome(cancha, horario, fecha));
       });
-      grupo.appendChild(grilla);
-      contBloquesHome.appendChild(grupo);
+      if (grilla.children.length === 0) {
+        grilla.innerHTML = '<p>No hay bloques configurados para este día.</p>';
+      }
     });
-    if (contBloquesHome.children.length === 0) {
-      contBloquesHome.innerHTML = '<p>No hay bloques configurados para este día.</p>';
-    }
   } catch (err) {
-    contBloquesHome.innerHTML = '';
+    tarjetasCancha.forEach(t => { t.querySelector('[data-grilla-cancha]').innerHTML = ''; });
     mostrarMensajeHome(err.message, 'error');
   }
 }

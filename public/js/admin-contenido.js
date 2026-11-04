@@ -327,7 +327,7 @@ document.getElementById('form-nuevo-reel').addEventListener('submit', async (e) 
 });
 
 // ---- Imágenes de portada (Hero) ----
-const NOMBRE_PAGINA_HERO = { index: 'Inicio', canchas: 'Reserva de canchas', eventos: 'Centro de Eventos' };
+const NOMBRE_PAGINA_HERO = { index: 'Inicio', canchas: 'Reserva de canchas', eventos: 'Centro de Eventos', cancha1: 'Cancha 1 (portada)', cancha2: 'Cancha 2 (portada)' };
 
 async function cargarHeroAdmin() {
   const cont = document.getElementById('grilla-hero-admin');
