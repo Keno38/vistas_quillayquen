@@ -5,8 +5,11 @@
 
 require('./env');
 
-const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
+// .trim(): al pegar valores en una terminal (o en `wrangler secret put`) es
+// fácil arrastrar un salto de línea o espacio invisible al final, lo que
+// rompe la autenticación con Supabase sin ningún error obvio.
+const SUPABASE_URL = (process.env.SUPABASE_URL || '').trim();
+const SUPABASE_SERVICE_KEY = (process.env.SUPABASE_SERVICE_KEY || '').trim();
 
 if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
   throw new Error(
@@ -19,9 +22,11 @@ const REST_URL = `${SUPABASE_URL.replace(/\/$/, '')}/rest/v1`;
 
 // path incluye el nombre de la tabla y los filtros PostgREST, ej: '/eventos?id=eq.5&select=*'
 async function pg(path, { method = 'GET', body, prefer } = {}) {
+  // Las claves nuevas de Supabase (sb_secret_...) no son JWT: hay que mandarlas
+  // solo en "apikey". Si además se manda como "Authorization: Bearer", Supabase
+  // intenta leerla como JWT y falla con un error confuso ("JWT issued at future").
   const headers = {
     apikey: SUPABASE_SERVICE_KEY,
-    Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`,
     'Content-Type': 'application/json'
   };
   if (prefer) headers.Prefer = prefer;

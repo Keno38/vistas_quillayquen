@@ -5,7 +5,14 @@
 const fs = require('fs');
 const path = require('path');
 
-const ENV_PATH = path.join(__dirname, '..', '.env');
+// __dirname no existe en Cloudflare Workers (entorno ESM sin filesystem real).
+// Si falla, ENV_PATH queda null y cargarEnv() simplemente no encuentra nada que leer.
+let ENV_PATH = null;
+try {
+  ENV_PATH = path.join(__dirname, '..', '.env');
+} catch (err) {
+  // Seguimos solo con process.env (Workers: variables vía wrangler secret/vars).
+}
 
 function cargarEnv() {
   // En Cloudflare Workers no existe el archivo .env (las variables se

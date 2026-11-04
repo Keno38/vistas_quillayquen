@@ -23,8 +23,16 @@ const { parseMultipart } = require('./multipart');
 const MAX_COMPROBANTE_BYTES = 8 * 1024 * 1024; // 8MB, de sobra para una foto/PDF de comprobante
 const MAX_GALERIA_BYTES = 150 * 1024 * 1024; // 150MB, los videos de celular (.mov/.mp4) pueden pesar bastante
 
-const PORT = process.env.PORT || 3000;
-const PUBLIC_DIR = path.join(__dirname, '..', 'public');
+const PORT = Number(process.env.PORT) || 3000;
+// __dirname no existe en Cloudflare Workers (entorno ESM). Ahí serveStatic()
+// nunca debería ejecutarse de todas formas (wrangler.toml sirve public/
+// directo desde el borde vía [assets]), así que un valor vacío es inofensivo.
+let PUBLIC_DIR = '';
+try {
+  PUBLIC_DIR = path.join(__dirname, '..', 'public');
+} catch (err) {
+  // Entorno sin __dirname (Workers): serveStatic() cae a su catch y responde 404.
+}
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',
