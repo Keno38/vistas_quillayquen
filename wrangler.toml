@@ -1,0 +1,26 @@
+name = "vistas-quillayquen"
+main = "server/worker.js"
+compatibility_date = "2025-09-08"
+compatibility_flags = ["nodejs_compat"]
+
+# Sirve todo lo de public/ directamente desde el borde de Cloudflare (sin pasar
+# por el Worker), igual que hacía fs.readFile en serveStatic() para desarrollo local.
+[assets]
+directory = "./public"
+binding = "ASSETS"
+# Las rutas que empiezan con /api deben llegar siempre al Worker, nunca sumarse
+# como si fueran un archivo estático.
+run_worker_first = ["/api/*"]
+
+[vars]
+# PORT no es necesario en Workers (no hay socket TCP real), pero se deja por
+# compatibilidad con el adaptador httpServerHandler.
+PORT = "8080"
+
+# El resto de las variables (SUPABASE_URL, SUPABASE_SERVICE_KEY, BREVO_API_KEY,
+# SMTP_USER, etc.) NO van aquí en texto plano porque este archivo se sube a git.
+# Se configuran como secretos con:
+#   wrangler secret put SUPABASE_SERVICE_KEY
+#   wrangler secret put BREVO_API_KEY
+#   wrangler secret put SMTP_USER
+# (una vez por cada variable que hoy está en tu archivo .env)

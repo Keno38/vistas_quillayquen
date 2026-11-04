@@ -151,19 +151,28 @@ function serveStatic(req, res, pathname) {
     return res.end('Prohibido');
   }
 
-  fs.readFile(fullPath, (err, content) => {
-    if (err) {
-      if (err.code === 'ENOENT') {
-        res.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8' });
-        return res.end('<h1>404 - Página no encontrada</h1><p><a href="/">Volver al inicio</a></p>');
+  // En Cloudflare Workers, wrangler.toml ya sirve todo lo de public/ desde el
+  // borde (binding [assets]) sin pasar por aquí. Esta función solo debería
+  // ejecutarse en desarrollo local (`node server/index.js`) o si llega una
+  // ruta que no coincide con ningún archivo estático conocido.
+  try {
+    fs.readFile(fullPath, (err, content) => {
+      if (err) {
+        if (err.code === 'ENOENT') {
+          res.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8' });
+          return res.end('<h1>404 - Página no encontrada</h1><p><a href="/">Volver al inicio</a></p>');
+        }
+        res.writeHead(500);
+        return res.end('Error del servidor');
       }
-      res.writeHead(500);
-      return res.end('Error del servidor');
-    }
-    const ext = path.extname(fullPath).toLowerCase();
-    res.writeHead(200, { 'Content-Type': MIME[ext] || 'application/octet-stream' });
-    res.end(content);
-  });
+      const ext = path.extname(fullPath).toLowerCase();
+      res.writeHead(200, { 'Content-Type': MIME[ext] || 'application/octet-stream' });
+      res.end(content);
+    });
+  } catch (err) {
+    res.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8' });
+    res.end('<h1>404 - Página no encontrada</h1><p><a href="/">Volver al inicio</a></p>');
+  }
 }
 
 async function handleApi(req, res, pathname, query) {
@@ -478,8 +487,16 @@ const server = http.createServer((req, res) => {
   }
 });
 
-server.listen(PORT, () => {
-  console.log(`Vistas de Quillayquen escuchando en http://localhost:${PORT}`);
-  console.log(`Panel admin: http://localhost:${PORT}/admin.html`);
-  console.log('Recuerda cambiar las contraseñas por defecto del panel de administración (ver README.md).');
-});
+module.exports = { server, PORT };
+
+// Si este archivo se ejecuta directamente (`node server/index.js`, como en
+// Render o en local), arranca el servidor de la forma tradicional.
+// Si en cambio lo importa server/worker.js (despliegue en Cloudflare Workers),
+// es ese archivo quien decide cuándo llamar a server.listen().
+if (require.main === module) {
+  server.listen(PORT, () => {
+    console.log(`Vistas de Quillayquen escuchando en http://localhost:${PORT}`);
+    console.log(`Panel admin: http://localhost:${PORT}/admin.html`);
+    console.log('Recuerda cambiar las contraseñas por defecto del panel de administración (ver README.md).');
+  });
+}
