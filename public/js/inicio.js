@@ -37,7 +37,6 @@ function crearBloqueHome(cancha, horario, fecha) {
       <span class="home-bloque-hora">${horario.hora_inicio}</span>
       <span class="home-chip ${info.clase}">${info.texto}</span>
     </div>
-    <p class="home-bloque-cancha">${cancha.nombre}</p>
     <p class="home-bloque-tipo">Pasto sintético</p>
     ${accionHTML}
   `;
@@ -55,9 +54,16 @@ async function cargarDisponibilidadHome() {
 
     contBloquesHome.innerHTML = '';
     data.forEach(cancha => {
+      const grupo = document.createElement('section');
+      grupo.className = 'home-cancha-grupo';
+      grupo.innerHTML = `<h3 class="home-cancha-titulo">${cancha.nombre} <span>· Pasto sintético</span></h3>`;
+      const grilla = document.createElement('div');
+      grilla.className = 'home-bloques';
       cancha.horarios.forEach(horario => {
-        contBloquesHome.appendChild(crearBloqueHome(cancha, horario, fecha));
+        grilla.appendChild(crearBloqueHome(cancha, horario, fecha));
       });
+      grupo.appendChild(grilla);
+      contBloquesHome.appendChild(grupo);
     });
     if (contBloquesHome.children.length === 0) {
       contBloquesHome.innerHTML = '<p>No hay bloques configurados para este día.</p>';

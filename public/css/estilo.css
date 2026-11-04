@@ -1144,8 +1144,26 @@ footer.sitio .firma {
   font-size: 0.88rem;
 }
 
+.home-cancha-grupo + .home-cancha-grupo {
+  margin-top: 2rem;
+}
+
+.home-cancha-titulo {
+  margin: 1.4rem 0 0;
+  font-size: 1.1rem;
+  color: var(--home-azul-oscuro);
+  padding-left: 0.7rem;
+  border-left: 4px solid var(--home-verde);
+}
+
+.home-cancha-titulo span {
+  font-weight: 400;
+  font-size: 0.85rem;
+  color: color-mix(in oklab, var(--home-azul-oscuro) 55%, transparent);
+}
+
 .home-bloques {
-  margin-top: 1.4rem;
+  margin-top: 0.9rem;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 0.9rem;
