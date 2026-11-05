@@ -34,6 +34,7 @@
         <a href="/index.html">Inicio</a>
         <a href="/canchas.html">Canchas</a>
         <a href="/eventos.html">Centro de Eventos</a>
+        <a href="/index.html#piscina">Piscina</a>
         <a href="/galeria.html">Galería</a>
         <a href="/contacto.html">Contáctanos</a>
       </nav>
@@ -44,16 +45,99 @@
 
 <main class="home-main">
 
-  <article class="home-hero-principal" style="min-height:320px;margin-bottom:0.6rem;">
-    <img src="/img/logo-icono.png" alt="Cancha de pasto sintético" data-hero-pagina="canchas">
-    <div class="home-hero-overlay">
-      <span class="home-etiqueta"><i></i> Cancha 1 · Cancha 2</span>
-      <h1>Canchas de pasto sintético</h1>
-      <p>Iluminadas, con estacionamiento y camarines.</p>
-    </div>
-  </article>
+  <section class="home-hero">
+    <article class="home-hero-principal">
+      <img src="/img/logo-icono.png" alt="Cancha de pasto sintético al atardecer con montañas de fondo" loading="eager" data-hero-pagina="canchas">
+      <div class="home-hero-overlay">
+        <span class="home-etiqueta"><i></i> Cancha 1 · disponible desde las 15:00</span>
+        <h1>Vistas de Quillayquén</h1>
+        <p>Dos canchas de pasto sintético y un centro de eventos con piscina. Explora el recinto y comienza tu reserva.</p>
+        <div class="home-hero-botones">
+          <a href="#reservar-ahora" class="home-boton-verde">Reservar cancha</a>
+          <a href="#galeria-recinto" class="home-boton-glass">Ver galería</a>
+        </div>
+      </div>
+    </article>
 
-  <div class="home-pagina-header">
+    <div class="home-hero-lateral" id="galeria-recinto">
+      <figure id="piscina">
+        <img id="lateral-recinto-1" src="/img/logo-icono.png" alt="Piscina y terraza del centro de eventos" loading="lazy">
+        <figcaption id="lateral-recinto-1-texto">Piscina · centro de eventos</figcaption>
+      </figure>
+      <figure>
+        <img id="lateral-recinto-2" src="/img/logo-icono.png" alt="Cancha de pasto sintético iluminada de noche" loading="lazy">
+        <figcaption id="lateral-recinto-2-texto">Cancha 2 · iluminada</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="home-disponibilidad" id="horarios">
+    <div class="home-disp-header">
+      <div>
+        <p class="home-disp-eyebrow">Disponibilidad de hoy</p>
+        <h2>Elige tu hora de juego</h2>
+      </div>
+      <div class="home-disp-selector">
+        <label for="home-fecha">Fecha</label>
+        <input type="date" id="home-fecha">
+      </div>
+    </div>
+
+    <div id="home-mensaje"></div>
+
+    <div class="home-canchas-vitrina">
+      <article class="home-cancha-tarjeta" data-tarjeta-cancha="0">
+        <div class="home-cancha-foto">
+          <img src="/img/logo-icono.png" alt="Cancha 1" data-hero-pagina="cancha1">
+          <span class="home-cancha-badge"><i class="home-cancha-badge-bola"></i> <span data-campo-nombre>Cancha 1</span><small>Pasto sintético</small></span>
+        </div>
+        <div class="home-cancha-caracteristicas">
+          <span>Pasto sintético</span>
+          <span>Iluminación nocturna</span>
+          <span>Camarines y baños</span>
+        </div>
+        <h3 class="home-cancha-horarios-titulo">Horarios disponibles</h3>
+        <div class="home-bloques" data-grilla-cancha></div>
+        <div class="home-cancha-pie">
+          <p data-campo-blurb>Perfecta para partidos con amigos, familia o empresas.</p>
+        </div>
+      </article>
+
+      <article class="home-cancha-tarjeta" data-tarjeta-cancha="1">
+        <div class="home-cancha-foto">
+          <img src="/img/logo-icono.png" alt="Cancha 2" data-hero-pagina="cancha2">
+          <span class="home-cancha-badge"><i class="home-cancha-badge-bola"></i> <span data-campo-nombre>Cancha 2</span><small>Pasto sintético</small></span>
+        </div>
+        <div class="home-cancha-caracteristicas">
+          <span>Pasto sintético</span>
+          <span>Iluminación nocturna</span>
+          <span>Camarines y baños</span>
+        </div>
+        <h3 class="home-cancha-horarios-titulo">Horarios disponibles</h3>
+        <div class="home-bloques" data-grilla-cancha></div>
+        <div class="home-cancha-pie">
+          <p data-campo-blurb>Excelente para torneos, entrenamientos y eventos.</p>
+        </div>
+      </article>
+    </div>
+
+    <a href="#reservar-ahora" class="home-banner-reserva">
+      <span class="home-banner-reserva-texto">
+        <strong>¡Reserva tu hora <span>ahora!</span></strong>
+        <small>Elige tu cancha, selecciona tu horario y asegura tu cupo en pocos segundos.</small>
+      </span>
+      <span class="home-banner-reserva-icono" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/><circle cx="12" cy="15" r="3.4"/><path d="M12 13.5v1.5l1 1"/></svg>
+      </span>
+    </a>
+
+    <div class="home-disp-footer" id="eventos">
+      <p>¿Organizas un torneo, cumpleaños o reunión? Cotiza tu evento en el centro de eventos con piscina.</p>
+      <a href="/eventos.html" class="home-boton-oscuro">Cotizar evento</a>
+    </div>
+  </section>
+
+  <div class="home-pagina-header" id="reservar-ahora">
     <p class="home-disp-eyebrow">Canchas de pasto sintético</p>
     <h1>Reserva tu cancha</h1>
     <p class="home-subtitulo">Selecciona fecha, cancha y horario disponible</p>
@@ -159,6 +243,8 @@
 <script src="/js/hero-publico.js"></script>
 <script src="/js/contacto-publico.js"></script>
 <script src="/js/whatsapp-flotante.js"></script>
+<script src="/js/galeria-inicio.js"></script>
+<script src="/js/inicio.js"></script>
 <script src="/js/canchas.js"></script>
 </body>
 </html>

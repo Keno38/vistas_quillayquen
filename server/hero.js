@@ -5,7 +5,7 @@
 const { pg } = require('./supabaseClient');
 const storage = require('./storage');
 
-const PAGINAS = ['index', 'canchas', 'eventos', 'cancha1', 'cancha2'];
+const PAGINAS = ['index', 'canchas', 'eventos', 'cancha1', 'cancha2', 'piscina'];
 
 function validarPagina(pagina) {
   if (!PAGINAS.includes(pagina)) {

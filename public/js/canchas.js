@@ -183,7 +183,10 @@ function aplicarSeleccionDesdeURL(canchasData) {
   const el = contenedorGrilla.querySelector(
     `.bloque-horario.disponible[data-cancha-id="${canchaId}"][data-hora-inicio="${hora}"]`
   );
-  if (el) el.click();
+  if (el) {
+    el.click();
+    btnContinuar.click();
+  }
   history.replaceState(null, '', window.location.pathname);
 }
 
