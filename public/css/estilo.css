@@ -1082,6 +1082,8 @@ footer.sitio .firma {
 }
 .home-hero-lateral figure:hover img { transform: scale(1.06); }
 
+.home-hero-lateral-unica { grid-template-rows: 1fr; }
+
 .home-hero-lateral figcaption {
   position: absolute;
   left: 0.9rem;
