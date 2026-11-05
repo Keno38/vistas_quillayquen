@@ -952,7 +952,7 @@ footer.sitio .firma {
 /* ---- Hero ---- */
 .home-hero {
   display: grid;
-  grid-template-columns: 1.35fr 1fr;
+  grid-template-columns: 1fr;
   gap: 1rem;
 }
 
@@ -1056,46 +1056,6 @@ footer.sitio .firma {
   backdrop-filter: blur(8px);
 }
 .home-boton-glass:hover { transform: translateY(-2px); background: rgba(255, 255, 255, 0.28); }
-
-.home-hero-lateral {
-  display: grid;
-  gap: 1rem;
-  grid-template-rows: 1fr 1fr;
-}
-
-.home-hero-lateral figure {
-  position: relative;
-  margin: 0;
-  min-height: 160px;
-  border-radius: var(--home-radio);
-  overflow: hidden;
-  box-shadow: var(--home-sombra);
-}
-
-.home-hero-lateral img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.7s ease;
-}
-.home-hero-lateral figure:hover img { transform: scale(1.06); }
-
-.home-hero-lateral-unica { grid-template-rows: 1fr; }
-
-.home-hero-lateral figcaption {
-  position: absolute;
-  left: 0.9rem;
-  bottom: 0.9rem;
-  background: rgba(6, 43, 79, 0.68);
-  color: var(--home-blanco);
-  font-size: 0.8rem;
-  font-weight: 600;
-  padding: 0.3rem 0.8rem;
-  border-radius: 999px;
-  backdrop-filter: blur(6px);
-}
 
 /* ---- Disponibilidad ---- */
 .home-disponibilidad {
