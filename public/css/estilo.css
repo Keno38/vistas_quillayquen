@@ -2154,30 +2154,15 @@ footer.sitio .home-social a { background: rgba(6, 43, 79, 0.06); }
 .home-ferreteria-banner-logo {
   flex-shrink: 0;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.15rem;
   background: #ffffff;
   border-radius: 16px;
-  padding: 1rem 1.3rem;
+  padding: 0.9rem 1.2rem;
   text-decoration: none;
   min-width: 170px;
 }
-.home-ferreteria-banner-logo strong {
-  font-family: var(--font-titulos);
-  font-weight: 800;
-  font-size: 1.05rem;
-  color: #141414;
-  letter-spacing: 0.01em;
-}
-.home-ferreteria-banner-logo strong span { color: #e00010; }
-.home-ferreteria-banner-logo small {
-  font-size: 0.64rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: color-mix(in oklab, #141414 60%, transparent);
-}
+.home-ferreteria-banner-logo img { display: block; height: 72px; width: auto; }
 .home-ferreteria-banner-texto { flex: 1; min-width: 240px; }
 .home-ferreteria-banner-pill {
   display: inline-block;
