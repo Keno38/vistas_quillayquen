@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Sora:wght@700;800&display=swap");
 
 :root {
   /* Paleta premium unificada en todo el sitio (misma que la portada). */
@@ -13,6 +13,7 @@
   --amarillo: #f2a93b;
   --verde-claro: #ddf4ea;
   --font-display: "Poppins", -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-titulos: "Sora", "Poppins", -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
   --radio-tarjeta: 26px;
   --radio-chico: 16px;
   --sombra-tarjeta: 0 16px 36px -16px rgba(6, 43, 79, 0.22);
@@ -32,9 +33,10 @@ body {
 }
 
 h1, h2, h3 {
-  font-family: var(--font-display);
-  font-weight: 700;
-  letter-spacing: -0.01em;
+  font-family: var(--font-titulos);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
 }
 
 /* El encabezado ahora es el mismo en las 5 páginas: ver ".home-header"
@@ -2133,6 +2135,101 @@ footer.sitio .home-social a { background: rgba(6, 43, 79, 0.06); }
   height: 130px;
   border: 0;
   border-radius: var(--home-radio-chico);
+}
+
+.home-ferreteria-banner {
+  position: relative;
+  overflow: hidden;
+  margin-top: 1.6rem;
+  border-radius: var(--radio-tarjeta);
+  background:
+    linear-gradient(100deg, transparent 0%, transparent 13%, #e00010 13%, #e00010 20%, transparent 20%, transparent 100%),
+    #141414;
+  padding: 2rem 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1.8rem;
+  flex-wrap: wrap;
+}
+.home-ferreteria-banner-logo {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.15rem;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 1rem 1.3rem;
+  text-decoration: none;
+  min-width: 170px;
+}
+.home-ferreteria-banner-logo strong {
+  font-family: var(--font-titulos);
+  font-weight: 800;
+  font-size: 1.05rem;
+  color: #141414;
+  letter-spacing: 0.01em;
+}
+.home-ferreteria-banner-logo strong span { color: #e00010; }
+.home-ferreteria-banner-logo small {
+  font-size: 0.64rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, #141414 60%, transparent);
+}
+.home-ferreteria-banner-texto { flex: 1; min-width: 240px; }
+.home-ferreteria-banner-pill {
+  display: inline-block;
+  background: #e00010;
+  color: #ffffff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  margin-bottom: 0.7rem;
+}
+.home-ferreteria-banner-texto h2 {
+  color: #ffffff;
+  margin: 0 0 0.5rem;
+  font-size: 1.5rem;
+}
+.home-ferreteria-banner-texto p {
+  color: rgba(255, 255, 255, 0.72);
+  margin: 0;
+  font-size: 0.92rem;
+}
+.home-ferreteria-banner-botones {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  flex-shrink: 0;
+}
+.home-ferreteria-whatsapp,
+.home-ferreteria-ubicacion {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 2.6rem;
+  padding: 0 1.3rem;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.86rem;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: transform 0.15s ease;
+}
+.home-ferreteria-whatsapp { background: #25d366; color: #ffffff; }
+.home-ferreteria-ubicacion { background: transparent; border: 1.5px solid rgba(255, 255, 255, 0.6); color: #ffffff; }
+.home-ferreteria-whatsapp:hover, .home-ferreteria-ubicacion:hover { transform: translateY(-2px); }
+.home-ferreteria-whatsapp svg, .home-ferreteria-ubicacion svg { width: 17px; height: 17px; fill: currentColor; flex-shrink: 0; }
+
+@media (max-width: 760px) {
+  .home-ferreteria-banner { flex-direction: column; text-align: center; padding: 1.7rem 1.3rem; }
+  .home-ferreteria-banner-botones { flex-direction: column; width: 100%; }
+  .home-ferreteria-whatsapp, .home-ferreteria-ubicacion { justify-content: center; width: 100%; }
 }
 
 .home-footer-completo .firma {
