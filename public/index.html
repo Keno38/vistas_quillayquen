@@ -3,13 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vistas de Quillayquén — Recinto deportivo</title>
-<meta name="description" content="Reserva canchas de pasto sintético, disfruta la piscina y arrienda el centro de eventos en Vistas de Quillayquén. Reserva online, pago por transferencia y confirmación rápida.">
-<meta property="og:title" content="Vistas de Quillayquén — Recinto deportivo">
-<meta property="og:description" content="Canchas de pasto sintético, piscina y centro de eventos. Reserva online.">
-<meta property="og:image" content="/img/logo-icono.png">
+<title>Vistas de Quillayquén — Canchas, piscina y eventos en San Fernando</title>
+<meta name="description" content="Reserva canchas de pasto sintético en 1 minuto, disfruta la piscina y arrienda el centro de eventos en Vistas de Quillayquén. Reserva online, pago por transferencia y confirmación rápida.">
+<meta property="og:title" content="Vistas de Quillayquén — Canchas, piscina y eventos">
+<meta property="og:description" content="Reserva tu cancha en 1 minuto. Piscina todo el verano y centro de eventos en un entorno natural.">
+<meta property="og:image" content="/img/piscina-aerea.jpg">
 <meta property="og:type" content="website">
 <link rel="stylesheet" href="/css/estilo.css">
+<link rel="stylesheet" href="/css/portada.css">
+<script>document.documentElement.classList.add('pt-js');</script>
 </head>
 <body class="pagina-inicio">
 
@@ -46,129 +48,202 @@
   </div>
 </header>
 
-<main class="home-main">
+<main class="pt-main">
 
-  <section class="home-hero2">
-    <div class="home-hero2-fotos">
-      <img src="/img/logo-icono.png" alt="Cancha de pasto sintético iluminada de noche" data-hero-pagina="canchas">
-      <img src="/img/logo-icono.png" alt="Piscina y terraza del centro de eventos" data-hero-pagina="eventos">
+  <!-- HERO -->
+  <section class="pt-hero">
+    <div class="pt-hero-bg">
+      <img src="/img/piscina-aerea.jpg" alt="Vista aérea de la piscina y los jardines de Vistas de Quillayquén" data-hero-pagina="index" fetchpriority="high">
     </div>
-    <div class="home-hero2-overlay">
-      <span class="home-etiqueta home-hero2-chip"><i></i> Reserva online</span>
-      <h1>Juega, refréscate y disfruta <span>Quillayquén</span></h1>
-      <p>Canchas de fútbol sintéticas, piscina y un entorno natural para compartir todo el año.</p>
-      <div class="home-hero-botones">
-        <a href="/canchas.html" class="home-boton-verde">Reservar cancha</a>
-        <a href="#piscina" class="home-boton-dorado">Venir a la piscina</a>
+    <div class="pt-wrap">
+      <span class="pt-chip"><i></i> Reservas abiertas · Quillayquén, San Fernando</span>
+      <h1>Juega, celebra y <em>disfruta</em> en un solo lugar</h1>
+      <p class="pt-sub">Canchas de pasto sintético, piscina y centro de eventos rodeados de naturaleza. Reserva online en 1 minuto.</p>
+      <div class="pt-hero-botones">
+        <a href="#reserva" class="pt-btn pt-btn-verde pt-btn-grande">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>
+          Reservar mi cancha
+        </a>
+        <a href="/eventos.html" class="pt-btn pt-btn-vidrio pt-btn-grande">Cotizar un evento</a>
       </div>
-      <div class="home-hero2-pills">
-        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/></svg> 2 canchas sintéticas</span>
-        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 17c1.5 1 3 1 4.5 0s3-1 4.5 0 3 1 4.5 0 3-1 4.5 0M2 12c1.5 1 3 1 4.5 0s3-1 4.5 0 3 1 4.5 0 3-1 4.5 0"/></svg> Piscina y áreas de descanso</span>
-        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 20l6-10 4 6 2-3 6 7z"/></svg> Entorno natural y familiar</span>
+      <div class="pt-hero-datos">
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12l4 4 10-10"/></svg> 2 canchas sintéticas</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12l4 4 10-10"/></svg> Piscina y áreas de descanso</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12l4 4 10-10"/></svg> Confirmación rápida</span>
       </div>
     </div>
   </section>
 
-  <section class="home-widget-reserva">
-    <div class="home-widget-titulo">
-      <span class="home-widget-icono"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg></span>
-      <div>
-        <strong>Reserva tu cancha en 1 minuto</strong>
-        <small>Elige fecha, cancha y hora. Al confirmar, terminas tu reserva en /canchas.html.</small>
+  <!-- RESERVA RÁPIDA -->
+  <div class="pt-wrap">
+    <section class="pt-reserva pt-reveal" id="reserva">
+      <div class="pt-reserva-cab">
+        <h2>Reserva tu cancha ahora</h2>
+        <small>Elige fecha, cancha y hora. Terminas el pago en el siguiente paso.</small>
       </div>
-    </div>
+      <div class="pt-reserva-campos">
+        <label>Fecha
+          <input type="date" id="widget-fecha">
+        </label>
+        <label>Cancha
+          <select id="widget-cancha"></select>
+        </label>
+        <a href="/canchas.html" id="widget-confirmar" class="pt-btn pt-btn-verde">Confirmar reserva <span>→</span></a>
+        <label class="pt-reserva-horas">Hora disponible
+          <div id="widget-horas" class="home-widget-horas">Elige una fecha</div>
+        </label>
+      </div>
+    </section>
+  </div>
 
-    <div class="home-widget-pasos">
-      <span class="home-widget-paso activo"><i>1</i> Fecha</span>
-      <span class="home-widget-linea"></span>
-      <span class="home-widget-paso"><i>2</i> Cancha</span>
-      <span class="home-widget-linea"></span>
-      <span class="home-widget-paso"><i>3</i> Hora disponible</span>
-      <span class="home-widget-linea"></span>
-      <span class="home-widget-paso"><i>4</i> Confirmar</span>
-    </div>
-
-    <div class="home-widget-campos">
-      <label>Fecha
-        <input type="date" id="widget-fecha">
-      </label>
-      <label>Cancha
-        <select id="widget-cancha"></select>
-      </label>
-      <label>Hora disponible
-        <div id="widget-horas" class="home-widget-horas">Elige una fecha</div>
-      </label>
-      <a href="/canchas.html" id="widget-confirmar" class="home-boton-verde home-widget-confirmar">Confirmar reserva <span>→</span></a>
+  <!-- QUÉ HACER -->
+  <section class="pt-seccion">
+    <div class="pt-wrap">
+      <div class="pt-titulo pt-reveal">
+        <span>Todo en un mismo lugar</span>
+        <h2>¿Qué quieres hacer hoy?</h2>
+        <p>Partidos con amigos, un día de piscina o el cumpleaños que todos van a recordar.</p>
+      </div>
+      <div class="pt-tarjetas">
+        <a href="/canchas.html" class="pt-tarjeta pt-reveal" data-d="1">
+          <img src="/img/cancha-2.jpg" alt="Cancha de pasto sintético con la cordillera de fondo" loading="lazy" data-hero-pagina="canchas">
+          <div class="pt-tarjeta-texto">
+            <span class="pt-tarjeta-etiqueta">Reserva online</span>
+            <h3>Canchas de pasto sintético</h3>
+            <p>Arma tu equipo, entrena o juega con amigos. Elige tu horario y listo.</p>
+            <span class="pt-tarjeta-link">Reservar cancha →</span>
+          </div>
+        </a>
+        <a href="#piscina" class="pt-tarjeta pt-reveal" data-d="2">
+          <img src="/img/piscina-aerea.jpg" alt="Piscina rodeada de palmeras y jardines" loading="lazy" data-hero-pagina="piscina">
+          <div class="pt-tarjeta-texto">
+            <span class="pt-tarjeta-etiqueta">Temporada de verano</span>
+            <h3>Día de piscina</h3>
+            <p>Relájate, refréscate y disfruta con la familia entre palmeras y jardines.</p>
+            <span class="pt-tarjeta-link">Ver horarios →</span>
+          </div>
+        </a>
+        <a href="/eventos.html" class="pt-tarjeta pt-reveal" data-d="3">
+          <img src="/img/piscina-aerea.jpg" alt="Quinchos y áreas verdes para celebrar eventos" loading="lazy" data-hero-pagina="eventos" style="object-position: 18% 40%;">
+          <div class="pt-tarjeta-texto">
+            <span class="pt-tarjeta-etiqueta">Cotiza sin compromiso</span>
+            <h3>Cumpleaños y eventos</h3>
+            <p>Celebra en un entorno natural, cómodo y seguro. Nosotros te ayudamos a armarlo.</p>
+            <span class="pt-tarjeta-link">Cotizar evento →</span>
+          </div>
+        </a>
+      </div>
     </div>
   </section>
 
-  <section class="home-piscina-seccion" id="piscina">
-    <div class="home-piscina-foto">
-      <img src="/img/logo-icono.png" alt="Piscina del centro de eventos" data-hero-pagina="piscina">
-    </div>
-    <div class="home-piscina-info">
-      <p class="home-piscina-icono">☀️</p>
-      <h2>Temporada de piscina</h2>
-      <span class="home-piscina-destacado">Ven cuando quieras este verano</span>
-      <div class="home-piscina-datos">
-        <div>
-          <strong>Horario</strong>
-          <p>Todos los días<br>10:00 a 20:00 hrs</p>
+  <!-- CÓMO FUNCIONA -->
+  <section class="pt-seccion pt-pasos-fondo">
+    <div class="pt-wrap">
+      <div class="pt-titulo pt-reveal">
+        <span>Fácil y rápido</span>
+        <h2>Reservar toma 3 pasos</h2>
+        <p>Sin llamadas ni esperas: ves la disponibilidad real y reservas desde tu celular.</p>
+      </div>
+      <div class="pt-pasos">
+        <div class="pt-paso pt-reveal" data-d="1">
+          <div class="pt-paso-num">1</div>
+          <h3>Elige día y hora</h3>
+          <p>Mira los horarios libres de cada cancha y escoge el que más te acomode.</p>
         </div>
-        <div>
-          <strong>Entrada</strong>
-          <p>Valor por persona<br>(consulta tarifas en el centro de eventos)</p>
+        <div class="pt-paso pt-reveal" data-d="2">
+          <div class="pt-paso-num">2</div>
+          <h3>Reserva y transfiere</h3>
+          <p>Completa tus datos y paga por transferencia, adjuntando el comprobante.</p>
         </div>
-        <div>
-          <strong>Ubicación</strong>
-          <p id="piscina-ubicacion">Quillayquén, San Fernando</p>
+        <div class="pt-paso pt-reveal" data-d="3">
+          <div class="pt-paso-num">3</div>
+          <h3>Recibe tu confirmación</h3>
+          <p>Verificamos tu pago y te confirmamos. Solo falta que llegues a jugar.</p>
         </div>
       </div>
-      <a href="/eventos.html" class="home-boton-oscuro">Ver centro de eventos</a>
+      <div class="pt-pasos-cta pt-reveal">
+        <a href="#reserva" class="pt-btn pt-btn-dorado pt-btn-grande">Quiero reservar</a>
+      </div>
     </div>
   </section>
 
-  <section class="home-tres-tarjetas">
-    <a href="/canchas.html" class="home-tarjeta-promo">
-      <img src="/img/logo-icono.png" alt="Partidos y entrenamientos" data-hero-pagina="canchas">
-      <span class="home-tarjeta-promo-icono home-tarjeta-promo-verde">⚽</span>
-      <div class="home-tarjeta-promo-texto">
-        <strong>Partidos y entrenamientos</strong>
-        <p>Arma tu equipo, entrena o disfruta un buen partido con amigos.</p>
-        <span class="home-tarjeta-promo-link">Reservar cancha →</span>
-      </div>
-    </a>
-    <a href="#piscina" class="home-tarjeta-promo">
-      <img src="/img/logo-icono.png" alt="Día de piscina" data-hero-pagina="piscina">
-      <span class="home-tarjeta-promo-icono home-tarjeta-promo-azul">〰️</span>
-      <div class="home-tarjeta-promo-texto">
-        <strong>Día de piscina</strong>
-        <p>Relájate, refréscate y disfruta del verano en nuestra piscina.</p>
-        <span class="home-tarjeta-promo-link">Ver piscina →</span>
-      </div>
-    </a>
-    <a href="/eventos.html" class="home-tarjeta-promo">
-      <img src="/img/logo-icono.png" alt="Cumpleaños y eventos" data-hero-pagina="eventos">
-      <span class="home-tarjeta-promo-icono home-tarjeta-promo-dorado">🎉</span>
-      <div class="home-tarjeta-promo-texto">
-        <strong>Cumpleaños y eventos</strong>
-        <p>Celebra con nosotros en un entorno natural, cómodo y seguro.</p>
-        <span class="home-tarjeta-promo-link">Cotizar evento →</span>
-      </div>
-    </a>
-  </section>
-
-  <section class="home-galeria-carrusel">
-    <div class="home-galeria-carrusel-header">
-      <h2><span>🖼️</span> Galería</h2>
-      <p>Conoce nuestras canchas, piscina y espacios.</p>
-      <div class="home-galeria-carrusel-flechas">
-        <button type="button" id="carrusel-anterior" aria-label="Anterior">‹</button>
-        <button type="button" id="carrusel-siguiente" aria-label="Siguiente">›</button>
+  <!-- PISCINA -->
+  <section class="pt-seccion" id="piscina">
+    <div class="pt-wrap">
+      <div class="pt-piscina pt-reveal">
+        <div class="pt-piscina-foto">
+          <img src="/img/piscina-aerea.jpg" alt="Piscina del centro de eventos" loading="lazy" data-hero-pagina="piscina">
+        </div>
+        <div class="pt-piscina-info">
+          <span class="pt-badge">☀️ Ven cuando quieras este verano</span>
+          <h2>Temporada de piscina</h2>
+          <ul class="pt-datos">
+            <li><b>🕙</b><div><strong>Horario</strong><p>Todos los días, de 10:00 a 20:00 hrs</p></div></li>
+            <li><b>🎟️</b><div><strong>Entrada</strong><p>Valor por persona (consulta tarifas en el centro de eventos)</p></div></li>
+            <li><b>📍</b><div><strong>Ubicación</strong><p id="piscina-ubicacion">Quillayquén, San Fernando</p></div></li>
+          </ul>
+          <div>
+            <a href="/eventos.html" class="pt-btn pt-btn-verde">Ver centro de eventos</a>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="home-galeria-carrusel-pista" id="galeria-carrusel-pista">Cargando galería...</div>
   </section>
+
+  <!-- GALERÍA -->
+  <section class="pt-seccion" style="padding-top:0">
+    <div class="pt-wrap">
+      <div class="pt-galeria-cab pt-reveal">
+        <div>
+          <h2>Conócenos por dentro</h2>
+          <p>Nuestras canchas, piscina y espacios.</p>
+        </div>
+        <div class="pt-flechas">
+          <button type="button" id="carrusel-anterior" aria-label="Anterior">‹</button>
+          <button type="button" id="carrusel-siguiente" aria-label="Siguiente">›</button>
+        </div>
+      </div>
+      <div class="pt-pista" id="galeria-carrusel-pista">Cargando galería...</div>
+    </div>
+  </section>
+
+  <!-- LLAMADO FINAL -->
+  <section class="pt-seccion" style="padding-top:0">
+    <div class="pt-wrap">
+      <div class="pt-final pt-reveal">
+        <img class="pt-final-bg" src="/img/cancha-1.jpg" alt="" loading="lazy">
+        <h2>Tu próximo partido empieza acá</h2>
+        <p>Los mejores horarios se llenan rápido. Asegura tu cancha hoy.</p>
+        <div class="pt-final-botones">
+          <a href="#reserva" class="pt-btn pt-btn-dorado pt-btn-grande">Reservar ahora</a>
+          <a href="/contacto.html" class="pt-btn pt-btn-vidrio pt-btn-grande">Hablar con nosotros</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="pt-wrap">
+    <section class="home-ferreteria-banner">
+      <a href="https://ferreteriapcy.cl" target="_blank" rel="noopener" class="home-ferreteria-banner-logo" aria-label="Ir al sitio de Ferretería PCY">
+        <img src="/img/logo-ferreteria-pcy.png" alt="Ferretería PCY">
+      </a>
+      <div class="home-ferreteria-banner-texto">
+        <span class="home-ferreteria-banner-pill">Vecinos de Vistas de Quillayquén</span>
+        <h2>¿Construyes o reparas?<br>Estamos aquí al lado</h2>
+        <p>Materiales, herramientas y fierro · Av. Quillayquén</p>
+      </div>
+      <div class="home-ferreteria-banner-botones">
+        <a href="https://wa.me/56933763192" target="_blank" rel="noopener" class="home-ferreteria-whatsapp">
+          <svg viewBox="0 0 24 24"><path d="M12.04 2c-5.46 0-9.9 4.44-9.9 9.9 0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38c1.45.79 3.08 1.21 4.79 1.21h.01c5.46 0 9.9-4.44 9.9-9.9 0-2.64-1.03-5.12-2.9-6.99A9.82 9.82 0 0 0 12.04 2zm0 1.67c2.2 0 4.26.86 5.82 2.41a8.2 8.2 0 0 1 2.41 5.82c0 4.55-3.7 8.25-8.25 8.25a8.2 8.2 0 0 1-4.17-1.14l-.3-.17-3.12.82.83-3.04-.19-.31a8.18 8.18 0 0 1-1.25-4.36c0-4.56 3.7-8.26 8.26-8.26zm-3.37 4.32c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1 0 1.24.9 2.44 1.03 2.6.13.17 1.77 2.83 4.38 3.86 2.16.86 2.6.69 3.07.65.47-.04 1.52-.62 1.73-1.22.21-.6.21-1.11.15-1.22-.06-.1-.23-.17-.48-.29-.25-.13-1.52-.75-1.76-.84-.23-.08-.4-.13-.57.13-.17.25-.65.84-.8 1.01-.15.17-.29.19-.54.06-.25-.13-1.05-.39-2-1.23-.74-.66-1.24-1.47-1.38-1.72-.15-.25-.02-.38.11-.5.11-.11.25-.29.38-.44.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.57-1.38-.78-1.89-.2-.49-.42-.42-.57-.43z"/></svg>
+          Cotiza por WhatsApp
+        </a>
+        <a href="https://www.google.com/maps/search/?api=1&query=Los+Nogales+LT+B-3%2C+Av.+Quillayqu%C3%A9n%2C+Coltauco" target="_blank" rel="noopener" class="home-ferreteria-ubicacion">
+          <svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg>
+          Ver ubicación
+        </a>
+      </div>
+    </section>
+  </div>
 
 </main>
 
@@ -210,5 +285,16 @@
 <script src="/js/inicio-widget.js"></script>
 <script src="/js/galeria-carrusel.js"></script>
 <script src="/js/footer-completo.js"></script>
+<script>
+  // Las secciones aparecen suavemente al hacer scroll.
+  (function () {
+    const items = document.querySelectorAll('.pt-reveal');
+    if (!('IntersectionObserver' in window)) { items.forEach(el => el.classList.add('visto')); return; }
+    const obs = new IntersectionObserver((entradas) => {
+      entradas.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visto'); obs.unobserve(e.target); } });
+    }, { threshold: 0.12 });
+    items.forEach(el => obs.observe(el));
+  })();
+</script>
 </body>
 </html>

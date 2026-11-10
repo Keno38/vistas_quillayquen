@@ -2258,6 +2258,15 @@ footer.sitio .home-social a { background: rgba(6, 43, 79, 0.06); }
   .home-hero-overlay .home-google-badge small { color: var(--texto); }
 }
 
+.pt-hero .home-google-badge {
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: none;
+  backdrop-filter: blur(8px);
+}
+.pt-hero .home-google-badge strong,
+.pt-hero .home-google-badge small { color: #ffffff; }
+
 .home-footer-completo .firma {
   max-width: 1200px;
   margin: 1.8rem auto 0;
