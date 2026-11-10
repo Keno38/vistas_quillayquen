@@ -2217,6 +2217,47 @@ footer.sitio .home-social a { background: rgba(6, 43, 79, 0.06); }
   .home-ferreteria-whatsapp, .home-ferreteria-ubicacion { justify-content: center; width: 100%; }
 }
 
+/* ---- Insignia de reseñas de Google ---- */
+.home-google-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: var(--blanco);
+  border: 1px solid var(--gris-borde);
+  border-radius: 999px;
+  padding: 0.55rem 1.1rem;
+  text-decoration: none;
+  box-shadow: var(--sombra-tarjeta);
+  margin-top: 1.1rem;
+  transition: transform 0.15s ease;
+}
+.home-google-badge:hover { transform: translateY(-2px); }
+.home-google-badge svg { width: 20px; height: 20px; flex-shrink: 0; }
+.home-google-badge-texto { display: flex; align-items: baseline; gap: 0.35rem; flex-wrap: wrap; }
+.home-google-badge strong { font-size: 0.98rem; color: var(--texto); font-weight: 800; }
+.home-google-badge-estrellas { color: var(--amarillo); font-size: 0.82rem; letter-spacing: 1px; }
+.home-google-badge small { color: color-mix(in oklab, var(--texto) 65%, transparent); font-size: 0.78rem; }
+
+.home-hero-overlay .home-google-badge {
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: none;
+  backdrop-filter: blur(2px);
+}
+.home-hero-overlay .home-google-badge strong,
+.home-hero-overlay .home-google-badge small { color: #ffffff; }
+
+@media (max-width: 640px) {
+  .home-hero-overlay .home-google-badge {
+    background: var(--blanco);
+    border: 1px solid var(--gris-borde);
+    box-shadow: var(--sombra-tarjeta);
+    backdrop-filter: none;
+  }
+  .home-hero-overlay .home-google-badge strong,
+  .home-hero-overlay .home-google-badge small { color: var(--texto); }
+}
+
 .home-footer-completo .firma {
   max-width: 1200px;
   margin: 1.8rem auto 0;
