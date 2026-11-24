@@ -2286,18 +2286,36 @@ footer.sitio .home-social a { background: rgba(6, 43, 79, 0.06); }
   padding: 2rem;
   margin: 2rem 0;
 }
-.mapa-cab { margin-bottom: 1.2rem; }
+.mapa-cab { margin-bottom: 1.2rem; display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
 .mapa-cab h2 { margin: 0 0 .4rem; font-size: clamp(1.4rem, 3vw, 1.9rem); }
 .mapa-cab p { margin: 0; color: #4a5a68; }
+.mapa-cab-contador { flex: none; font-size: .85rem; font-weight: 600; color: var(--verde-oscuro, #0a3d2a); background: rgba(10,61,42,.08); padding: .35rem .8rem; border-radius: 999px; white-space: nowrap; }
 .mapa-img-wrap { position: relative; border-radius: var(--radio-chico); overflow: hidden; line-height: 0; background: #000; }
 .mapa-img { display: block; width: 100%; height: auto; }
 .mapa-pines { position: absolute; inset: 0; }
 .mapa-pin {
   position: absolute; width: 26px; height: 26px; margin-left: -13px; margin-top: -13px;
   border-radius: 50%; border: 3px solid rgba(255,255,255,.9); box-shadow: 0 2px 8px rgba(0,0,0,.45);
-  cursor: pointer; padding: 0; transition: transform .15s ease;
+  cursor: pointer; padding: 0; transition: transform .15s ease; isolation: isolate;
+}
+.mapa-pin::before {
+  content: ""; position: absolute; inset: 0; border-radius: 50%; background: inherit;
+  z-index: -1; animation: mapa-pulso 2.2s ease-out infinite;
 }
 .mapa-pin:hover, .mapa-pin:focus-visible { transform: scale(1.2); }
+@keyframes mapa-pulso {
+  0% { opacity: .55; transform: scale(1); }
+  100% { opacity: 0; transform: scale(2.4); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mapa-pin::before { animation: none; }
+}
+.mapa-popup-nav { display: flex; justify-content: space-between; margin-bottom: .8rem; }
+.mapa-popup-nav button {
+  display: inline-flex; align-items: center; gap: .35rem; border: none; background: var(--gris-fondo);
+  color: var(--texto); font-weight: 600; font-size: .85rem; padding: .5rem .9rem; border-radius: 999px; cursor: pointer;
+}
+.mapa-popup-nav button:hover { background: #e4e9ec; }
 .mapa-overlay {
   display: none; position: fixed; inset: 0; background: rgba(6,20,15,.6);
   align-items: center; justify-content: center; padding: 1rem; z-index: 200;

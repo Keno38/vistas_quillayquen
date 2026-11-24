@@ -80,6 +80,15 @@ const popupTitulo = document.getElementById('mapa-popup-titulo');
 const popupDesc = document.getElementById('mapa-popup-desc');
 const popupPrecio = document.getElementById('mapa-popup-precio');
 const popupCta = document.getElementById('mapa-popup-cta');
+const contador = document.getElementById('mapa-contador');
+const botonAnterior = document.getElementById('mapa-anterior');
+const botonSiguiente = document.getElementById('mapa-siguiente');
+
+if (contador) {
+  contador.textContent = `${PUNTOS.length} zonas para explorar`;
+}
+
+let indiceActual = 0;
 
 let configPagoCanchas = null;
 
@@ -133,7 +142,8 @@ async function cargarFotosHero(fotos, contenedor) {
   });
 }
 
-function abrirPopup(punto) {
+function abrirPopup(punto, indice) {
+  indiceActual = indice;
   popupTitulo.textContent = punto.titulo;
   popupDesc.textContent = punto.desc;
   popupFotos.innerHTML = '';
@@ -159,14 +169,25 @@ function cerrarPopup() {
 document.getElementById('mapa-cerrar').addEventListener('click', cerrarPopup);
 overlay.addEventListener('click', e => { if (e.target === overlay) cerrarPopup(); });
 
-PUNTOS.forEach(punto => {
+if (botonAnterior && botonSiguiente) {
+  botonAnterior.addEventListener('click', () => {
+    const indice = (indiceActual - 1 + PUNTOS.length) % PUNTOS.length;
+    abrirPopup(PUNTOS[indice], indice);
+  });
+  botonSiguiente.addEventListener('click', () => {
+    const indice = (indiceActual + 1) % PUNTOS.length;
+    abrirPopup(PUNTOS[indice], indice);
+  });
+}
+
+PUNTOS.forEach((punto, indice) => {
   const pin = document.createElement('button');
   pin.className = 'mapa-pin';
   pin.style.left = punto.x + '%';
   pin.style.top = punto.y + '%';
   pin.style.background = COLORES[punto.categoria];
   pin.setAttribute('aria-label', punto.titulo);
-  pin.addEventListener('click', () => abrirPopup(punto));
+  pin.addEventListener('click', () => abrirPopup(punto, indice));
   contenedorPines.appendChild(pin);
 });
 

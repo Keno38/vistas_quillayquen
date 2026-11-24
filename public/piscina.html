@@ -79,8 +79,11 @@
 
   <section class="mapa-interactivo" id="mapa-interactivo">
     <div class="mapa-cab">
-      <h2>Mapa interactivo del recinto</h2>
-      <p>Toca un punto para conocer el sector: fotos, descripción y valores.</p>
+      <div>
+        <h2>Mapa interactivo del recinto</h2>
+        <p>Toca un punto para conocer el sector: fotos, descripción y valores.</p>
+      </div>
+      <span class="mapa-cab-contador" id="mapa-contador"></span>
     </div>
     <div class="mapa-img-wrap">
       <img src="/img/mapa-recinto.jpg" alt="Vista aérea del recinto Vistas de Quillayquén" class="mapa-img">
@@ -90,6 +93,10 @@
     <div class="mapa-overlay" id="mapa-overlay">
       <div class="mapa-popup" id="mapa-popup">
         <button class="mapa-cerrar" id="mapa-cerrar" aria-label="Cerrar">&times;</button>
+        <div class="mapa-popup-nav">
+          <button type="button" id="mapa-anterior">‹ Anterior</button>
+          <button type="button" id="mapa-siguiente">Siguiente ›</button>
+        </div>
         <div class="mapa-popup-fotos" id="mapa-popup-fotos"></div>
         <h3 id="mapa-popup-titulo"></h3>
         <p id="mapa-popup-desc"></p>
