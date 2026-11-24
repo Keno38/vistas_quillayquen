@@ -173,6 +173,7 @@
 @media (max-width: 560px) {
   .pt-hero { padding: 3.2rem 0 8rem; min-height: 620px; }
   .pt-hero::before { background: linear-gradient(0deg, rgba(4,28,52,.82) 0%, rgba(4,28,52,.38) 55%, rgba(4,28,52,.15) 100%); }
+  .pt-hero-bg img { object-position: 30% 75%; }
   .pt-hero-botones .pt-btn { width: 100%; }
   .pt-reserva { padding: 1.3rem 1.1rem 1.4rem; border-radius: 22px; }
   .pt-reserva-campos { grid-template-columns: 1fr; }
