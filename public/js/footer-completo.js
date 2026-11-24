@@ -5,7 +5,6 @@
   const correoEl = document.getElementById('footer-correo');
   const direccionEl = document.getElementById('footer-direccion');
   const mapaEl = document.getElementById('footer-mapa');
-  const mapaLinkEl = document.getElementById('footer-mapa-link');
   const ubicacionPiscinaEl = document.getElementById('piscina-ubicacion');
   if (!telefonoEl) return;
 
@@ -25,8 +24,6 @@
     if (datos.mapa_embed_url) {
       mapaEl.src = datos.mapa_embed_url;
       mapaEl.classList.remove('oculto');
-      mapaLinkEl.href = datos.mapa_embed_url;
-      mapaLinkEl.classList.remove('oculto');
     }
   } catch (err) {
     telefonoEl.textContent = 'No pudimos cargar los datos de contacto.';

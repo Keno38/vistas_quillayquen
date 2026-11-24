@@ -2113,8 +2113,9 @@ footer.sitio .home-social a { background: rgba(6, 43, 79, 0.06); }
   .home-footer-completo-inner { grid-template-columns: 1fr; }
 }
 
-.home-footer-marca { display: flex; flex-direction: column; gap: 0.6rem; }
-.home-footer-marca .home-marca-nombre { font-weight: 700; }
+.home-footer-marca .home-logo-badge { display: inline-block; vertical-align: middle; margin-right: 0.5rem; }
+.home-footer-marca .home-marca-nombre { display: inline-block; vertical-align: middle; font-weight: 700; }
+.home-footer-marca .home-social { display: flex; margin-top: 0.6rem; }
 .home-footer-marca .home-social a svg { fill: rgba(255, 255, 255, 0.85); }
 .home-footer-marca .home-social a { background: rgba(255, 255, 255, 0.12); }
 
