@@ -1,6 +1,7 @@
 const PUNTOS = [
   {
     categoria: 'cancha', x: 76.3, y: 49.6,
+    etiqueta: 'Canchas',
     titulo: 'Canchas de pasto sintético',
     desc: 'Dos canchas de pasto sintético con iluminación nocturna y estacionamiento junto a la cancha.',
     fotos: [
@@ -12,6 +13,7 @@ const PUNTOS = [
   },
   {
     categoria: 'piscina', x: 34.4, y: 48.3,
+    etiqueta: 'Piscina',
     titulo: 'Piscina',
     desc: 'Piscina con áreas de descanso y sombra, abierta todos los días de 10:00 a 20:00 hrs.',
     fotos: [
@@ -24,6 +26,7 @@ const PUNTOS = [
   },
   {
     categoria: 'quinchos', x: 10.3, y: 72,
+    etiqueta: 'Quincho',
     titulo: 'Quinchos y zona de asados (sector bajo)',
     desc: 'Áreas verdes y quinchos con lavaplatos y mesas, para días de asado en familia.',
     fotos: [
@@ -36,6 +39,7 @@ const PUNTOS = [
   },
   {
     categoria: 'quinchos', x: 20.6, y: 22.2,
+    etiqueta: 'Quincho',
     titulo: 'Quinchos y zona de asados (sector alto)',
     desc: 'Áreas verdes y quinchos con lavaplatos y mesas, para días de asado en familia.',
     fotos: [
@@ -48,6 +52,7 @@ const PUNTOS = [
   },
   {
     categoria: 'juegos', x: 6.5, y: 44.7,
+    etiqueta: 'Zona de juegos',
     titulo: 'Zona de juegos',
     desc: 'Área de juegos para los más pequeños dentro del recinto.',
     fotos: [
@@ -59,6 +64,7 @@ const PUNTOS = [
   },
   {
     categoria: 'acceso', x: 51.1, y: 88.2,
+    etiqueta: 'Acceso',
     titulo: 'Acceso principal',
     desc: 'Entrada principal al recinto Vistas de Quillayquén.',
     fotos: [
@@ -70,6 +76,7 @@ const PUNTOS = [
   },
   {
     categoria: 'ferreteria', x: 94.5, y: 33.7,
+    etiqueta: 'Ferretería PCY',
     titulo: 'Ferretería PCY (vecino)',
     desc: 'Nuestra vecina de confianza: materiales, herramientas y fierro en Av. Quillayquén, al lado del recinto.',
     fotos: [
@@ -202,6 +209,15 @@ PUNTOS.forEach((punto, indice) => {
   pin.setAttribute('aria-label', punto.titulo);
   pin.addEventListener('click', () => abrirPopup(punto, indice));
   contenedorPines.appendChild(pin);
+
+  if (punto.etiqueta) {
+    const etiqueta = document.createElement('span');
+    etiqueta.className = 'mapa-pin-etiqueta';
+    etiqueta.style.left = punto.x + '%';
+    etiqueta.style.top = punto.y + '%';
+    etiqueta.textContent = punto.etiqueta;
+    contenedorPines.appendChild(etiqueta);
+  }
 });
 
 cargarPrecioCancha();

@@ -2303,6 +2303,14 @@ footer.sitio .home-social a { background: rgba(6, 43, 79, 0.06); }
   z-index: -1; animation: mapa-pulso 2.2s ease-out infinite;
 }
 .mapa-pin:hover, .mapa-pin:focus-visible { transform: scale(1.2); }
+.mapa-pin-etiqueta {
+  position: absolute; transform: translate(-50%, -165%); pointer-events: none;
+  background: rgba(10, 20, 18, .72); color: #fff; font-size: .7rem; font-weight: 700;
+  letter-spacing: .01em; padding: .25rem .55rem; border-radius: 6px; white-space: nowrap;
+}
+@media (max-width: 640px) {
+  .mapa-pin-etiqueta { font-size: .6rem; padding: .18rem .42rem; }
+}
 @keyframes mapa-pulso {
   0% { opacity: .55; transform: scale(1); }
   100% { opacity: 0; transform: scale(2.4); }
