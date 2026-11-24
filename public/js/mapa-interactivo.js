@@ -68,9 +68,19 @@ const PUNTOS = [
     ctaTexto: 'Cómo llegar', ctaHref: '/index.html',
     precio: '',
   },
+  {
+    categoria: 'ferreteria', x: 94.5, y: 33.7,
+    titulo: 'Ferretería PCY (vecino)',
+    desc: 'Nuestra vecina de confianza: materiales, herramientas y fierro en Av. Quillayquén, al lado del recinto.',
+    fotos: [
+      { src: '/img/logo-ferreteria-pcy.png', alt: 'Ferretería PCY' },
+    ],
+    ctaTexto: 'Visitar ferreteriapcy.cl', ctaHref: 'https://ferreteriapcy.cl',
+    precio: '',
+  },
 ];
 
-const COLORES = { cancha: '#2ecc71', piscina: '#f1c40f', quinchos: '#e74c3c', juegos: '#3498db', acceso: '#00bcd4' };
+const COLORES = { cancha: '#2ecc71', piscina: '#f1c40f', quinchos: '#e74c3c', juegos: '#3498db', acceso: '#00bcd4', ferreteria: '#1a1a1a' };
 
 const contenedorPines = document.getElementById('mapa-pines');
 const overlay = document.getElementById('mapa-overlay');
@@ -149,6 +159,9 @@ function abrirPopup(punto, indice) {
   popupFotos.innerHTML = '';
   popupCta.textContent = punto.ctaTexto;
   popupCta.href = punto.ctaHref;
+  const esExterno = /^https?:\/\//.test(punto.ctaHref);
+  popupCta.target = esExterno ? '_blank' : '';
+  popupCta.rel = esExterno ? 'noopener' : '';
 
   if (punto.categoria === 'cancha') {
     popupPrecio.textContent = textoPrecioCancha();
