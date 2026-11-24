@@ -43,8 +43,8 @@
 .pt-hero::before {
   content: ""; position: absolute; inset: 0; z-index: -1;
   background:
-    linear-gradient(90deg, rgba(4,28,52,.88) 0%, rgba(4,28,52,.62) 45%, rgba(4,28,52,.15) 100%),
-    linear-gradient(0deg, rgba(4,28,52,.55) 0%, transparent 40%);
+    linear-gradient(90deg, rgba(4,28,52,.92) 0%, rgba(4,28,52,.78) 45%, rgba(4,28,52,.4) 100%),
+    linear-gradient(0deg, rgba(4,28,52,.7) 0%, transparent 45%);
 }
 .pt-chip {
   display: inline-flex; align-items: center; gap: .55rem; padding: .5rem 1rem; border-radius: 999px;
@@ -54,8 +54,8 @@
 .pt-chip i { width: 9px; height: 9px; border-radius: 50%; background: #3ddc97; box-shadow: 0 0 0 4px rgba(61,220,151,.3); animation: pt-pulso 1.8s infinite; }
 @keyframes pt-pulso { 50% { box-shadow: 0 0 0 9px rgba(61,220,151,0); } }
 .pt-hero h1 {
-  font-size: clamp(2.4rem, 6.2vw, 4.6rem); line-height: 1.04; letter-spacing: -.03em; font-weight: 800;
-  margin: 1.2rem 0 1rem; max-width: 15ch;
+  font-size: clamp(2.2rem, 5.6vw, 4.2rem); line-height: 1.08; letter-spacing: -.03em; font-weight: 800;
+  margin: 1.2rem 0 1rem; max-width: 20ch;
 }
 .pt-hero h1 em { font-style: normal; color: #7cf0bb; }
 .pt-hero p.pt-sub { font-size: clamp(1.05rem, 2vw, 1.3rem); max-width: 34rem; margin: 0 0 2rem; color: rgba(255,255,255,.9); }
@@ -74,6 +74,7 @@
 .pt-reserva-cab { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .6rem 1.5rem; margin-bottom: 1.2rem; }
 .pt-reserva-cab h2 { margin: 0; font-size: clamp(1.25rem, 2.4vw, 1.7rem); }
 .pt-reserva-cab small { color: #4a6075; font-size: .92rem; }
+.pt-reserva-precio { width: 100%; margin: 0; font-weight: 700; color: var(--verde-oscuro, #0a3d2a); font-size: .95rem; }
 .pt-reserva-campos { display: grid; grid-template-columns: 1fr 1fr auto; gap: 1rem 1.2rem; align-items: end; }
 .pt-reserva label { display: block; font-size: .78rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #4a6075; }
 .pt-reserva input[type="date"], .pt-reserva select {

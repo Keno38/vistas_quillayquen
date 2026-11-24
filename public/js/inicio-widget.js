@@ -8,11 +8,28 @@
   const selectCancha = document.getElementById('widget-cancha');
   const contHoras = document.getElementById('widget-horas');
   const btnConfirmar = document.getElementById('widget-confirmar');
+  const elPrecio = document.getElementById('widget-precio');
   if (!inputFecha || !selectCancha) return;
 
   function hoyISO() {
     return new Date().toISOString().slice(0, 10);
   }
+
+  function formatoCLP(monto) {
+    return Number(monto).toLocaleString('es-CL', { style: 'currency', currency: 'CLP', maximumFractionDigits: 0 });
+  }
+
+  async function cargarPrecio() {
+    if (!elPrecio) return;
+    try {
+      const resp = await fetch('/api/canchas/config');
+      const config = await resp.json();
+      elPrecio.textContent = `Valor por hora: ${formatoCLP(config.monto_completo)} (abono de ${formatoCLP(config.monto_abono)} para reservar)`;
+    } catch {
+      // Si falla, el precio se confirma al reservar.
+    }
+  }
+  cargarPrecio();
 
   inputFecha.min = hoyISO();
   inputFecha.value = hoyISO();

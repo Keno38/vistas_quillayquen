@@ -3,10 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vistas de Quillayquén — Canchas, piscina y eventos en San Fernando</title>
-<meta name="description" content="Reserva canchas de pasto sintético en 1 minuto, disfruta la piscina y arrienda el centro de eventos en Vistas de Quillayquén. Reserva online, pago por transferencia y confirmación rápida.">
-<meta property="og:title" content="Vistas de Quillayquén — Canchas, piscina y eventos">
-<meta property="og:description" content="Reserva tu cancha en 1 minuto. Piscina todo el verano y centro de eventos en un entorno natural.">
+<link rel="icon" href="/img/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="/img/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="/img/favicon-180.png">
+<title>Vistas de Quillayquén — Canchas, piscina y centro de eventos en Coltauco</title>
+<meta name="description" content="Centro de eventos en Coltauco: arrienda salón techado, piscina y quincho para matrimonios y celebraciones. Reserva canchas de pasto sintético en 1 minuto, pago por transferencia y confirmación rápida.">
+<meta property="og:title" content="Vistas de Quillayquén — Canchas, piscina y centro de eventos en Coltauco">
+<meta property="og:description" content="Centro de eventos en Coltauco. Reserva tu cancha en 1 minuto. Piscina todo el verano y salón de eventos en un entorno natural.">
 <meta property="og:image" content="/img/piscina-aerea.jpg">
 <meta property="og:type" content="website">
 <link rel="stylesheet" href="/css/estilo.css">
@@ -35,8 +38,8 @@
       <nav class="home-nav" aria-label="Navegación principal">
         <a href="/index.html">Inicio</a>
         <a href="/canchas.html">Canchas</a>
-        <a href="#piscina">Piscina</a>
         <a href="/eventos.html">Centro de Eventos</a>
+        <a href="/piscina.html">Piscina</a>
         <a href="/galeria.html">Galería</a>
         <a href="/contacto.html">Contáctanos</a>
       </nav>
@@ -56,8 +59,8 @@
       <img src="/img/piscina-aerea.jpg" alt="Vista aérea de la piscina y los jardines de Vistas de Quillayquén" data-hero-pagina="index" fetchpriority="high">
     </div>
     <div class="pt-wrap">
-      <span class="pt-chip"><i></i> Reservas abiertas · Quillayquén, San Fernando</span>
-      <h1>Juega, celebra y <em>disfruta</em> en un solo lugar</h1>
+      <span class="pt-chip"><i></i> Reservas abiertas · Quillayquén, Coltauco</span>
+      <h1>Juega, celebra y <em>disfruta</em></h1>
       <p class="pt-sub">Canchas de pasto sintético, piscina y centro de eventos rodeados de naturaleza. Reserva online en 1 minuto.</p>
       <div class="pt-hero-botones">
         <a href="#reserva" class="pt-btn pt-btn-verde pt-btn-grande">
@@ -80,6 +83,7 @@
       <div class="pt-reserva-cab">
         <h2>Reserva tu cancha ahora</h2>
         <small>Elige fecha, cancha y hora. Terminas el pago en el siguiente paso.</small>
+        <p class="pt-reserva-precio" id="widget-precio"></p>
       </div>
       <div class="pt-reserva-campos">
         <label>Fecha
@@ -114,7 +118,7 @@
             <span class="pt-tarjeta-link">Reservar cancha →</span>
           </div>
         </a>
-        <a href="#piscina" class="pt-tarjeta pt-reveal" data-d="2">
+        <a href="/piscina.html" class="pt-tarjeta pt-reveal" data-d="2">
           <img src="/img/piscina-aerea.jpg" alt="Piscina rodeada de palmeras y jardines" loading="lazy" data-hero-pagina="piscina">
           <div class="pt-tarjeta-texto">
             <span class="pt-tarjeta-etiqueta">Temporada de verano</span>
@@ -167,29 +171,6 @@
     </div>
   </section>
 
-  <!-- PISCINA -->
-  <section class="pt-seccion" id="piscina">
-    <div class="pt-wrap">
-      <div class="pt-piscina pt-reveal">
-        <div class="pt-piscina-foto">
-          <img src="/img/piscina-aerea.jpg" alt="Piscina del centro de eventos" loading="lazy" data-hero-pagina="piscina">
-        </div>
-        <div class="pt-piscina-info">
-          <span class="pt-badge">☀️ Ven cuando quieras este verano</span>
-          <h2>Temporada de piscina</h2>
-          <ul class="pt-datos">
-            <li><b>🕙</b><div><strong>Horario</strong><p>Todos los días, de 10:00 a 20:00 hrs</p></div></li>
-            <li><b>🎟️</b><div><strong>Entrada</strong><p>Valor por persona (consulta tarifas en el centro de eventos)</p></div></li>
-            <li><b>📍</b><div><strong>Ubicación</strong><p id="piscina-ubicacion">Quillayquén, San Fernando</p></div></li>
-          </ul>
-          <div>
-            <a href="/eventos.html" class="pt-btn pt-btn-verde">Ver centro de eventos</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- GALERÍA -->
   <section class="pt-seccion" style="padding-top:0">
     <div class="pt-wrap">
@@ -227,11 +208,11 @@
       <a href="https://ferreteriapcy.cl" target="_blank" rel="noopener" class="home-ferreteria-banner-logo" aria-label="Ir al sitio de Ferretería PCY">
         <img src="/img/logo-ferreteria-pcy.png" alt="Ferretería PCY">
       </a>
-      <div class="home-ferreteria-banner-texto">
+      <a href="https://ferreteriapcy.cl" target="_blank" rel="noopener" class="home-ferreteria-banner-texto">
         <span class="home-ferreteria-banner-pill">Vecinos de Vistas de Quillayquén</span>
         <h2>¿Construyes o reparas?<br>Estamos aquí al lado</h2>
         <p>Materiales, herramientas y fierro · Av. Quillayquén</p>
-      </div>
+      </a>
       <div class="home-ferreteria-banner-botones">
         <a href="https://wa.me/56933763192" target="_blank" rel="noopener" class="home-ferreteria-whatsapp">
           <svg viewBox="0 0 24 24"><path d="M12.04 2c-5.46 0-9.9 4.44-9.9 9.9 0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38c1.45.79 3.08 1.21 4.79 1.21h.01c5.46 0 9.9-4.44 9.9-9.9 0-2.64-1.03-5.12-2.9-6.99A9.82 9.82 0 0 0 12.04 2zm0 1.67c2.2 0 4.26.86 5.82 2.41a8.2 8.2 0 0 1 2.41 5.82c0 4.55-3.7 8.25-8.25 8.25a8.2 8.2 0 0 1-4.17-1.14l-.3-.17-3.12.82.83-3.04-.19-.31a8.18 8.18 0 0 1-1.25-4.36c0-4.56 3.7-8.26 8.26-8.26zm-3.37 4.32c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1 0 1.24.9 2.44 1.03 2.6.13.17 1.77 2.83 4.38 3.86 2.16.86 2.6.69 3.07.65.47-.04 1.52-.62 1.73-1.22.21-.6.21-1.11.15-1.22-.06-.1-.23-.17-.48-.29-.25-.13-1.52-.75-1.76-.84-.23-.08-.4-.13-.57.13-.17.25-.65.84-.8 1.01-.15.17-.29.19-.54.06-.25-.13-1.05-.39-2-1.23-.74-.66-1.24-1.47-1.38-1.72-.15-.25-.02-.38.11-.5.11-.11.25-.29.38-.44.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.57-1.38-.78-1.89-.2-.49-.42-.42-.57-.43z"/></svg>

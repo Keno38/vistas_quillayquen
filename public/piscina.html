@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="/img/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="/img/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="/img/favicon-180.png">
+<title>Piscina — Vistas de Quillayquén</title>
+<meta name="description" content="Piscina en Vistas de Quillayquén, Coltauco: abierta todos los días de 10:00 a 20:00 hrs durante el verano. Áreas de descanso y sombra para toda la familia.">
+<meta property="og:title" content="Piscina — Vistas de Quillayquén">
+<meta property="og:description" content="Piscina abierta todos los días de 10:00 a 20:00 hrs, con áreas de descanso y sombra, en Coltauco.">
+<meta property="og:image" content="/img/piscina-aerea.jpg">
+<meta property="og:type" content="website">
+<link rel="stylesheet" href="/css/estilo.css">
+<link rel="stylesheet" href="/css/portada.css">
+</head>
+<body>
+
+<div class="home-glow home-glow-verde" aria-hidden="true"></div>
+<div class="home-glow home-glow-dorado" aria-hidden="true"></div>
+
+<header class="home-header">
+  <div class="home-header-inner">
+    <a href="/index.html" class="home-marca">
+      <img src="/img/logo-icono.png" alt="Vistas de Quillayquén" class="home-logo-badge">
+      <span class="home-marca-texto">
+        <span class="home-marca-nombre">Vistas de Quillayquén</span>
+        <span class="home-marca-sub">Complejo deportivo</span>
+      </span>
+    </a>
+    <input type="checkbox" id="menu-toggle" class="home-menu-checkbox">
+    <label for="menu-toggle" class="home-hamburger" aria-label="Abrir menú">
+      <span></span><span></span><span></span>
+    </label>
+    <div class="home-menu-movil">
+      <nav class="home-nav" aria-label="Navegación principal">
+        <a href="/index.html">Inicio</a>
+        <a href="/canchas.html">Canchas</a>
+        <a href="/eventos.html">Centro de Eventos</a>
+        <a href="/piscina.html">Piscina</a>
+        <a href="/galeria.html">Galería</a>
+        <a href="/contacto.html">Contáctanos</a>
+      </nav>
+      <a href="/canchas.html" class="home-boton-oscuro">Reservar cancha</a>
+    </div>
+  </div>
+</header>
+
+<main class="home-main">
+  <div class="home-pagina-header">
+    <p class="home-disp-eyebrow">☀️ Ven cuando quieras este verano</p>
+    <h1>Temporada de piscina</h1>
+    <p class="home-subtitulo">Piscina con áreas de descanso y sombra, ideal para pasar el día en familia.</p>
+  </div>
+
+  <section class="pt-seccion">
+    <div class="pt-wrap">
+      <div class="pt-piscina pt-reveal">
+        <div class="pt-piscina-foto">
+          <img src="/img/piscina-aerea.jpg" alt="Piscina del centro de eventos" loading="lazy" data-hero-pagina="piscina">
+        </div>
+        <div class="pt-piscina-info">
+          <span class="pt-badge">☀️ Ven cuando quieras este verano</span>
+          <h2>Temporada de piscina</h2>
+          <ul class="pt-datos">
+            <li><b>🕙</b><div><strong>Horario</strong><p>Todos los días, de 10:00 a 20:00 hrs</p></div></li>
+            <li><b>🎟️</b><div><strong>Entrada</strong><p>Valor por persona (consulta tarifas en el centro de eventos)</p></div></li>
+            <li><b>📍</b><div><strong>Ubicación</strong><p>Quillayquén, Coltauco</p></div></li>
+          </ul>
+          <div>
+            <a href="/eventos.html" class="pt-btn pt-btn-verde">Ver centro de eventos</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mapa-interactivo" id="mapa-interactivo">
+    <div class="mapa-cab">
+      <h2>Mapa interactivo del recinto</h2>
+      <p>Toca un punto para conocer el sector: fotos, descripción y valores.</p>
+    </div>
+    <div class="mapa-img-wrap">
+      <img src="/img/mapa-recinto.jpg" alt="Vista aérea del recinto Vistas de Quillayquén" class="mapa-img">
+      <div class="mapa-pines" id="mapa-pines"></div>
+    </div>
+
+    <div class="mapa-overlay" id="mapa-overlay">
+      <div class="mapa-popup" id="mapa-popup">
+        <button class="mapa-cerrar" id="mapa-cerrar" aria-label="Cerrar">&times;</button>
+        <div class="mapa-popup-fotos" id="mapa-popup-fotos"></div>
+        <h3 id="mapa-popup-titulo"></h3>
+        <p id="mapa-popup-desc"></p>
+        <p class="mapa-popup-precio" id="mapa-popup-precio"></p>
+        <a class="boton" id="mapa-popup-cta" href="#"></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="home-ferreteria-banner">
+    <a href="https://ferreteriapcy.cl" target="_blank" rel="noopener" class="home-ferreteria-banner-logo" aria-label="Ir al sitio de Ferretería PCY">
+      <img src="/img/logo-ferreteria-pcy.png" alt="Ferretería PCY">
+    </a>
+    <a href="https://ferreteriapcy.cl" target="_blank" rel="noopener" class="home-ferreteria-banner-texto">
+      <span class="home-ferreteria-banner-pill">Vecinos de Vistas de Quillayquén</span>
+      <h2>¿Construyes o reparas?<br>Estamos aquí al lado</h2>
+      <p>Materiales, herramientas y fierro · Av. Quillayquén</p>
+    </a>
+    <div class="home-ferreteria-banner-botones">
+      <a href="https://wa.me/56933763192" target="_blank" rel="noopener" class="home-ferreteria-whatsapp">
+        <svg viewBox="0 0 24 24"><path d="M12.04 2c-5.46 0-9.9 4.44-9.9 9.9 0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38c1.45.79 3.08 1.21 4.79 1.21h.01c5.46 0 9.9-4.44 9.9-9.9 0-2.64-1.03-5.12-2.9-6.99A9.82 9.82 0 0 0 12.04 2zm0 1.67c2.2 0 4.26.86 5.82 2.41a8.2 8.2 0 0 1 2.41 5.82c0 4.55-3.7 8.25-8.25 8.25a8.2 8.2 0 0 1-4.17-1.14l-.3-.17-3.12.82.83-3.04-.19-.31a8.18 8.18 0 0 1-1.25-4.36c0-4.56 3.7-8.26 8.26-8.26zm-3.37 4.32c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1 0 1.24.9 2.44 1.03 2.6.13.17 1.77 2.83 4.38 3.86 2.16.86 2.6.69 3.07.65.47-.04 1.52-.62 1.73-1.22.21-.6.21-1.11.15-1.22-.06-.1-.23-.17-.48-.29-.25-.13-1.52-.75-1.76-.84-.23-.08-.4-.13-.57.13-.17.25-.65.84-.8 1.01-.15.17-.29.19-.54.06-.25-.13-1.05-.39-2-1.23-.74-.66-1.24-1.47-1.38-1.72-.15-.25-.02-.38.11-.5.11-.11.25-.29.38-.44.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.57-1.38-.78-1.89-.2-.49-.42-.42-.57-.43z"/></svg>
+        Cotiza por WhatsApp
+      </a>
+      <a href="https://www.google.com/maps/search/?api=1&query=Los+Nogales+LT+B-3%2C+Av.+Quillayqu%C3%A9n%2C+Coltauco" target="_blank" rel="noopener" class="home-ferreteria-ubicacion">
+        <svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg>
+        Ver ubicación
+      </a>
+    </div>
+  </section>
+</main>
+
+<footer class="home-footer-completo">
+  <div class="home-footer-completo-inner">
+    <div class="home-footer-marca">
+      <img src="/img/logo-icono.png" alt="Vistas de Quillayquén" class="home-logo-badge">
+      <span class="home-marca-nombre">Vistas de Quillayquén</span>
+      <div class="home-social">
+        <a href="https://www.instagram.com/vistasdequillayquen_/" target="_blank" rel="noopener" aria-label="Instagram Vistas de Quillayquén">
+          <svg viewBox="0 0 24 24"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7zm5 3.5A4.5 4.5 0 1 1 7.5 12 4.5 4.5 0 0 1 12 7.5zm0 2A2.5 2.5 0 1 0 14.5 12 2.5 2.5 0 0 0 12 9.5zm4.8-3.3a1 1 0 1 1-1 1 1 1 0 0 1 1-1z"/></svg>
+        </a>
+        <a href="https://www.facebook.com/profile.php?id=100052160036272" target="_blank" rel="noopener" aria-label="Facebook Vistas de Quillayquén">
+          <svg viewBox="0 0 24 24"><path d="M22 12a10 10 0 1 0-11.5 9.9v-7H8v-2.9h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6v1.9H16l-.4 2.9h-2.1v7A10 10 0 0 0 22 12z"/></svg>
+        </a>
+        <a href="https://www.instagram.com/ferreteriapcy/" target="_blank" rel="noopener" aria-label="Instagram Ferretería PCY">
+          <svg viewBox="0 0 24 24"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7zm5 3.5A4.5 4.5 0 1 1 7.5 12 4.5 4.5 0 0 1 12 7.5zm0 2A2.5 2.5 0 1 0 14.5 12 2.5 2.5 0 0 0 12 9.5zm4.8-3.3a1 1 0 1 1-1 1 1 1 0 0 1 1-1z"/></svg>
+        </a>
+      </div>
+    </div>
+    <div class="home-footer-col">
+      <h4>Contáctanos</h4>
+      <p id="footer-telefono">Cargando...</p>
+      <p id="footer-correo"></p>
+    </div>
+    <div class="home-footer-col">
+      <h4>¿Dónde estamos?</h4>
+      <p id="footer-direccion">Cargando...</p>
+      <a id="footer-mapa-link" href="/contacto.html" target="_blank" rel="noopener" class="home-footer-mapa-link oculto">Ver en Google Maps</a>
+    </div>
+    <div class="home-footer-mapa">
+      <iframe id="footer-mapa" title="Mapa de ubicación" loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="oculto"></iframe>
+    </div>
+  </div>
+  <div class="firma">© 2026 enovo · Vistas de Quillayquén — parte de Comercializadora PCY · Todos los derechos reservados.</div>
+</footer>
+<script src="/js/hero-publico.js"></script>
+<script src="/js/footer-completo.js"></script>
+<script src="/js/whatsapp-flotante.js"></script>
+<script src="/js/mapa-interactivo.js"></script>
+</body>
+</html>
